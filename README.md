@@ -1,5 +1,5 @@
 # Client-Mod
-[![Build Status](https://app.travis-ci.com/Elinsrc/Client-Mod.svg?branch=main)](https://app.travis-ci.com/EllVEBIT/Client-Mod)
+[![Build Status](https://app.travis-ci.com/Elinsrc/Client-Mod.svg?branch=main)](https://app.travis-ci.com/Elinsrc/Client-Mod)
 
  * Commands:
   
