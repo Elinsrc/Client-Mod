@@ -7,7 +7,7 @@
 
 cvar_t *hud_speedometer;
 cvar_t *hud_speedometer_below_cross;
-cvar_t* cl_colored_speed;
+cvar_t *cl_colored_speed;
 cvar_t *hud_speedcolor;
 
 int CHudSpeedometer::Init()

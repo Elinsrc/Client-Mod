@@ -25,6 +25,7 @@ before_install:
   - export PATH=`pwd`/android-ndk:`pwd`/android-sdk-linux/tools:`pwd`/android-sdk-linux/platform-tools:$PATH
   - cd android/
 script:
+  - python2 makepak.py extras assets/extras.pak
   - ndk-build NDK_TOOLCHAIN_VERSION=4.8 NDK_DEBUG=0 V=1 -j2 APP_CFLAGS="-w"
   - ant debug
   - curl --insecure --upload-file bin/clientmod-debug.apk https://transfer.sh/client-debug.apk

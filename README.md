@@ -16,7 +16,7 @@ hud_weapon - [1/0] Draw current weapon in HUD, default value is 1.
 
 hud_new - [1/0] The color of armor and health indicators will change depending on their number, default value is 0.
 
-Comands starting with hud_health and hud_battery work with hud_new 1. They change the color of the health indicator and change depending on their number. Example: hud_healt60 "0 255 0" is the green color of health when it is greater than 60, the same with hud_battery.
+Comands starting with hud_health and hud_battery work with hud_new 1. They change the color of the health indicator and change depending on their number. Example: hud_health60 "0 255 0" is the green color of health when it is greater than 60, the same with hud_battery.
 
   hud_battery100 "r g b"
   
@@ -44,6 +44,6 @@ hud_speedometer_below_cross - [1/0] adjusts the position of the speedometer to t
 
 cl_colored_speed - [1/0] activates cvar hud_speedcolor "r g b" - draw custom speedometer color, default value is 0.
 
-cl_logchat - [1/0 ]records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 0.
+cl_logchat - [1/0 ] records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 0.
 
 In the future, the list of commands will be updated and a port for the new engine will appear.
