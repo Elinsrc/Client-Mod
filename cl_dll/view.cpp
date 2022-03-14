@@ -621,7 +621,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 
 	for( i = 0; i < 3; i++ )
 	{
-	  if ( CVAR_GET_FLOAT("cl_sway"))
+	  if ( CVAR_GET_FLOAT("cl_weaponsway"))
 	  {
 	    view->origin[i] += bob * 0.6f * pparams->right[i];
 	    view->origin[i] += bob * 0.4f * pparams->up[i];
@@ -634,7 +634,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	view->origin[2] += bob;
 
 	// throw in a little tilt.
-	if ( CVAR_GET_FLOAT("cl_sway"))
+	if ( CVAR_GET_FLOAT("cl_weaponsway"))
 	{
 	  view->angles[YAW] -= bob * 0.3f;
 	  view->angles[ROLL] -= bob * 0.5f;

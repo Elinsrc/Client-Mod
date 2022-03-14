@@ -34,7 +34,9 @@ Comands starting with hud_health and hud_battery work with hud_new 1. They chang
  
   hud_health20 "r g b"
 
-cl_lowerweapon - [1/0] The weapon in the player's hand will lower depending on the speed of movement, default value is 0.
+cl_lowerweapon - [1/0] The weapon in the player's hand will lower depending on the speed of movement, default value is 1.
+
+cl_weaponsway - [1/0] Swaying of the weapon when moving, default value is 1.
 
 cl_gausscolor - [1/0] activates cvar cl_gaussbeam "r g b", default value is 0.
 
