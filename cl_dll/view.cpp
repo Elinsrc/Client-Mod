@@ -621,14 +621,31 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 
 	for( i = 0; i < 3; i++ )
 	{
-		view->origin[i] += bob * 0.4f * pparams->forward[i];
+	  if ( CVAR_GET_FLOAT("cl_sway"))
+	  {
+	    view->origin[i] += bob * 0.6f * pparams->right[i];
+	    view->origin[i] += bob * 0.4f * pparams->up[i];
+	  }
+	  else
+	  {
+	    view->origin[i] += bob * 0.4f * pparams->forward[i];
+	  }
 	}
 	view->origin[2] += bob;
 
 	// throw in a little tilt.
-	view->angles[YAW] -= bob * 0.5f;
-	view->angles[ROLL] -= bob * 1.0f;
-	view->angles[PITCH] -= bob * 0.3f;
+	if ( CVAR_GET_FLOAT("cl_sway"))
+	{
+	  view->angles[YAW] -= bob * 0.3f;
+	  view->angles[ROLL] -= bob * 0.5f;
+	  view->angles[PITCH] -= bob * 0.3f;
+	}
+	else
+	{
+	  view->angles[YAW] -= bob * 0.5f;
+	  view->angles[ROLL] -= bob * 1.0f;
+	  view->angles[PITCH] -= bob * 0.3f;
+	}
 
 	if( cl_viewbob && cl_viewbob->value )
 		VectorCopy( view->angles, view->curstate.angles );
