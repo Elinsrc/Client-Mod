@@ -130,7 +130,7 @@ int CHudSayText::Draw( float flTime )
 				// draw the first x characters in the player color
 				strncpy( buf, g_szLineBuffer[i], Q_min(g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 32 ) );
 				buf[Q_min( g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 31 )] = 0;
-				DrawSetTextColor( g_pflNameColors[i][0], g_pflNameColors[i][1], g_pflNameColors[i][2] );
+				DrawSetTextColor( 255, 255, 255 );
 				int x = DrawConsoleString( LINE_START, y, buf );
 
 				// color is reset after each string draw

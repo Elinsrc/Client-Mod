@@ -202,7 +202,7 @@ int CHudStatusBar::Draw( float fTime )
 		}
 
 		if( m_pflNameColors[i] )
-			DrawSetTextColor( m_pflNameColors[i][0], m_pflNameColors[i][1], m_pflNameColors[i][2] );
+			DrawSetTextColor( 255, 255, 255 );
 
 		DrawConsoleString( x, y, m_szStatusBar[i] );
 	}
