@@ -20,7 +20,7 @@
 #include "hud.h"
 #include "cl_util.h"
 //#include "triangleapi.h"
-extern cvar_t	*hud_color;
+extern cvar_t	*InfoPanelColor;
 
 #define MAX_LOGO_FRAMES 56
 
@@ -377,7 +377,7 @@ static constexpr int s_TenPowers[] = {
 };
 
 
-int CHud::DrawHudNumberC(int x, int y, int number, int r, int g, int b)
+int CHud::DrawHudNumberCenter(int x, int y, int number, int r, int g, int b)
 {
 	int digit_width = GetSpriteRect(m_HUD_number_0).right - GetSpriteRect(m_HUD_number_0).left;
 	int digit_count = number > 9 ? (int)log10((double)number) + 1 : 1;
@@ -401,7 +401,7 @@ int CHud::DrawHudNumberCentered(int x, int y, int number, int r, int g, int b)
 	int digit_width = GetSpriteRect(m_HUD_number_0).right - GetSpriteRect(m_HUD_number_0).left;
 	int digit_count = number > 9 ? (int)log10((double)number) + 1 : 1;
 
-	return DrawHudNumberC(x - (digit_width * digit_count) / 2, y, number, r, g, b);
+	return DrawHudNumberCenter(x - (digit_width * digit_count) / 2, y, number, r, g, b);
 }
 
 int CHud::GetNumWidth( int iNumber, int iFlags )
@@ -431,13 +431,24 @@ int CHud::GetNumWidth( int iNumber, int iFlags )
 
 void CHud::DrawDarkRectangle( int x, int y, int wide, int tall )
 {
-  int r, g ,b;
-  const char *colors = hud_color->string;
-  sscanf( colors, "%d %d %d", &r, &g, &b);
-	//gEngfuncs.pTriAPI->RenderMode( kRenderTransTexture );
-	gEngfuncs.pfnFillRGBABlend( x, y, wide, tall, 0, 0, 0, 255 * 0.6 );
-	FillRGBA( x + 1, y, wide - 1, 1, r, g, b, 255 );
-	FillRGBA( x, y, 1, tall - 1, r, g, b, 255 );
-	FillRGBA( x + wide - 1, y + 1, 1, tall - 1, r, g, b, 255 );
-	FillRGBA( x, y + tall - 1, wide - 1, 1, r, g, b, 255 );
+  if ( CVAR_GET_FLOAT("cl_custom_infopanel") )
+  {
+    int r, g ,b;
+    const char *colors = InfoPanelColor->string;
+    sscanf( colors, "%d %d %d", &r, &g, &b);
+    
+    gEngfuncs.pfnFillRGBABlend( x, y, wide, tall, 0, 0, 0, 255 * 0.6 );
+    FillRGBA( x + 1, y, wide - 1, 1, r, g, b, 255 );
+    FillRGBA( x, y, 1, tall - 1, r, g, b, 255 );
+    FillRGBA( x + wide - 1, y + 1, 1, tall - 1, r, g, b, 255 );
+    FillRGBA( x, y + tall - 1, wide - 1, 1, r, g, b, 255 );
+  }
+  else
+  {
+    gEngfuncs.pfnFillRGBABlend( x, y, wide, tall, 0, 0, 0, 255 * 0.6 );
+    FillRGBA( x + 1, y, wide - 1, 1, 255, 140, 0, 255 );
+    FillRGBA( x, y, 1, tall - 1, 255, 140, 0, 255 );
+    FillRGBA( x + wide - 1, y + 1, 1, tall - 1, 255, 140, 0, 255 );
+    FillRGBA( x, y + tall - 1, wide - 1, 1, 255, 140, 0, 255 );
+  }
 }

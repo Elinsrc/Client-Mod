@@ -48,4 +48,8 @@ cl_colored_speed - [1/0] activates cvar hud_speedcolor "r g b" - draw custom spe
 
 cl_logchat - [1/0 ] records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 0.
 
+cl_custom_infopanel - [1/0] different color for motd and scoreboard, defaut value is 0.
+
+cl_infopanel_color " r g b" - it works when the quare is turned on cl_infopanel_color 1,a llows you to change the color to the one you need, defaut value cl_infopanel_color '0 255 0".
+
 In the future, the list of commands will be updated and a port for the new engine will appear.

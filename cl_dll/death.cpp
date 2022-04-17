@@ -124,7 +124,15 @@ int CHudDeathNotice::Draw( float flTime )
 
 				// Draw killers name
 				if( rgDeathNoticeList[i].KillerColor )
-					DrawSetTextColor( 255, 255, 255);
+					if ( CVAR_GET_FLOAT("cl_custom_infopanel") )
+					{
+					  DrawSetTextColor( 255, 255, 255 );
+					}
+					else
+					{
+					  DrawSetTextColor( rgDeathNoticeList[i].KillerColor[0], rgDeathNoticeList[i].KillerColor[1], rgDeathNoticeList[i].KillerColor[2] );
+					}
+					
 				x = 5 + DrawConsoleString( x, y, rgDeathNoticeList[i].szKiller );
 			}
 
@@ -144,7 +152,15 @@ int CHudDeathNotice::Draw( float flTime )
 			if( rgDeathNoticeList[i].iNonPlayerKill == FALSE )
 			{
 				if( rgDeathNoticeList[i].VictimColor )
-					DrawSetTextColor( 255, 255, 255 );
+					if ( CVAR_GET_FLOAT("cl_custom_infopanel") )
+					{
+					  DrawSetTextColor( 255, 255, 255 );
+					}
+					else
+					{
+					  DrawSetTextColor( rgDeathNoticeList[i].KillerColor[0], rgDeathNoticeList[i].KillerColor[1], rgDeathNoticeList[i].KillerColor[2] );
+					}
+					
 				x = DrawConsoleString( x, y, rgDeathNoticeList[i].szVictim );
 			}
 		}

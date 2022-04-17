@@ -31,6 +31,7 @@
 cvar_t *hud_color;
 cvar_t *GaussBeamColor;
 cvar_t *hud_textmode;
+cvar_t *InfoPanelColor;
 float g_hud_text_color[3];
 
 extern client_sprite_t *GetSpriteList( client_sprite_t *pList, const char *psz, int iRes, int iCount );
@@ -195,6 +196,8 @@ void CHud::Init( void )
 	CVAR_CREATE( "cl_lowerweapon","1", FCVAR_ARCHIVE );
 	CVAR_CREATE( "cl_weaponsway","1", FCVAR_ARCHIVE );
 	CVAR_CREATE( "cl_gausscolor", "0", FCVAR_ARCHIVE );
+	CVAR_CREATE( "cl_custom_infopanel", "0", FCVAR_ARCHIVE );
+	InfoPanelColor = CVAR_CREATE( "cl_infopanel_color", "0 255 0", FCVAR_ARCHIVE );
 	GaussBeamColor = CVAR_CREATE( "cl_gaussbeam", "255 0 0", FCVAR_ARCHIVE );
 	/////////
 	
