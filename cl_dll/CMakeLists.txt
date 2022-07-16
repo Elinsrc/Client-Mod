@@ -91,6 +91,7 @@ set (CLDLL_SOURCES
 	hud_redraw.cpp
 	hud_spectator.cpp
 	hud_speedometer.cpp
+	hud_jumpspeed.cpp
 	hud_update.cpp
 	in_camera.cpp
 	input.cpp

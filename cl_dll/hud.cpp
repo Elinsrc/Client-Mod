@@ -428,6 +428,7 @@ void CHud::VidInit( void )
 	m_Scoreboard.VidInit();
 	m_MOTD.VidInit();
 	m_Speedometer.VidInit();
+	
 }
 
 int CHud::MsgFunc_Logo( const char *pszName,  int iSize, void *pbuf )

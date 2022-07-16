@@ -66,6 +66,7 @@ SRCS+=./hud_redraw.cpp
 #SRCS+=./hud_servers.cpp
 SRCS+=./hud_spectator.cpp
 SRCS+=./hud_speedometer.cpp
+SRCS+=./hud_jumpspeed.cpp
 SRCS+=./hud_update.cpp
 SRCS+=./in_camera.cpp
 SRCS+=./input.cpp

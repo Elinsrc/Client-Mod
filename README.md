@@ -46,6 +46,14 @@ hud_speedometer_below_cross - [1/0] adjusts the position of the speedometer to t
 
 cl_colored_speed - [1/0] activates cvar hud_speedcolor "r g b" - draw custom speedometer color, default value is 0.
 
+hud_jumpspeed - [1/0] shows the player's speed at the moment of the jump, default value is 1. Taken from OpenAG.
+
+hud_jumpspeed_below_cross - [1/0] adjusts the position of the jumpspeed to the sight, defaut value is 0.
+
+hud_jumpspeed_height - [1/0] adjusts the positio jumpspeed, defaut value is 0.
+
+cl_colored_jump - [1/0] activates cvar hud_jumpcolor "r g b" - draw custom jumpspeed color, default value is 0.
+
 cl_logchat - [1/0 ] records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 0.
 
 In the future, the list of commands will be updated and a port for the new engine will appear.

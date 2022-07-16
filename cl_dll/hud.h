@@ -91,6 +91,7 @@ struct HUDLIST
 //-----------------------------------------------------
 #include "hud_spectator.h"
 #include "hud_speedometer.h"
+#include "hud_jumpspeed.h"
 
 //
 //-----------------------------------------------------
@@ -642,6 +643,7 @@ public:
 	CHudScoreboard	m_Scoreboard;
 	CHudMOTD	m_MOTD;
 	CHudSpeedometer	m_Speedometer;
+	CHudJumpspeed   m_Jumpspeed;
 
 	void Init( void );
 	void VidInit( void );
