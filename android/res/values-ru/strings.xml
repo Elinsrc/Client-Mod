@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="launch_button">Запустить Client mod!</string>
-	<string name="app_name">Client Mod</string>
 	<string name="cmd_args_text">Аргументы командной строки</string>
 	<string name="alert_dialog_text">не установлен!</string>
 	<string name="about_button">о client mod</string>

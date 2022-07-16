@@ -5,12 +5,4 @@
 	<string name="cmd_args_text">Command-line arguments</string>
 	<string name="alert_dialog_text">not installed!</string>
 	<string name="about_button">about</string>
-	<string name="link">https://github.com/Elinsrc/Client-Mod</string>
-	<string name="about_thanks" translatable="false">
-		Special thanks to:\n
-		&#8226; FWGS™\n
-		&#8226; Beloko for some touch controls textures\n
-		&#8226; Uncle Mike for Xash3D engine\n
-		&#8226; Valve for Half-Life\n
-	</string>
 </resources>

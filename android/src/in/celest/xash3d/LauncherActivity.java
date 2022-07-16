@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
-import android.app.Dialog;
+import android.net.Uri;
 import android.os.Build;
 
 import in.celest.xash3d.clientmod.R;
@@ -45,19 +45,10 @@ public class LauncherActivity extends Activity {
 		ExtractAssets.extractPAK(this, false);
 	}
 	
-	public void aboutXash(View view)
+	public void aboutlink(View view)
 	{
-		final Activity a = this;
-		this.runOnUiThread(new Runnable() 
-		{
-			public void run()
-			{
-				final Dialog dialog = new Dialog(a);
-				dialog.setContentView(R.layout.about);
-				dialog.setCancelable(true);
-				dialog.show();
-			}
-		});
+		Intent link=new Intent(Intent.ACTION_VIEW,Uri.parse("https://github.com/Elinsrc/Client-Mod/"));
+		startActivity(link);
 	}
 	
 	public void startXash(View view)
@@ -72,8 +63,8 @@ public class LauncherActivity extends Activity {
 		editor.commit();
 
 		if(cmdArgs.length() != 0) intent.putExtra("argv", argv);
-		// Uncomment to set gamedir here
-		//intent.putExtra("gamedir", "valve" );
+		// set gamedir here
+		/intent.putExtra("gamedir", "valve" );
 		intent.putExtra("gamelibdir", getFilesDir().getAbsolutePath().replace("/files","/lib"));
 		intent.putExtra("pakfile", getFilesDir().getAbsolutePath() + "/extras.pak");
 
