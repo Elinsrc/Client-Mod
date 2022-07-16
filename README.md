@@ -8,7 +8,7 @@ Added a new control with additional buttons to activate "Configuration->Touch->T
 Added commands:
   
 cl_autojump - [1/0] Autojump on SPACEBAR key, default value is 1.
-When this command is enabled the jump button may not work, solved by command cl_lw 1. Taken from mobile port ag6.6, autojump author Nekonomicon. 
+When this command is enabled the jump button may not work, solved by command cl_lw 1. Taken from OpenAG
   
 hud_color "r g b" - Sets hud color, values must be enclosed in quotation marks. example: hud_color "255 0 255".
 
