@@ -1,7 +1,6 @@
 # Client-Mod
-[![Build Status](https://app.travis-ci.com/Elinsrc/Client-Mod.svg?branch=main)](https://app.travis-ci.com/Elinsrc/Client-Mod)
 
-* Client mod is a small modification of the "half life" client part for "Xash3D FWGS v0.19.*"
+* Client mod is a small modification of the "half life" client part for "Xash3D FWGS and GoldSource*"
  
 Added a new control with additional buttons to activate "Configuration->Touch->Touch options", select preset "New" and click Activate.
  
@@ -56,4 +55,4 @@ cl_colored_jump - [1/0] activates cvar hud_jumpcolor "r g b" - draw custom jumps
 
 cl_logchat - [1/0 ] records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 0.
 
-In the future, the list of commands will be updated and a port for the new engine will appear.
+In the future, the list of commands will be updated and a android port for the new engine will appear.

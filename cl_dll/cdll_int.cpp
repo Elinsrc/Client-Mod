@@ -169,6 +169,12 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 
 	// for now filterstuffcmd is last in the engine interface
 	memcpy( &gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t) - sizeof( void * ) );
+	
+	gEngfuncs.pfnClientCmd( "clear" );
+	gEngfuncs.pfnClientCmd( "echo \"^2Client Mod\"" );
+	gEngfuncs.pfnClientCmd( "echo \"^2GitHub page: https://github.com/Elinsrc/Client-Mod/\"" );
+	gEngfuncs.pfnClientCmd( "exec customconfig.cfg" );
+
 
 	if( gEngfuncs.pfnGetCvarPointer( "cl_filterstuffcmd" ) == 0 )
 	{
