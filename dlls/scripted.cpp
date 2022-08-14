@@ -24,11 +24,11 @@
 #include "cbase.h"
 #include "monsters.h"
 
-#ifndef ANIMATION_H
+#if !defined(ANIMATION_H)
 #include "animation.h"
 #endif
 
-#ifndef SAVERESTORE_H
+#if !defined(SAVERESTORE_H)
 #include "saverestore.h"
 #endif
 
@@ -664,7 +664,7 @@ void ScriptEntityCancel( edict_t *pentCine )
 		if( pTarget )
 		{
 			// make sure their monster is actually playing a script
-			if( pTarget->m_MonsterState == MONSTERSTATE_SCRIPT )
+			if( pTarget->m_MonsterState == MONSTERSTATE_SCRIPT || pTarget->m_IdealMonsterState == MONSTERSTATE_SCRIPT )
 			{
 				// tell them do die
 				pTarget->m_scriptState = CCineMonster::SCRIPT_CLEANUP;

@@ -20,7 +20,7 @@
 #include <stdlib.h> // atoi
 #include <ctype.h>  // isspace
 #include "mathlib.h"
-#ifdef HAVE_TGMATH_H
+#if HAVE_TGMATH_H
 #include <tgmath.h>
 #endif
 
@@ -33,7 +33,7 @@
 
 int g_bhopcap = 1;
 
-#ifdef CLIENT_DLL
+#if CLIENT_DLL
 // Spectator Mode
 int iJumpSpectator;
 extern float vJumpOrigin[3];
@@ -45,7 +45,7 @@ extern int g_walking;
 
 static int pm_shared_initialized = 0;
 
-#ifdef _MSC_VER
+#if _MSC_VER
 #pragma warning( disable : 4305 )
 #endif
 
@@ -66,19 +66,7 @@ playermove_t *pmove = NULL;
 #define	STOP_EPSILON		0.1f
 
 #define CTEXTURESMAX		512			// max number of textures loaded
-#define CBTEXTURENAMEMAX	13			// only load first n chars of name
-
-#define CHAR_TEX_CONCRETE	'C'			// texture types
-#define CHAR_TEX_METAL		'M'
-#define CHAR_TEX_DIRT		'D'
-#define CHAR_TEX_VENT		'V'
-#define CHAR_TEX_GRATE		'G'
-#define CHAR_TEX_TILE		'T'
-#define CHAR_TEX_SLOSH		'S'
-#define CHAR_TEX_WOOD		'W'
-#define CHAR_TEX_COMPUTER	'P'
-#define CHAR_TEX_GLASS		'Y'
-#define CHAR_TEX_FLESH		'F'
+#include "pm_materials.h"
 
 #define STEP_CONCRETE		0		// default step sound
 #define STEP_METAL		1		// metal floor
@@ -101,7 +89,7 @@ playermove_t *pmove = NULL;
 #define PLAYER_DUCKING_MULTIPLIER	0.333f
 
 // double to float warning
-#ifdef _MSC_VER
+#if _MSC_VER
 #pragma warning(disable : 4244)
 #endif
 
@@ -134,6 +122,20 @@ static char grgszTextureName[CTEXTURESMAX][CBTEXTURENAMEMAX];
 static char grgchTextureType[CTEXTURESMAX];
 
 int g_onladder = 0;
+
+static void PM_InitTrace( trace_t *trace, const vec3_t end )
+{
+	memset( trace, 0, sizeof( *trace ));
+	VectorCopy( end, trace->endpos );
+	trace->allsolid = true;
+	trace->fraction = 1.0f;
+}
+
+static void PM_TraceModel( physent_t *pe, float *start, float *end, trace_t *trace )
+{
+	PM_InitTrace( trace, end );
+	pmove->PM_TraceModel(pe, start, end, trace);
+}
 
 void PM_SwapTextures( int i, int j )
 {
@@ -1813,7 +1815,7 @@ void PM_SpectatorMove( void )
 	
 	if( pmove->iuser1 == OBS_ROAMING )
 	{
-#ifdef CLIENT_DLL
+#if CLIENT_DLL
 		// jump only in roaming mode
 		if( iJumpSpectator )
 		{
@@ -2123,7 +2125,7 @@ void PM_LadderMove( physent_t *pLadder )
 		onFloor = false;
 
 	pmove->gravity = 0;
-	pmove->PM_TraceModel( pLadder, pmove->origin, ladderCenter, &trace );
+	PM_TraceModel(pLadder, pmove->origin, ladderCenter, &trace);
 	if( trace.fraction != 1.0f )
 	{
 		float forward = 0, right = 0;
@@ -3324,7 +3326,7 @@ void PM_Move( struct playermove_s *ppmove, int server )
 	{
 		pmove->friction = 1.0f;
 	}
-
+	
 #ifdef CLIENT_DLL
 	g_onground = ( pmove->onground != -1 );
 	g_inwater = ( pmove->waterlevel > 1 );
@@ -3361,4 +3363,3 @@ void PM_Init( struct playermove_s *ppmove )
 
 	pm_shared_initialized = 1;
 }
-

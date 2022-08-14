@@ -21,13 +21,15 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
-
 #include <time.h>
-
 #include <string.h>
 #include <stdio.h>
 
 cvar_t *cl_logchat;
+
+#if USE_VGUI
+#include "vgui_TeamFortressViewport.h"
+#endif
 
 extern float *GetClientColor( int clientIndex );
 
@@ -56,7 +58,7 @@ int CHudSayText::Init( void )
 	HOOK_MESSAGE( SayText );
 
 	InitHUDData();
-	
+
 	cl_logchat = CVAR_CREATE("cl_logchat", "0", FCVAR_ARCHIVE);
 	m_HUD_saytext =		gEngfuncs.pfnRegisterVariable( "hud_saytext", "1", 0 );
 	m_HUD_saytext_time =	gEngfuncs.pfnRegisterVariable( "hud_saytext_time", "5", 0 );
@@ -99,6 +101,12 @@ int ScrollTextUp( void )
 int CHudSayText::Draw( float flTime )
 {
 	int y = Y_START;
+
+#if USE_VGUI
+	if( ( gViewPort && gViewPort->AllowedToPrintText() == FALSE ) || !m_HUD_saytext->value )
+		return 1;
+#endif
+
 
 	// make sure the scrolltime is within reasonable bounds,  to guard against the clock being reset
 	flScrollTime = Q_min( flScrollTime, flTime + m_HUD_saytext_time->value );
@@ -161,9 +169,19 @@ int CHudSayText::MsgFunc_SayText( const char *pszName, int iSize, void *pbuf )
 
 void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientIndex )
 {
-	int i;
+#if USE_VGUI
+	if( gViewPort && gViewPort->AllowedToPrintText() == FALSE )
+	{
+		// Print it straight to the console
+		ConsolePrint( pszBuf );
+		return;
+	}
+#else
 	ConsolePrint( pszBuf );
-	
+#endif
+
+	int i;
+
 	if (cl_logchat->value != 0.0f)
 	{
 		FILE *logchat = fopen("logchat.txt", "a");

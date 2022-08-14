@@ -28,6 +28,10 @@ extern "C"
 #include <string.h>
 #include <ctype.h>
 
+#if USE_VGUI
+#include "vgui_TeamFortressViewport.h"
+#endif
+
 extern "C" 
 {
 	struct kbutton_s DLLEXPORT *KB_Find( const char *name );
@@ -383,7 +387,11 @@ Return 1 to allow engine to process the key, otherwise, act on it as needed
 ============
 */
 int DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBinding )
-{	
+{
+#if USE_VGUI
+	if (gViewPort)
+		return gViewPort->KeyInput(down, keynum, pszCurrentBinding);
+#endif
 	return 1;
 }
 
@@ -652,11 +660,27 @@ void IN_Impulse( void )
 void IN_ScoreDown( void )
 {
 	KeyDown( &in_score );
+#if USE_VGUI && !USE_NOVGUI_SCOREBOARD
+	if ( gViewPort )
+	{
+		gViewPort->ShowScoreBoard();
+	}
+#else
+	gHUD.m_Scoreboard.UserCmd_ShowScores();
+#endif
 }
 
 void IN_ScoreUp( void )
 {
 	KeyUp( &in_score );
+#if USE_VGUI && !USE_NOVGUI_SCOREBOARD
+	if ( gViewPort )
+	{
+		gViewPort->HideScoreBoard();
+	}
+#else
+	gHUD.m_Scoreboard.UserCmd_HideScores();
+#endif
 }
 
 void IN_MLookUp( void )
@@ -853,20 +877,31 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 	// set button and flag bits
 	//
 	cmd->buttons = CL_ButtonBits( 1 );
-	
+
 	{
-	  static bool s_jump_was_down_last_frame = false;
-	  if( cl_autojump->value != 0.0f )
-	  {
-	    bool should_release_jump = ( !g_onground && !g_inwater && g_walking );
-	    if( s_jump_was_down_last_frame && g_onground && !g_inwater && g_walking )
-	      should_release_jump = true;
-	    if( should_release_jump )
-	      cmd->buttons &= ~IN_JUMP;
-	  }
-	  s_jump_was_down_last_frame = ( ( cmd->buttons & IN_JUMP ) != 0 );
+		static bool s_jump_was_down_last_frame = false;
+		if( cl_autojump->value != 0.0f )
+		{
+			bool should_release_jump = ( !g_onground && !g_inwater && g_walking );
+			/*
+			 * Spam pressing and releasing jump if we're stuck in a spot where jumping still results in
+			 * being onground in the end of the frame. Without this check, +jump would remain held and
+			 * when the player exits this spot they would have to release and press the jump button to
+			 * start jumping again. This also helps with exiting water or ladder right onto the ground.
+			*/
+			if( s_jump_was_down_last_frame && g_onground && !g_inwater && g_walking )
+				should_release_jump = true;
+			if( should_release_jump )
+				cmd->buttons &= ~IN_JUMP;
+		}
+		s_jump_was_down_last_frame = ( ( cmd->buttons & IN_JUMP ) != 0 );
 	}
 
+#if USE_VGUI
+	// If they're in a modal dialog, ignore the attack button.
+	if(GetClientVoiceMgr()->IsInSquelchMode())
+		cmd->buttons &= ~IN_ATTACK;
+#endif
 
 	// Using joystick?
 	if( in_joystick->value )
@@ -893,6 +928,7 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 	{
 		VectorCopy( oldangles, cmd->viewangles );
 	}
+
 }
 
 /*
@@ -921,9 +957,11 @@ int CL_ButtonBits( int bResetState )
 
 	if( in_attack.state & 3 )
 	{
+#if !USE_VGUI || USE_NOVGUI_MOTD
 		if( gHUD.m_MOTD.m_bShow )
 			gHUD.m_MOTD.Reset();
 		else
+#endif
 			bits |= IN_ATTACK;
 	}
 
@@ -1102,6 +1140,10 @@ void InitInput( void )
 	gEngfuncs.pfnAddCommand( "-reload", IN_ReloadUp );
 	gEngfuncs.pfnAddCommand( "+alt1", IN_Alt1Down );
 	gEngfuncs.pfnAddCommand( "-alt1", IN_Alt1Up );
+	gEngfuncs.pfnAddCommand( "+score", IN_ScoreDown );
+	gEngfuncs.pfnAddCommand( "-score", IN_ScoreUp );
+	gEngfuncs.pfnAddCommand( "+showscores", IN_ScoreDown );
+	gEngfuncs.pfnAddCommand( "-showscores", IN_ScoreUp );
 	gEngfuncs.pfnAddCommand( "+graph", IN_GraphDown );
 	gEngfuncs.pfnAddCommand( "-graph", IN_GraphUp );
 	gEngfuncs.pfnAddCommand( "+break", IN_BreakDown );
@@ -1119,10 +1161,11 @@ void InitInput( void )
 	cl_movespeedkey		= gEngfuncs.pfnRegisterVariable( "cl_movespeedkey", "0.3", 0 );
 	cl_pitchup		= gEngfuncs.pfnRegisterVariable( "cl_pitchup", "89", 0 );
 	cl_pitchdown		= gEngfuncs.pfnRegisterVariable( "cl_pitchdown", "89", 0 );
-	cl_autojump		= gEngfuncs.pfnRegisterVariable( "cl_autojump", "1", FCVAR_ARCHIVE );
 
 	cl_vsmoothing		= gEngfuncs.pfnRegisterVariable( "cl_vsmoothing", "0.05", FCVAR_ARCHIVE );
 
+	cl_autojump		= gEngfuncs.pfnRegisterVariable( "cl_autojump", "1", FCVAR_ARCHIVE );
+	
 	m_pitch			= gEngfuncs.pfnRegisterVariable( "m_pitch","0.022", FCVAR_ARCHIVE );
 	m_yaw			= gEngfuncs.pfnRegisterVariable( "m_yaw","0.022", FCVAR_ARCHIVE );
 	m_forward		= gEngfuncs.pfnRegisterVariable( "m_forward","1", FCVAR_ARCHIVE );
@@ -1153,4 +1196,3 @@ void DLLEXPORT HUD_Shutdown( void )
 {
 	ShutdownInput();
 }
-

@@ -12,7 +12,7 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
+#if !OEM_BUILD && !HLDEMO_BUILD
 
 #include "extdll.h"
 #include "util.h"
@@ -178,7 +178,7 @@ void CEgon::Attack( void )
 	Vector vecSrc = m_pPlayer->GetGunPosition();
 
 	int flags;
-#if defined( CLIENT_WEAPONS )
+#if CLIENT_WEAPONS
 	flags = FEV_NOTHOST;
 #else
 	flags = 0;
@@ -197,7 +197,7 @@ void CEgon::Attack( void )
 
 			m_flAmmoUseTime = gpGlobals->time;// start using ammo ASAP.
 
-			PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usEgonFire, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, m_fireState, m_fireMode, 1, 0 );
+			PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usEgonFire, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, m_fireMode, 1, 0 );
 		
 			m_shakeTime = 0;
 
@@ -216,7 +216,7 @@ void CEgon::Attack( void )
 
 			if( pev->fuser1 <= UTIL_WeaponTimeBase() )
 			{
-				PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usEgonFire, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, m_fireState, m_fireMode, 0, 0 );
+				PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usEgonFire, 0.0f, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, m_fireMode, 0, 0 );
 				pev->fuser1 = 1000;
 			}
 
@@ -252,7 +252,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 	if( tr.fAllSolid )
 		return;
 
-#ifndef CLIENT_DLL
+#if !CLIENT_DLL
 	CBaseEntity *pEntity = CBaseEntity::Instance( tr.pHit );
 
 	if( pEntity == NULL )
@@ -275,7 +275,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 	switch( m_fireMode )
 	{
 	case FIRE_NARROW:
-#ifndef CLIENT_DLL
+#if !CLIENT_DLL
 		if( pev->dmgtime < gpGlobals->time )
 		{
 			// Narrow mode only does damage to the entity it hits
@@ -311,7 +311,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 		timedist = ( pev->dmgtime - gpGlobals->time ) / GetPulseInterval();
 		break;
 	case FIRE_WIDE:
-#ifndef CLIENT_DLL
+#if !CLIENT_DLL
 		if( pev->dmgtime < gpGlobals->time )
 		{
 			// wide mode does damage to the ent, and radius damage
@@ -373,7 +373,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 
 void CEgon::UpdateEffect( const Vector &startPoint, const Vector &endPoint, float timeBlend )
 {
-#ifndef CLIENT_DLL
+#if !CLIENT_DLL
 	if( !m_pBeam )
 	{
 		CreateEffect();
@@ -399,7 +399,7 @@ void CEgon::UpdateEffect( const Vector &startPoint, const Vector &endPoint, floa
 
 void CEgon::CreateEffect( void )
 {
-#ifndef CLIENT_DLL
+#if !CLIENT_DLL
 	DestroyEffect();
 
 	m_pBeam = CBeam::BeamCreate( EGON_BEAM_SPRITE, 40 );
@@ -445,7 +445,7 @@ void CEgon::CreateEffect( void )
 
 void CEgon::DestroyEffect( void )
 {
-#ifndef CLIENT_DLL
+#if !CLIENT_DLL
 	if( m_pBeam )
 	{
 		UTIL_Remove( m_pBeam );

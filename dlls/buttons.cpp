@@ -57,7 +57,7 @@ TYPEDESCRIPTION CEnvGlobal::m_SaveData[] =
 	DEFINE_FIELD( CEnvGlobal, m_initialstate, FIELD_INTEGER ),
 };
 
-IMPLEMENT_SAVERESTORE( CEnvGlobal, CBaseEntity )
+IMPLEMENT_SAVERESTORE( CEnvGlobal, CPointEntity )
 
 LINK_ENTITY_TO_CLASS( env_global, CEnvGlobal )
 
@@ -130,7 +130,7 @@ TYPEDESCRIPTION CMultiSource::m_SaveData[] =
 	DEFINE_FIELD( CMultiSource, m_globalstate, FIELD_STRING ),
 };
 
-IMPLEMENT_SAVERESTORE( CMultiSource, CBaseEntity )
+IMPLEMENT_SAVERESTORE( CMultiSource, CPointEntity )
 
 LINK_ENTITY_TO_CLASS( multisource, CMultiSource )
 
@@ -637,9 +637,9 @@ void DoSpark( entvars_t *pev, const Vector &location )
 void CBaseButton::ButtonSpark( void )
 {
 	SetThink( &CBaseButton::ButtonSpark );
-	pev->nextthink = gpGlobals->time + 0.1f + RANDOM_FLOAT( 0.0f, 1.5f );// spark again at random interval
+	pev->nextthink = pev->ltime + 0.1f + RANDOM_FLOAT( 0.0f, 1.5f );// spark again at random interval
 
-	DoSpark( pev, pev->mins );
+	DoSpark( pev, pev->absmin );
 }
 
 //

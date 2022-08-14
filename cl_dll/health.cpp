@@ -35,7 +35,6 @@ cvar_t *hud_health60;
 cvar_t *hud_health40;
 cvar_t *hud_health20;
 
-
 DECLARE_MESSAGE( m_Health, Health )
 DECLARE_MESSAGE( m_Health, Damage )
 
@@ -73,7 +72,7 @@ int CHudHealth::Init( void )
 	giDmgWidth = 0;
 
 	memset( m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES );
-	
+
 	hud_health100 = CVAR_CREATE("hud_health100", "0 250 0", FCVAR_ARCHIVE);
 	//hud_health80 = CVAR_CREATE("hud_health80", "0 0 0", FCVAR_ARCHIVE)
 	hud_health60 = CVAR_CREATE("hud_health60", "250 250 0", FCVAR_ARCHIVE);
@@ -271,7 +270,8 @@ int CHudHealth::Draw( float flTime )
 
 		int iHeight = gHUD.m_iFontHeight;
 		int iWidth = HealthWidth / 10;
-		UnpackRGB( r, g, b, RGB_YELLOWISH );
+		//UnpackRGB( r, g, b, RGB_YELLOWISH );
+		GetPainColor( r, g, b );
 		FillRGBA( x, y, iWidth, iHeight, r, g, b, a );
 	}
 

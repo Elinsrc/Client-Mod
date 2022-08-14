@@ -25,6 +25,7 @@
 #include "screenfade.h"
 #include "shake.h"
 #include "hltv.h"
+#include "view.h"
 
 // Spectator Mode
 extern "C" 
@@ -35,14 +36,6 @@ extern "C"
 	int iHasNewViewOrigin;
 	int iIsSpectator;
 }
-
-#ifndef M_PI
-#define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
-#endif
-
-#ifndef M_PI_F
-#define M_PI_F		(float)M_PI
-#endif
 
 extern "C" 
 {
@@ -95,6 +88,7 @@ float v_cameraFocusAngle = 35.0f;
 int v_cameraMode = CAM_MODE_FOCUS;
 qboolean v_resetCamera = 1;
 
+vec3_t v_client_aimangles;
 vec3_t g_ev_punchangle;
 
 cvar_t	*scr_ofsx;
@@ -552,7 +546,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 			pparams->vieworg[i] += scr_ofsx->value*pparams->forward[i] + scr_ofsy->value*pparams->right[i] + scr_ofsz->value*pparams->up[i];
 		}
 	}
-	
+
 	if ( CVAR_GET_FLOAT("cl_lowerweapon") )
 	{
 	  vec3_t pl_vel;
@@ -576,7 +570,6 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	  }
 	
 	pparams->vieworg[2] += m_flOfs;
-	  
 	}
 
 	// Treating cam_ofs[2] as the distance
@@ -646,7 +639,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	  view->angles[ROLL] -= bob * 1.0f;
 	  view->angles[PITCH] -= bob * 0.3f;
 	}
-
+	
 	if( cl_viewbob && cl_viewbob->value )
 		VectorCopy( view->angles, view->curstate.angles );
 
@@ -775,11 +768,16 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 
 	// Store off v_angles before munging for third person
 	v_angles = pparams->viewangles;
+	v_client_aimangles = pparams->cl_viewangles;
 	v_lastAngles = pparams->viewangles;
 	//v_cl_angles = pparams->cl_viewangles;	// keep old user mouse angles !
 	if( CL_IsThirdPerson() )
 	{
 		VectorCopy( camAngles, pparams->viewangles );
+	}
+
+	// Apply this at all times
+	{
 		float pitch = camAngles[0];
 
 		// Normalize angles
@@ -1571,7 +1569,7 @@ void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 {
 	gHUD.m_Speedometer.UpdateSpeed(pparams->simvel);
 	gHUD.m_Jumpspeed.UpdateSpeed(pparams->simvel);
-	
+
 	// intermission / finale rendering
 	if( pparams->intermission )
 	{
@@ -1587,8 +1585,8 @@ void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 	}
 /*
 // Example of how to overlay the whole screen with red at 50 % alpha
-#define SF_TEST
-#if defined SF_TEST
+#define SF_TEST	1
+#if SF_TEST
 	{
 		screenfade_t sf;
 		gEngfuncs.pfnGetScreenFade( &sf );
@@ -1654,8 +1652,8 @@ void V_Init( void )
 	cl_chasedist = gEngfuncs.pfnRegisterVariable( "cl_chasedist","112", 0 );
 }
 
-//#define TRACE_TEST
-#if defined( TRACE_TEST )
+//#define TRACE_TEST	1
+#if TRACE_TEST
 
 extern float in_fov;
 /*
@@ -1734,4 +1732,3 @@ void V_Move( int mx, int my )
 	}
 }
 #endif
-

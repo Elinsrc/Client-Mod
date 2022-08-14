@@ -36,7 +36,7 @@ extern globalvars_t *gpGlobals;
 extern int g_iUser1;
 
 // Pool of client side entities/entvars_t
-static entvars_t ev[32];
+static entvars_t ev[MAX_WEAPONS];
 static int num_ents = 0;
 
 // The entity we'll use to represent the local client
@@ -45,7 +45,7 @@ static CBasePlayer player;
 // Local version of game .dll global variables ( time, etc. )
 static globalvars_t Globals; 
 
-static CBasePlayerWeapon *g_pWpns[32];
+static CBasePlayerWeapon *g_pWpns[MAX_WEAPONS];
 
 float g_flApplyVel = 0.0;
 int g_irunninggausspred = 0;
@@ -372,7 +372,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		m_fFireOnEmpty = FALSE;
 
 		// weapon is useable. Reload if empty and weapon has waited as long as it has to after firing
-		if( m_iClip == 0 && !( iFlags() & ITEM_FLAG_NOAUTORELOAD ) && m_flNextPrimaryAttack < 0.0f )
+		if( m_iClip == 0 && !( iFlags() & ITEM_FLAG_NOAUTORELOAD ) && m_flNextPrimaryAttack <= 0.0f )
 		{
 			Reload();
 			return;
@@ -752,7 +752,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	if( !pWeapon )
 		return;
 
-	for( i = 0; i < 32; i++ )
+	for( i = 0; i < MAX_WEAPONS; i++ )
 	{
 		pCurrent = g_pWpns[i];
 		if( !pCurrent )
@@ -899,19 +899,15 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 
 	if( player.m_pActiveItem->m_iId == WEAPON_RPG )
 	{
-		from->client.vuser2[1] = ( (CRpg *)player.m_pActiveItem)->m_fSpotActive;
-		from->client.vuser2[2] = ( (CRpg *)player.m_pActiveItem)->m_cActiveRockets;
+		to->client.vuser2[1] = ( (CRpg *)player.m_pActiveItem)->m_fSpotActive;
+		to->client.vuser2[2] = ( (CRpg *)player.m_pActiveItem)->m_cActiveRockets;
 	}
 
 	// Make sure that weapon animation matches what the game .dll is telling us
 	//  over the wire ( fixes some animation glitches )
 	if( g_runfuncs && ( HUD_GetWeaponAnim() != to->client.weaponanim ) )
 	{
-		int body = 2;
-
-		//Pop the model to body 0.
-		if( pWeapon == &g_Tripmine )
-			 body = 0;
+		int body = 0;
 
 		//Show laser sight/scope combo
 		if( pWeapon == &g_Python && bIsMultiplayer() )
@@ -921,7 +917,7 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 		HUD_SendWeaponAnim( to->client.weaponanim, body, 1 );
 	}
 
-	for( i = 0; i < 32; i++ )
+	for( i = 0; i < MAX_WEAPONS; i++ )
 	{
 		pCurrent = g_pWpns[i];
 
@@ -1039,7 +1035,7 @@ void _DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state_s
 {
 	g_runfuncs = runfuncs;
 
-#if defined( CLIENT_WEAPONS )
+#if CLIENT_WEAPONS
 	if( cl_lw && cl_lw->value )
 	{
 		HUD_WeaponsPostThink( from, to, cmd, time, random_seed );

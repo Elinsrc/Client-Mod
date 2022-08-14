@@ -26,13 +26,17 @@
 #include <string.h>
 #include <stdio.h>
 
+#if !USE_VGUI || USE_NOVGUI_MOTD
 DECLARE_MESSAGE( m_MOTD, MOTD )
+#endif
 
 int CHudMOTD::Init( void )
 {
 	gHUD.AddHudElem( this );
 
+#if !USE_VGUI || USE_NOVGUI_MOTD
 	HOOK_MESSAGE( MOTD );
+#endif
 
 	m_bShow = false;
 
@@ -66,7 +70,7 @@ int CHudMOTD::Draw( float fTime )
 	if( !m_bShow )
 		return 1;
 	gHUD.m_iNoConsolePrint |= 1 << 1;
-	bool bScroll;
+	//bool bScroll;
 	// find the top of where the MOTD should be drawn,  so the whole thing is centered in the screen
 	int ypos = ( ScreenHeight - LINE_HEIGHT * m_iLines ) / 2; // shift it up slightly
 	char *ch = m_szMOTD;

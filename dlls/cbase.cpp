@@ -98,7 +98,7 @@ static DLL_FUNCTIONS gFunctionTable =
 
 static void SetObjectCollisionBox( entvars_t *pev );
 
-#ifndef _WIN32
+#if !_WIN32
 extern "C" {
 #endif
 int GetEntityAPI( DLL_FUNCTIONS *pFunctionTable, int interfaceVersion )
@@ -125,7 +125,7 @@ int GetEntityAPI2( DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion )
 	return TRUE;
 }
 
-#ifndef _WIN32
+#if !_WIN32
 }
 #endif
 
@@ -255,6 +255,8 @@ void DispatchSave( edict_t *pent, SAVERESTOREDATA *pSaveData )
 	{
 		ENTITYTABLE *pTable = &pSaveData->pTable[pSaveData->currentIndex];
 
+		gpGlobals->time = pSaveData->time;
+
 		if( pTable->pent != pent )
 			ALERT( at_error, "ENTITY TABLE OR INDEX IS WRONG!!!!\n" );
 
@@ -307,6 +309,9 @@ int DispatchRestore( edict_t *pent, SAVERESTOREDATA *pSaveData, int globalEntity
 		Vector oldOffset;
 
 		CRestore restoreHelper( pSaveData );
+
+		gpGlobals->time = pSaveData->time;
+
 		if( globalEntity )
 		{
 			CRestore tmpRestore( pSaveData );

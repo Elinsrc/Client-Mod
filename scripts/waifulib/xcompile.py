@@ -20,12 +20,14 @@ import os
 import sys
 
 ANDROID_NDK_ENVVARS = ['ANDROID_NDK_HOME', 'ANDROID_NDK']
-ANDROID_NDK_SUPPORTED = [10, 19, 20]
+ANDROID_NDK_SUPPORTED = [10, 19, 20, 23, 25]
 ANDROID_NDK_HARDFP_MAX = 11 # latest version that supports hardfp
 ANDROID_NDK_GCC_MAX = 17 # latest NDK that ships with GCC
 ANDROID_NDK_UNIFIED_SYSROOT_MIN = 15
 ANDROID_NDK_SYSROOT_FLAG_MAX = 19 # latest NDK that need --sysroot flag
-ANDROID_NDK_API_MIN = { 10: 3, 19: 16, 20: 16 } # minimal API level ndk revision supports
+ANDROID_NDK_API_MIN = { 10: 3, 19: 16, 20: 16, 23: 16, 25: 19 } # minimal API level ndk revision supports
+
+ANDROID_STPCPY_API_MIN = 21 # stpcpy() introduced in SDK 21
 ANDROID_64BIT_API_MIN = 21 # minimal API level that supports 64-bit targets
 
 # This class does support ONLY r10e and r19c/r20 NDK
@@ -152,6 +154,8 @@ class Android:
 	def gen_host_toolchain(self):
 		# With host toolchain we don't care about OS
 		# so just download NDK for Linux x86_64
+		if 'HOST_TOOLCHAIN' in self.ctx.environ:
+			return self.ctx.environ['HOST_TOOLCHAIN']
 		if self.is_host():
 			return 'linux-x86_64'
 
@@ -194,21 +198,42 @@ class Android:
 		return os.path.join(self.gen_gcc_toolchain_path(), 'bin', triplet)
 
 	def gen_binutils_path(self):
+		if self.ndk_rev >= 23:
+			return os.path.join(self.gen_gcc_toolchain_path(), 'bin')
 		return os.path.join(self.gen_gcc_toolchain_path(), self.ndk_triplet(), 'bin')
 
 	def cc(self):
 		if self.is_host():
-			return 'clang --target=%s%d' % (self.ndk_triplet(), self.api)
+			s = 'clang'
+			environ = getattr(self.ctx, 'environ', os.environ)
+
+			if 'CC' in environ:
+				s = environ['CC']
+
+			return '%s --target=%s%d' % (s, self.ndk_triplet(), self.api)
 		return self.gen_toolchain_path() + ('clang' if self.is_clang() else 'gcc')
 
 	def cxx(self):
 		if self.is_host():
-			return 'clang++ --target=%s%d' % (self.ndk_triplet(), self.api)
+			s = 'clang++'
+			environ = getattr(self.ctx, 'environ', os.environ)
+
+			if 'CXX' in environ:
+				s = environ['CXX']
+
+			return '%s --target=%s%d' % (s, self.ndk_triplet(), self.api)
 		return self.gen_toolchain_path() + ('clang++' if self.is_clang() else 'g++')
 
 	def strip(self):
 		if self.is_host():
+			environ = getattr(self.ctx, 'environ', os.environ)
+
+			if 'STRIP' in environ:
+				return environ['STRIP']
 			return 'llvm-strip'
+
+		if self.ndk_rev >= 23:
+			return os.path.join(self.gen_binutils_path(), 'llvm-strip')
 		return os.path.join(self.gen_binutils_path(), 'strip')
 
 	def system_stl(self):
@@ -243,47 +268,43 @@ class Android:
 					'-isystem', '%s/usr/include/' % (self.sysroot())
 				]
 
-		cflags += ['-I%s' % (self.system_stl()), '-DANDROID', '-D__ANDROID__']
+		cflags += ['-I%s' % (self.system_stl())]
+		if not self.is_clang():
+			cflags += ['-DANDROID', '-D__ANDROID__']
 
 		if cxx and not self.is_clang() and self.toolchain not in ['4.8','4.9']:
 			cflags += ['-fno-sized-deallocation']
 
-		def fixup_host_clang_with_old_ndk():
-			cflags = []
-			# Clang builtin redefine w/ different calling convention bug
-			# NOTE: I did not added complex.h functions here, despite
-			# that NDK devs forgot to put __NDK_FPABI_MATH__ for complex
-			# math functions
-			# I personally don't need complex numbers support, but if you want it
-			# just run sed to patch header
-			for f in ['strtod', 'strtof', 'strtold']:
-				cflags += ['-fno-builtin-%s' % f]
-			return cflags
-
+		if self.is_clang():
+			# stpcpy() isn't available in early Android versions
+			# disable it here so Clang won't use it
+			if self.api < ANDROID_STPCPY_API_MIN:
+				cflags += ['-fno-builtin-stpcpy']
 
 		if self.is_arm():
 			if self.arch == 'armeabi-v7a':
 				# ARMv7 support
-				cflags += ['-mthumb', '-mfpu=neon', '-mcpu=cortex-a9', '-DHAVE_EFFICIENT_UNALIGNED_ACCESS', '-DVECTORIZE_SINCOS']
-
-				if not self.is_clang() and not self.is_host():
-					cflags += [ '-mvectorize-with-neon-quad' ]
-
-				if self.is_host() and self.ndk_rev <= ANDROID_NDK_HARDFP_MAX:
-					cflags += fixup_host_clang_with_old_ndk()
+				cflags += ['-mthumb', '-mfpu=neon', '-mcpu=cortex-a9']
 
 				if self.is_hardfp():
 					cflags += ['-D_NDK_MATH_NO_SOFTFP=1', '-mfloat-abi=hard', '-DLOAD_HARDFP', '-DSOFTFP_LINK']
+
+					if self.is_host():
+						# Clang builtin redefine w/ different calling convention bug
+						# NOTE: I did not added complex.h functions here, despite
+						# that NDK devs forgot to put __NDK_FPABI_MATH__ for complex
+						# math functions
+						# I personally don't need complex numbers support, but if you want it
+						# just run sed to patch header
+						for f in ['strtod', 'strtof', 'strtold']:
+							cflags += ['-fno-builtin-%s' % f]
 				else:
 					cflags += ['-mfloat-abi=softfp']
 			else:
-				if self.is_host() and self.ndk_rev <= ANDROID_NDK_HARDFP_MAX:
-					cflags += fixup_host_clang_with_old_ndk()
-
 				# ARMv5 support
-				cflags += ['-march=armv5te', '-mtune=xscale', '-msoft-float']
+				cflags += ['-march=armv5te', '-msoft-float']
 		elif self.is_x86():
-			cflags += ['-mtune=atom', '-march=atom', '-mssse3', '-mfpmath=sse', '-DVECTORIZE_SINCOS', '-DHAVE_EFFICIENT_UNALIGNED_ACCESS']
+			cflags += ['-mtune=atom', '-march=atom', '-mssse3', '-mfpmath=sse']
 		return cflags
 
 	# they go before object list
@@ -299,14 +320,21 @@ class Android:
 
 		if self.is_clang() or self.is_host():
 			linkflags += ['-fuse-ld=lld']
+		else: linkflags += ['-no-canonical-prefixes']
 
-		linkflags += ['-Wl,--hash-style=both','-Wl,--no-undefined']
+		linkflags += ['-Wl,--hash-style=sysv', '-Wl,--no-undefined']
 		return linkflags
 
 	def ldflags(self):
-		ldflags = ['-lgcc', '-no-canonical-prefixes']
+		ldflags = []
+
+		if self.ndk_rev < 23:
+			ldflags += ['-lgcc']
+
 		if self.is_clang() or self.is_host():
 			ldflags += ['-stdlib=libstdc++']
+		else: ldflags += ['-no-canonical-prefixes']
+
 		if self.is_arm():
 			if self.arch == 'armeabi-v7a':
 				ldflags += ['-march=armv7-a', '-mthumb']
@@ -324,6 +352,10 @@ def options(opt):
 	android = opt.add_option_group('Android options')
 	android.add_option('--android', action='store', dest='ANDROID_OPTS', default=None,
 		help='enable building for android, format: --android=<arch>,<toolchain>,<api>, example: --android=armeabi-v7a-hard,4.9,9')
+
+	magx = opt.add_option_group('MotoMAGX options')
+	magx.add_option('--enable-magx', action = 'store_true', dest = 'MAGX', default = False,
+		help = 'enable targetting for MotoMAGX phones [default: %default]')
 
 def configure(conf):
 	if conf.options.ANDROID_OPTS:
@@ -360,7 +392,14 @@ def configure(conf):
 
 		# conf.env.ANDROID_OPTS = android
 		conf.env.DEST_OS2 = 'android'
+	elif conf.options.MAGX:
+		# useless to change toolchain path, as toolchain meant to be placed in this path
+		toolchain_path = '/opt/toolchains/motomagx/arm-eabi2/lib/'
+		conf.env.INCLUDES_MAGX = [toolchain_path + i for i in ['ezx-z6/include', 'qt-2.3.8/include']]
+		conf.env.LIBPATH_MAGX  = [toolchain_path + i for i in ['ezx-z6/lib', 'qt-2.3.8/lib']]
+		conf.env.LINKFLAGS_MAGX = ['-Wl,-rpath-link=' + i for i in conf.env.LIBPATH_MAGX]
 
+	conf.env.MAGX = conf.options.MAGX
 	MACRO_TO_DESTOS = OrderedDict({ '__ANDROID__' : 'android' })
 	for k in c_config.MACRO_TO_DESTOS:
 		MACRO_TO_DESTOS[k] = c_config.MACRO_TO_DESTOS[k] # ordering is important
@@ -375,6 +414,10 @@ def post_compiler_cxx_configure(conf):
 		if conf.android.ndk_rev == 19:
 			conf.env.CXXFLAGS_cxxshlib += ['-static-libstdc++']
 			conf.env.LDFLAGS_cxxshlib += ['-static-libstdc++']
+	elif conf.options.MAGX:
+		for lib in ['qte-mt', 'ezxappbase', 'ezxpm', 'log_util']:
+			conf.check_cc(lib=lib, use='MAGX', uselib_store='MAGX')
+
 	return
 
 def post_compiler_c_configure(conf):

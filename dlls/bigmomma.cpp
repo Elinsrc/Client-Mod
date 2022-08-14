@@ -12,7 +12,7 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
+#if !OEM_BUILD && !HLDEMO_BUILD
 
 //=========================================================
 // monster template
@@ -1034,7 +1034,7 @@ Vector VecCheckSplatToss( entvars_t *pev, const Vector &vecSpot1, Vector vecSpot
 	Vector vecScale;
 	Vector vecGrenadeVel;
 	Vector vecTemp;
-	float flGravity = g_psv_gravity->value;
+	float flGravity = Q_max( g_psv_gravity->value, 0.1f );
 
 	// calculate the midpoint and apex of the 'triangle'
 	vecMidPoint = vecSpot1 + ( vecSpot2 - vecSpot1 ) * 0.5f;
@@ -1049,6 +1049,9 @@ Vector VecCheckSplatToss( entvars_t *pev, const Vector &vecSpot1, Vector vecSpot
 	}
 
 	// Don't worry about actually hitting the target, this won't hurt us!
+
+	// TODO: Need another way to calculate height because current calculation is completely wrong
+	// and there posible crash.
 
 	// How high should the grenade travel (subtract 15 so the grenade doesn't hit the ceiling)?
 	float height = vecApex.z - vecSpot1.z - 15.0f;

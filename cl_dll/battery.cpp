@@ -40,7 +40,7 @@ int CHudBattery::Init( void )
 	m_iFlags = 0;
 
 	HOOK_MESSAGE( Battery );
-	
+
 	hud_battery100 = CVAR_CREATE("hud_battery100", "0 250 0", FCVAR_ARCHIVE);
 	//hud_battery80 = CVAR_CREATE("hud_battery80", "0 0 0", FCVAR_ARCHIVE)
 	hud_battery60 = CVAR_CREATE("hud_battery60", "250 250 0", FCVAR_ARCHIVE);
@@ -146,7 +146,7 @@ int CHudBattery::Draw( float flTime )
 	}
 	else
 		a = MIN_ALPHA;
-		
+
 	GetPainColor( r, g, b );
 	ScaleColors( r, g, b, a );
 

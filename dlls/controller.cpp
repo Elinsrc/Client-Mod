@@ -12,7 +12,7 @@
 *   use or distribution of this code by or to any unlicensed person is illegal.
 *
 ****/
-#if !defined( OEM_BUILD ) && !defined( HLDEMO_BUILD )
+#if !OEM_BUILD && !HLDEMO_BUILD
 
 //=========================================================
 // CONTROLLER
@@ -669,8 +669,11 @@ void CController::RunTask( Task_t *pTask )
 	case TASK_WAIT:
 	case TASK_WAIT_FACE_ENEMY:
 	case TASK_WAIT_PVS:
-		MakeIdealYaw( m_vecEnemyLKP );
-		ChangeYaw( pev->yaw_speed );
+		if (m_hEnemy != 0)
+		{
+			MakeIdealYaw( m_vecEnemyLKP );
+			ChangeYaw( pev->yaw_speed );
+		}
 
 		if( m_fSequenceFinished )
 		{

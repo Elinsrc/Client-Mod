@@ -571,7 +571,8 @@ void CBaseMonster::MonsterThink( void )
 //=========================================================
 void CBaseMonster::MonsterUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
-	m_IdealMonsterState = MONSTERSTATE_ALERT;
+	if (m_MonsterState == MONSTERSTATE_IDLE)
+		m_IdealMonsterState = MONSTERSTATE_ALERT;
 }
 
 //=========================================================
@@ -728,7 +729,7 @@ BOOL CBaseMonster::MoveToNode( Activity movementAct, float waitTime, const Vecto
 	return FRefreshRoute();
 }
 
-#ifdef _DEBUG
+#if _DEBUG
 void DrawRoute( entvars_t *pev, WayPoint_t *m_Route, int m_iRouteIndex, int r, int g, int b )
 {
 	int i;

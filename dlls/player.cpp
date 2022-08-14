@@ -1198,23 +1198,26 @@ void CBasePlayer::WaterMove()
 	}
 
 	// make bubbles
-	air = (int)( pev->air_finished - gpGlobals->time );
-	if( !RANDOM_LONG( 0, 0x1f ) && RANDOM_LONG( 0, AIRTIME - 1 ) >= air )
+	if( pev->waterlevel == 3 )
 	{
-		switch( RANDOM_LONG( 0, 3 ) )
+		air = (int)( pev->air_finished - gpGlobals->time );
+		if( !RANDOM_LONG( 0, 0x1f ) && RANDOM_LONG( 0, AIRTIME - 1 ) >= air )
 		{
-			case 0:
-				EMIT_SOUND( ENT( pev ), CHAN_BODY, "player/pl_swim1.wav", 0.8, ATTN_NORM );
-				break;
-			case 1:
-				EMIT_SOUND( ENT( pev ), CHAN_BODY, "player/pl_swim2.wav", 0.8, ATTN_NORM );
-				break;
-			case 2:
-				EMIT_SOUND( ENT( pev ), CHAN_BODY, "player/pl_swim3.wav", 0.8, ATTN_NORM );
-				break;
-			case 3:
-				EMIT_SOUND( ENT( pev ), CHAN_BODY, "player/pl_swim4.wav", 0.8, ATTN_NORM );
-				break;
+			switch( RANDOM_LONG( 0, 3 ) )
+			{
+				case 0:
+					EMIT_SOUND( ENT( pev ), CHAN_BODY, "player/pl_swim1.wav", 0.8, ATTN_NORM );
+					break;
+				case 1:
+					EMIT_SOUND( ENT( pev ), CHAN_BODY, "player/pl_swim2.wav", 0.8, ATTN_NORM );
+					break;
+				case 2:
+					EMIT_SOUND( ENT( pev ), CHAN_BODY, "player/pl_swim3.wav", 0.8, ATTN_NORM );
+					break;
+				case 3:
+					EMIT_SOUND( ENT( pev ), CHAN_BODY, "player/pl_swim4.wav", 0.8, ATTN_NORM );
+					break;
+			}
 		}
 	}
 
@@ -2600,7 +2603,7 @@ pt_end:
 	// Track button info so we can detect 'pressed' and 'released' buttons next frame
 	m_afButtonLast = pev->button;
 
-#if defined( CLIENT_WEAPONS )
+#if CLIENT_WEAPONS
 	// Decay timers on weapons
 	// go through all of the weapons and make a list of the ones to pack
 	for( int i = 0; i < MAX_ITEM_TYPES; i++ )
@@ -2995,7 +2998,7 @@ int CBasePlayer::Restore( CRestore &restore )
 
 	RenewItems();
 
-#if defined( CLIENT_WEAPONS )
+#if CLIENT_WEAPONS
 	// HACK:	This variable is saved/restored in CBaseMonster as a time variable, but we're using it
 	//			as just a counter.  Ideally, this needs its own variable that's saved as a plain float.
 	//			Barring that, we clear it out here instead of using the incorrect restored time value.
@@ -3092,7 +3095,9 @@ void CBasePlayer::SelectItem( const char *pstr )
 
 	if( m_pActiveItem )
 	{
+		m_pActiveItem->pev->oldbuttons = 1;
 		m_pActiveItem->Deploy();
+		m_pActiveItem->pev->oldbuttons = 0;
 		m_pActiveItem->UpdateItemInfo();
 	}
 }
@@ -3118,7 +3123,11 @@ void CBasePlayer::SelectLastItem( void )
 	CBasePlayerItem *pTemp = m_pActiveItem;
 	m_pActiveItem = m_pLastItem;
 	m_pLastItem = pTemp;
+
+	m_pActiveItem->pev->oldbuttons = 1;
 	m_pActiveItem->Deploy();
+	m_pActiveItem->pev->oldbuttons = 0;
+
 	m_pActiveItem->UpdateItemInfo();
 }
 
@@ -3352,7 +3361,7 @@ void CBasePlayer::ForceClientDllUpdate( void )
 ImpulseCommands
 ============
 */
-extern float g_flWeaponCheat;
+extern cvar_t *g_enable_cheats;
 
 void CBasePlayer::ImpulseCommands()
 {
@@ -3430,8 +3439,8 @@ void CBasePlayer::ImpulseCommands()
 //=========================================================
 void CBasePlayer::CheatImpulseCommands( int iImpulse )
 {
-#if !defined( HLDEMO_BUILD )
-	if( g_flWeaponCheat == 0.0f )
+#if !HLDEMO_BUILD
+	if( g_enable_cheats->value == 0 )
 	{
 		return;
 	}
@@ -3467,7 +3476,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "ammo_ARgrenades" );
 		GiveNamedItem( "weapon_handgrenade" );
 		GiveNamedItem( "weapon_tripmine" );
-#ifndef OEM_BUILD
+#if !OEM_BUILD
 		GiveNamedItem( "weapon_357" );
 		GiveNamedItem( "ammo_357" );
 		GiveNamedItem( "weapon_crossbow" );
@@ -3753,7 +3762,7 @@ Called every frame by the player PreThink
 */
 void CBasePlayer::ItemPreFrame()
 {
-#if defined( CLIENT_WEAPONS )
+#if CLIENT_WEAPONS
 	if( m_flNextAttack > 0 )
 #else
 	if( gpGlobals->time < m_flNextAttack )
@@ -3783,7 +3792,7 @@ void CBasePlayer::ItemPostFrame()
 	if( m_pTank != 0 )
 		return;
 
-#if defined( CLIENT_WEAPONS )
+#if CLIENT_WEAPONS
 	if( m_flNextAttack > 0 )
 #else
 	if( gpGlobals->time < m_flNextAttack )
@@ -4589,7 +4598,10 @@ BOOL CBasePlayer::SwitchWeapon( CBasePlayerItem *pWeapon )
 	}
 
 	m_pActiveItem = pWeapon;
+
+	pWeapon->pev->oldbuttons = 1;
 	pWeapon->Deploy();
+	pWeapon->pev->oldbuttons = 0;
 
 	return TRUE;
 }
