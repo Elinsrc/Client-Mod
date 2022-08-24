@@ -20,11 +20,12 @@ int CHudSpeedometer::Init()
 	hud_speedcolor = CVAR_CREATE("hud_speedcolor", "255 255 0", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem( this );
-
+	return 0;
 }
 
 int CHudSpeedometer::VidInit()
 {
+	return 1;
 }
 
 int CHudSpeedometer::Draw(float time)
@@ -51,6 +52,8 @@ int CHudSpeedometer::Draw(float time)
 		y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2;
 
 	gHUD.DrawHudNumberCentered(ScreenWidth / 2, y, m_iSpeed, r, g, b);
+
+	return 0;
 }
 
 void CHudSpeedometer::UpdateSpeed(const float velocity[2])

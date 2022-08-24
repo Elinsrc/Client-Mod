@@ -1,6 +1,6 @@
 # Client-Mod
 
-* Client mod is a small modification of the "half life" client part for "Xash3D FWGS and GoldSource*"
+* Client mod is a small modification of the "half life" client part for "Xash3D FWGS and GoldSource"
  
 Added a new control with additional buttons to activate "Configuration->Touch->Touch options", select preset "New" and click Activate.
  
