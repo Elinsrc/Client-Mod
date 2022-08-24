@@ -7,7 +7,7 @@ Added a new control with additional buttons to activate "Configuration->Touch->T
 Added commands:
   
 cl_autojump - [1/0] Autojump on SPACEBAR key, default value is 1.
-When this command is enabled the jump button may not work, solved by command cl_lw 1. Taken from OpenAG
+When this command is enabled the jump button may not work, solved by command cl_lw 1. Taken from OpenAG.
   
 hud_color "r g b" - Sets hud color, values must be enclosed in quotation marks. example: hud_color "255 0 255".
 
@@ -37,13 +37,15 @@ cl_lowerweapon - [1/0] The weapon in the player's hand will lower depending on t
 
 cl_weaponsway - [1/0] Swaying of the weapon when moving, default value is 1.
 
+cl_weaponlag - [1/0] weapon lag when turning, default value is 1.
+
 cl_gausscolor - [1/0] activates cvar cl_gaussbeam "r g b", default value is 0.
 
 hud_speedometer - [1/0] shows the player's speed, default value is 1. 
 
 hud_speedometer_below_cross - [1/0] adjusts the position of the speedometer to the sight, defaut value is 0.
 
-cl_colored_speed - [1/0] activates cvar hud_speedcolor "r g b" - draw custom speedometer color, default value is 0.
+cl_colored_speed - [1/0] activates cvar hud_speedcolor "r g b" - draw custom speedometer color.
 
 hud_jumpspeed - [1/0] shows the player's speed at the moment of the jump, default value is 1. Taken from OpenAG.
 
@@ -51,8 +53,8 @@ hud_jumpspeed_below_cross - [1/0] adjusts the position of the jumpspeed to the s
 
 hud_jumpspeed_height - [1/0] adjusts the positio jumpspeed, defaut value is 0.
 
-cl_colored_jump - [1/0] activates cvar hud_jumpcolor "r g b" - draw custom jumpspeed color, default value is 0.
+cl_colored_jump - [1/0] activates cvar hud_jumpcolor "r g b" - draw custom jumpspeed color.
 
-cl_logchat - [1/0 ] records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 0.
+cl_logchat - [1/0 ] records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 1.
 
 In the future, the list of commands will be updated and a android port for the new engine will appear.
