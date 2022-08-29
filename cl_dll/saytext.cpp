@@ -26,6 +26,7 @@
 #include <stdio.h>
 
 cvar_t *cl_logchat;
+cvar_t *cl_chatbg;
 
 #if USE_VGUI
 #include "vgui_TeamFortressViewport.h"
@@ -60,6 +61,7 @@ int CHudSayText::Init( void )
 	InitHUDData();
 
 	cl_logchat = CVAR_CREATE("cl_logchat", "0", FCVAR_ARCHIVE);
+	cl_chatbg = CVAR_CREATE("cl_chatbg", "0", FCVAR_ARCHIVE);
 	m_HUD_saytext =		gEngfuncs.pfnRegisterVariable( "hud_saytext", "1", 0 );
 	m_HUD_saytext_time =	gEngfuncs.pfnRegisterVariable( "hud_saytext_time", "5", 0 );
 
@@ -107,6 +109,19 @@ int CHudSayText::Draw( float flTime )
 		return 1;
 #endif
 
+    // shit code unfinished 
+	int ypos = Y_START - gHUD.m_iFontHeight;
+	int xpos = LINE_START ;
+	int scale_x = ScreenHeight / 2;
+	int scale_y = ScreenHeight / gHUD.m_iFontHeight * 4;
+
+	if( cl_chatbg && cl_chatbg->value )
+	{
+		gHUD.DrawDarkRectangle( xpos - 5, ypos - 5, scale_x, scale_y );
+		DrawUtfString( LINE_START, ypos, ScreenHeight, "Chat", 255, 140, 0 );
+		FillRGBA( xpos - 4, ypos +22, ScreenHeight / 2 - 2, 1, 255, 140, 0, 255 );
+	}
+	//
 
 	// make sure the scrolltime is within reasonable bounds,  to guard against the clock being reset
 	flScrollTime = Q_min( flScrollTime, flTime + m_HUD_saytext_time->value );

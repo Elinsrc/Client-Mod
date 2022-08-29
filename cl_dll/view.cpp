@@ -320,7 +320,7 @@ void V_CalcViewModelLag( ref_params_t *pparams, Vector &origin, Vector &angles, 
 
 		vDifference = forward - m_vecLastFacing;
 
-		float flSpeed = 5.0f;
+		float flSpeed = 2.5f;
 
 		// If we start to lag too far behind, we'll increase the "catch up" speed.
 		// Solves the problem with fast cl_yawspeed, m_yaw or joysticks rotating quickly.
