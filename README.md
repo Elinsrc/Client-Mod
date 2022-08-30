@@ -57,4 +57,18 @@ cl_colored_jump - [1/0] activates cvar hud_jumpcolor "r g b" - draw custom jumps
 
 cl_logchat - [1/0 ] records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 1.
 
+cl_cross - [0/1/2/3/4] custom crosshair, defaut value 0.
+
+cl_cross_color "r g b" - crosshair color, In cl_cross value 0 not work, defaut value "0 255 0".
+
+cl_cross_alpha [value] - crosshair transparency, defaut value 200.
+
+cl_cross_trick [value] - sight thickness, defaut value 1.
+
+cl_cross_dist [value] - crosshair distance from the middle, defaut value 2.
+
+cl_cross_lenght [value] - length crosshair, defaut value 5.
+
+unfinished command cl_chatbg - [1/0],defaut value 0.
+
 In the future, the list of commands will be updated and a android port for the new engine will appear.
