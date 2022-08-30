@@ -68,6 +68,7 @@ SRCS+=./hud_spectator.cpp
 SRCS+=./hud_speedometer.cpp
 SRCS+=./hud_jumpspeed.cpp
 SRCS+=./hud_update.cpp
+SRCS+=./hud_crosshair.cpp
 SRCS+=./in_camera.cpp
 SRCS+=./input.cpp
 SRCS+=./input_goldsource.cpp

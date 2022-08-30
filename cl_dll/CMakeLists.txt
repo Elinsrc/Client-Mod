@@ -96,6 +96,7 @@ set (CLDLL_SOURCES
 	hud_speedometer.cpp
 	hud_jumpspeed.cpp
 	hud_update.cpp
+	hud_crosshair.cpp
 	in_camera.cpp
 	input.cpp
 	input_goldsource.cpp

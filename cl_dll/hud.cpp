@@ -425,6 +425,7 @@ void CHud::Init( void )
 	m_StatusIcons.Init();
 	m_Speedometer.Init();
 	m_Jumpspeed.Init();
+	m_Crosshair.Init();
 #if USE_VGUI
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
 #endif
@@ -616,6 +617,7 @@ void CHud::VidInit( void )
 	m_StatusIcons.VidInit();
 	m_Speedometer.VidInit();
 	m_Jumpspeed.VidInit();
+	m_Crosshair.VidInit();
 #if USE_VGUI
 	GetClientVoiceMgr()->VidInit();
 #endif

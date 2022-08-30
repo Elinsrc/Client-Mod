@@ -98,6 +98,7 @@ struct HUDLIST
 #include "hud_spectator.h"
 #include "hud_speedometer.h"
 #include "hud_jumpspeed.h"
+#include "hud_crosshair.h"
 
 //
 //-----------------------------------------------------
@@ -610,6 +611,7 @@ public:
 	CHudStatusIcons m_StatusIcons;
 	CHudSpeedometer	m_Speedometer;
 	CHudJumpspeed   m_Jumpspeed;
+	CHudCrosshair	m_Crosshair;
 #if !USE_VGUI || USE_NOVGUI_SCOREBOARD
 	CHudScoreboard	m_Scoreboard;
 #endif
