@@ -261,6 +261,10 @@ int __MsgFunc_ServerName( const char *pszName, int iSize, void *pbuf )
 	if (gViewPort)
 		return gViewPort->MsgFunc_ServerName( pszName, iSize, pbuf );
 #endif
+	BEGIN_READ( pbuf, iSize );
+
+	strncpy( gHUD.m_szServerName, READ_STRING(), sizeof(gHUD.m_szServerName) );
+	gHUD.m_szServerName[sizeof(gHUD.m_szServerName) - 1] = 0;
 	return 0;
 }
 
@@ -392,6 +396,8 @@ void CHud::Init( void )
 	GaussBeamColor = CVAR_CREATE( "cl_gaussbeam", "255 0 0", FCVAR_ARCHIVE );
 
 	m_pSpriteList = NULL;
+
+	m_szServerName[0] = 0;
 
 	// Clear any old HUD list
 	if( m_pHudList )

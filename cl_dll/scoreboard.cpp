@@ -29,7 +29,6 @@
 cvar_t *cl_scoreboard_bg;
 cvar_t *cl_showpacketloss;
 
-
 #if USE_VGUI
 #include "vgui_TeamFortressViewport.h"
 #endif
@@ -155,10 +154,12 @@ int CHudScoreboard::Draw( float fTime )
 
 	if( cl_scoreboard_bg && cl_scoreboard_bg->value )
 		gHUD.DrawDarkRectangle( xpos - 5, ypos - 5, FAR_RIGHT, ROW_RANGE_MAX );
-	if( !gHUD.m_Teamplay )
-		DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Player", 255, 140, 0 );
-	else
-		DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Teams", 255, 140, 0 );
+
+	char ServerName[90];
+	if(gHUD.m_szServerName[0])
+		snprintf(ServerName,80,"%s",gHUD.m_szServerName);
+	
+	DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, ServerName, 255, 140, 0 );
 
 	gHUD.DrawHudStringReverse( KILLS_RANGE_MAX + xpos_rel, ypos, 0, "kills", 255, 140, 0 );
 	DrawUtfString( DIVIDER_POS + xpos_rel, ypos, ScreenWidth, "/", 255, 140, 0 );

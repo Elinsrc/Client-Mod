@@ -655,6 +655,8 @@ public:
 	float GetSensitivity();
 
 	void GetAllPlayersInfo( void );
+
+	char m_szServerName[64];
 };
 
 extern CHud gHUD;
