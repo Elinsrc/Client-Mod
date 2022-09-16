@@ -34,6 +34,9 @@ int CHudCrosshair::VidInit()
 
 int CHudCrosshair::Draw(float time)
 {
+	if( !( gHUD.m_iWeaponBits & ( 1 << ( WEAPON_SUIT ) ) ) )
+		return 1;
+	
 	if (cl_cross->value == 0.0f)
 	{
 		gEngfuncs.pfnClientCmd( "crosshair 1" );
