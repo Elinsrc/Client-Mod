@@ -102,12 +102,12 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       uses: actions/upload-artifact@v2
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-linux
+        name: Client-Mod-linux
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact
       if: startsWith(matrix.os, 'windows')
       uses: actions/upload-artifact@v2
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-windows
+        name: Client-Mod-windows
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
 

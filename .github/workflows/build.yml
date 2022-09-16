@@ -89,24 +89,24 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v2
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-linux
+        name: Client-Mod-linux
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload linux artifact with vgui
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v2
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-linux-vgui
+        name: Client-Mod-linux-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact
       if: startsWith(matrix.os, 'windows')
       uses: actions/upload-artifact@v2
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-windows
+        name: Client-Mod-windows
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact with vgui
       if: startsWith(matrix.os, 'windows')
       uses: actions/upload-artifact@v2
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-windows-vgui
+        name: Client-Mod-windows-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}
 
