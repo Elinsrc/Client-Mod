@@ -23,6 +23,7 @@
 #include "parsemsg.h"
 #include "triangleapi.h"
 
+#include <ctime>
 #include <string.h>
 #include <stdio.h>
 
@@ -102,6 +103,7 @@ We have a minimum width of 1-320 - we could have the field widths scale with it?
 #define PING_RANGE_MAX	295
 #define PL_RANGE_MIN 315
 #define PL_RANGE_MAX 375
+#define MAX_SERVER_NAME 180
 
 int SCOREBOARD_WIDTH = 320;
 
@@ -109,6 +111,7 @@ int SCOREBOARD_WIDTH = 320;
 #define ROW_GAP  (gHUD.m_scrinfo.iCharHeight)
 #define ROW_RANGE_MIN 15
 #define ROW_RANGE_MAX ( ScreenHeight - 50 )
+#define ROW_TOP 20
 
 int CHudScoreboard::Draw( float fTime )
 {
@@ -140,7 +143,7 @@ int CHudScoreboard::Draw( float fTime )
 	int xpos_rel = ( ScreenWidth - SCOREBOARD_WIDTH ) / 2;
 
 	// print the heading line
-	int ypos = ROW_RANGE_MIN + ( list_slot * ROW_GAP );
+	int ypos = ROW_TOP + ROW_RANGE_MIN + ( list_slot * ROW_GAP );
 	int xpos = NAME_RANGE_MIN + xpos_rel;
 
 	FAR_RIGHT = can_show_packetloss ? PL_RANGE_MAX : PING_RANGE_MAX;
@@ -152,14 +155,33 @@ int CHudScoreboard::Draw( float fTime )
 		FAR_RIGHT += NAME_RANGE_MODIFIER;
 	}
 
+	int info_pos = ROW_RANGE_MIN + ( list_slot * ROW_GAP );
+
 	if( cl_scoreboard_bg && cl_scoreboard_bg->value )
-		gHUD.DrawDarkRectangle( xpos - 5, ypos - 5, FAR_RIGHT, ROW_RANGE_MAX );
+		gHUD.DrawDarkRectangle( xpos - 5, info_pos - 5, FAR_RIGHT, ROW_RANGE_MAX );
 
 	char ServerName[90];
 	if(gHUD.m_szServerName[0])
 		snprintf(ServerName,80,"%s",gHUD.m_szServerName);
 	
-	DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, ServerName, 255, 140, 0 );
+	DrawUtfString( xpos, info_pos, MAX_SERVER_NAME + xpos_rel, ServerName, 255, 140, 0 );
+
+	int DATE_TIME_POS;
+
+    if( cl_showpacketloss && cl_showpacketloss->value)
+    	DATE_TIME_POS = 260;
+    else
+    	DATE_TIME_POS = 180;
+
+    char time_str[80];
+    time_t date_time = time(0);
+    strftime(time_str, 80, "%Y.%m.%d %T", localtime(&date_time));
+	DrawUtfString( DATE_TIME_POS + xpos_rel, info_pos, ScreenWidth, time_str, 255, 140, 0 );
+
+	if( !gHUD.m_Teamplay )
+		DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Player", 255, 140, 0 );
+	else
+		DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Teams", 255, 140, 0 );
 
 	gHUD.DrawHudStringReverse( KILLS_RANGE_MAX + xpos_rel, ypos, 0, "kills", 255, 140, 0 );
 	DrawUtfString( DIVIDER_POS + xpos_rel, ypos, ScreenWidth, "/", 255, 140, 0 );
@@ -172,7 +194,7 @@ int CHudScoreboard::Draw( float fTime )
 	}
 
 	list_slot += 1.2f;
-	ypos = ROW_RANGE_MIN + ( list_slot * ROW_GAP );
+	ypos = ROW_TOP + ROW_RANGE_MIN + ( list_slot * ROW_GAP );
 	// xpos = NAME_RANGE_MIN + xpos_rel;
 	FillRGBA( xpos - 4, ypos, FAR_RIGHT -2, 1, 255, 140, 0, 255 );  // draw the seperator line
 
@@ -267,7 +289,7 @@ int CHudScoreboard::Draw( float fTime )
 		// draw out the best team
 		team_info_t *team_info = &g_TeamInfo[best_team];
 
-		ypos = ROW_RANGE_MIN + ( list_slot * ROW_GAP );
+		ypos = ROW_TOP + ROW_RANGE_MIN + ( list_slot * ROW_GAP );
 
 		// check we haven't drawn too far down
 		if( ypos > ROW_RANGE_MAX )  // don't draw to close to the lower border
@@ -392,7 +414,7 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 		// draw out the best player
 		hud_player_info_t *pl_info = &g_PlayerInfoList[best_player];
 
-		int ypos = ROW_RANGE_MIN + ( list_slot * ROW_GAP );
+		int ypos = ROW_TOP + ROW_RANGE_MIN + ( list_slot * ROW_GAP );
 
 		// check we haven't drawn too far down
 		if( ypos > ROW_RANGE_MAX )  // don't draw to close to the lower border

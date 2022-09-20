@@ -21,7 +21,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
-#include <time.h>
+#include <ctime>
 #include <string.h>
 #include <stdio.h>
 
@@ -200,9 +200,9 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 	if (cl_logchat->value != 0.0f)
 	{
 		FILE *logchat = fopen("logchat.txt", "a");
-		time_t mytime = time(NULL);
-		char * time_str = ctime(&mytime);
-		time_str[strlen(time_str)-1] = '\0';
+		char time_str[80];
+		time_t date_time = time(0);
+		strftime(time_str, 80, "[%Y.%m.%d|%T]", localtime(&date_time));
 		
 		fprintf( logchat, "%s %s",time_str ,pszBuf ); 
 		fclose( logchat );
