@@ -64,7 +64,7 @@ public class LauncherActivity extends Activity {
 
 		if(cmdArgs.length() != 0) intent.putExtra("argv", argv);
 		// set gamedir here
-		/intent.putExtra("gamedir", "valve" );
+		intent.putExtra("gamedir", "valve" );
 		intent.putExtra("gamelibdir", getFilesDir().getAbsolutePath().replace("/files","/lib"));
 		intent.putExtra("pakfile", getFilesDir().getAbsolutePath() + "/extras.pak");
 
