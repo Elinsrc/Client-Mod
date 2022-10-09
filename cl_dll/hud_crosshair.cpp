@@ -113,32 +113,5 @@ int CHudCrosshair::Draw(float time)
 			FillRGBA(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
 		}	
 	}
-
-		
-
-	if (cl_cross->value == 1)
-	{
-		FillRGBA(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
-		FillRGBA(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
-		FillRGBA(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
-		FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-		FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-	}
-	else if (cl_cross->value == 2)
-	{
-		FillRGBA(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
-		FillRGBA(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
-		FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-		FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-	}
-	else if (cl_cross->value == 3)
-	{
-		FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-		FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-	}
-	else if (cl_cross->value == 4)
-	{
-		FillRGBA(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
-	}	
 	return 0;
 }

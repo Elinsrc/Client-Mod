@@ -61,9 +61,9 @@ cl_logchat - [1/0 ] records the entire chat log during the game, the log is stor
 
 cl_cross - [0/1/2/3/4] custom crosshair, defaut value 0.
 
-cl_cross_color "r g b" - crosshair alpha, In cl_cross value 0 not work, defaut value "0 255 0".
+cl_cross_color "r g b" - crosshair color, In cl_cross value 0 not work, defaut value "0 255 0".
 
-cl_cross_alpha [value] - crosshair transparency, defaut value 200.
+cl_cross_alpha [value] - crosshair alpha, defaut value 200.
 
 cl_cross_trick [value] - sight thickness, defaut value 1.
 
