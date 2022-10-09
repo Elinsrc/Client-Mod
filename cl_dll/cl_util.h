@@ -63,6 +63,7 @@ inline struct cvar_s *CVAR_CREATE( const char *cv, const char *val, const int fl
 #define SPR_DisableScissor ( *gEngfuncs.pfnSPR_DisableScissor )
 //
 #define FillRGBA ( *gEngfuncs.pfnFillRGBA )
+#define FillRGBABlend ( *gEngfuncs.pfnFillRGBABlend )
 
 // ScreenHeight returns the height of the screen, in pixels
 #define ScreenHeight ( gHUD.m_scrinfo.iHeight )

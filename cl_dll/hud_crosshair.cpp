@@ -45,6 +45,7 @@ int CHudCrosshair::Draw(float time)
 	else
 		gEngfuncs.pfnClientCmd( "crosshair 0" );
 
+	//code written by Ku2zoff
 	int iDist = XRES(cl_cross_dist->value);
 	int iLength = XRES(cl_cross_lenght->value);
 	int iDepth = XRES(cl_cross_trick->value);
@@ -80,6 +81,5 @@ int CHudCrosshair::Draw(float time)
 	{
 		FillRGBA(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
 	}	
-	
 	return 0;
 }
