@@ -11,6 +11,7 @@ cvar_t *cl_cross_trick;
 cvar_t *cl_cross_dist;
 cvar_t *cl_cross_lenght;
 cvar_t *cl_cross_alpha;
+cvar_t *cl_cross_translucent;
 
 int CHudCrosshair::Init()
 {
@@ -22,6 +23,7 @@ int CHudCrosshair::Init()
 	cl_cross_trick = CVAR_CREATE("cl_cross_trick", "1", FCVAR_ARCHIVE);
 	cl_cross_dist = CVAR_CREATE("cl_cross_dist", "2", FCVAR_ARCHIVE);
 	cl_cross_lenght = CVAR_CREATE("cl_cross_lenght", "5", FCVAR_ARCHIVE);
+	cl_cross_translucent = CVAR_CREATE( "cl_cross_translucent", "1", FCVAR_ARCHIVE );
 
 	gHUD.AddHudElem( this );
 	return 0;
@@ -56,6 +58,63 @@ int CHudCrosshair::Draw(float time)
 	int a = cl_cross_alpha->value;
 	const char *colors = cl_cross_color->string;
 	sscanf( colors, "%d %d %d", &r, &g, &b);
+
+	if (cl_cross_translucent->value == 0.0f)
+	{
+		if (cl_cross->value == 1)
+		{
+			FillRGBABlend(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
+			FillRGBABlend(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
+			FillRGBABlend(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
+			FillRGBABlend(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
+			FillRGBABlend(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
+		}
+		else if (cl_cross->value == 2)
+		{
+			FillRGBABlend(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
+			FillRGBABlend(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
+			FillRGBABlend(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
+			FillRGBABlend(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
+		}
+		else if (cl_cross->value == 3)
+		{
+			FillRGBABlend(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
+			FillRGBABlend(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
+		}
+		else if (cl_cross->value == 4)
+		{
+			FillRGBABlend(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
+		}	
+	}
+	else
+	{
+		if (cl_cross->value == 1)
+		{
+			FillRGBA(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
+			FillRGBA(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
+			FillRGBA(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
+			FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
+			FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
+		}
+		else if (cl_cross->value == 2)
+		{
+			FillRGBA(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
+			FillRGBA(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
+			FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
+			FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
+		}
+		else if (cl_cross->value == 3)
+		{
+			FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
+			FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
+		}
+		else if (cl_cross->value == 4)
+		{
+			FillRGBA(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
+		}	
+	}
+
+		
 
 	if (cl_cross->value == 1)
 	{
