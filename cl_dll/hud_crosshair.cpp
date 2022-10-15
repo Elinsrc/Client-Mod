@@ -11,19 +11,30 @@ cvar_t *cl_cross_trick;
 cvar_t *cl_cross_dist;
 cvar_t *cl_cross_lenght;
 cvar_t *cl_cross_alpha;
-cvar_t *cl_cross_translucent;
+cvar_t *cl_cross_stroke;
+cvar_t *cl_cross_top_line;
+cvar_t *cl_cross_bottom_line;
+cvar_t *cl_cross_left_line;
+cvar_t *cl_cross_right_line;
+cvar_t *cl_cross_dot;
 
 int CHudCrosshair::Init()
 {
 	m_iFlags = HUD_ACTIVE;
 
 	cl_cross = CVAR_CREATE("cl_cross", "0", FCVAR_ARCHIVE);
-	cl_cross_color = CVAR_CREATE("cl_cross_color", "0 255 0", FCVAR_ARCHIVE);
+	cl_cross_color = CVAR_CREATE("cl_cross_color", "255 255 255", FCVAR_ARCHIVE);
 	cl_cross_alpha = CVAR_CREATE("cl_cross_alpha", "200", FCVAR_ARCHIVE);
 	cl_cross_trick = CVAR_CREATE("cl_cross_trick", "1", FCVAR_ARCHIVE);
 	cl_cross_dist = CVAR_CREATE("cl_cross_dist", "2", FCVAR_ARCHIVE);
 	cl_cross_lenght = CVAR_CREATE("cl_cross_lenght", "5", FCVAR_ARCHIVE);
-	cl_cross_translucent = CVAR_CREATE( "cl_cross_translucent", "1", FCVAR_ARCHIVE );
+	cl_cross_stroke = CVAR_CREATE( "cl_cross_stroke", "1", FCVAR_ARCHIVE );
+	cl_cross_top_line = CVAR_CREATE("cl_cross_top_line", "1", FCVAR_ARCHIVE);
+	cl_cross_bottom_line = CVAR_CREATE("cl_cross_bottom_line", "1", FCVAR_ARCHIVE);
+	cl_cross_left_line = CVAR_CREATE("cl_cross_left_line", "1", FCVAR_ARCHIVE);
+	cl_cross_right_line = CVAR_CREATE("cl_cross_right_line", "1", FCVAR_ARCHIVE);
+	cl_cross_dot = CVAR_CREATE("cl_cross_dot", "1", FCVAR_ARCHIVE);
+
 
 	gHUD.AddHudElem( this );
 	return 0;
@@ -53,65 +64,52 @@ int CHudCrosshair::Draw(float time)
 	int iDepth = XRES(cl_cross_trick->value);
 	int xPos = ScreenWidth/2;
 	int yPos = ScreenHeight/2;
+	int stroke = cl_cross_stroke->value;
 
 	int r, g, b;
 	int a = cl_cross_alpha->value;
 	const char *colors = cl_cross_color->string;
 	sscanf( colors, "%d %d %d", &r, &g, &b);
 
-	if (cl_cross_translucent->value == 0.0f)
+	// Top line
+	if (cl_cross_top_line->value)
 	{
-		if (cl_cross->value == 1)
-		{
-			FillRGBABlend(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
-			FillRGBABlend(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
-			FillRGBABlend(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
-			FillRGBABlend(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-			FillRGBABlend(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-		}
-		else if (cl_cross->value == 2)
-		{
-			FillRGBABlend(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
-			FillRGBABlend(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
-			FillRGBABlend(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-			FillRGBABlend(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-		}
-		else if (cl_cross->value == 3)
-		{
-			FillRGBABlend(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-			FillRGBABlend(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-		}
-		else if (cl_cross->value == 4)
-		{
-			FillRGBABlend(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
-		}	
+		if (cl_cross_stroke->value)
+			FillRGBABlend(xPos - iDepth/2 - stroke, yPos - iDist - iLength - stroke, iDepth + stroke * 2, iLength + stroke * 2, 0, 0, 0, a);
+		FillRGBABlend(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a);
 	}
-	else
+	
+	// Bottom line
+	if (cl_cross_bottom_line->value)
 	{
-		if (cl_cross->value == 1)
-		{
-			FillRGBA(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
-			FillRGBA(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
-			FillRGBA(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
-			FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-			FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-		}
-		else if (cl_cross->value == 2)
-		{
-			FillRGBA(xPos - iDepth/2, yPos - iDist - iLength, iDepth, iLength, r, g, b, a); // top
-			FillRGBA(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a); // bottom
-			FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-			FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-		}
-		else if (cl_cross->value == 3)
-		{
-			FillRGBA(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // left
-			FillRGBA(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a); // right
-		}
-		else if (cl_cross->value == 4)
-		{
-			FillRGBA(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a); // center
-		}	
+		if (cl_cross_stroke->value)
+			FillRGBABlend(xPos - iDepth/2 -stroke , yPos + iDist - stroke , iDepth + stroke * 2, iLength + stroke * 2, 0, 0, 0, a);
+		FillRGBABlend(xPos - iDepth/2, yPos + iDist, iDepth, iLength, r, g, b, a);
 	}
+	
+	// Left line
+	if (cl_cross_left_line->value)
+	{
+		if (cl_cross_stroke->value)
+			FillRGBABlend(xPos - iDist - iLength - stroke, yPos - iDepth/2 - stroke, iLength + stroke * 2, iDepth + stroke * 2, 0, 0, 0, a);
+		FillRGBABlend(xPos - iDist - iLength, yPos - iDepth/2, iLength, iDepth, r, g, b, a);
+	}
+
+	// Right line
+	if (cl_cross_right_line->value)
+	{
+		if (cl_cross_stroke->value)
+			FillRGBABlend(xPos + iDist - stroke, yPos - iDepth/2 - stroke, iLength + stroke * 2, iDepth + stroke * 2, 0, 0, 0, a);
+		FillRGBABlend(xPos + iDist, yPos - iDepth/2, iLength, iDepth, r, g, b, a);
+	}
+	
+	// Dot
+	if (cl_cross_dot->value)
+	{
+		if (cl_cross_stroke->value)
+			FillRGBABlend(xPos - iDepth/2 - stroke, yPos - iDepth/2 - stroke, iDepth + stroke * 2, iDepth + stroke * 2, 0, 0, 0, a);
+		FillRGBABlend(xPos - iDepth/2, yPos - iDepth/2, iDepth, iDepth, r, g, b, a);
+	}
+
 	return 0;
 }

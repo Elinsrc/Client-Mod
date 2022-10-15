@@ -4,7 +4,7 @@
  
 Added a new control with additional buttons to activate "Configuration->Touch->Touch options", select preset "New" and click Activate.
 
-Added server name to scoreboard and current date with time
+Added server name to scoreboard and current date with time.
  
 Added commands:
   
@@ -59,7 +59,7 @@ cl_colored_jump - [1/0] activates cvar hud_jumpcolor "r g b" - draw custom jumps
 
 cl_logchat - [1/0 ] records the entire chat log during the game, the log is stored next to the "valve" folder, defaut value is 1.
 
-cl_cross - [0/1/2/3/4] custom crosshair, defaut value 0.
+cl_cross - [1/0] custom crosshair, defaut value 0.
 
 cl_cross_color "r g b" - crosshair color, In cl_cross value 0 not work, defaut value "0 255 0".
 
@@ -71,7 +71,17 @@ cl_cross_dist [value] - crosshair distance from the middle, defaut value 2.
 
 cl_cross_lenght [value] - length crosshair, defaut value 5.
 
-cl_cross_translucent [value] - rosshair transparency, defaut value 1.
+cl_cross_stroke [value] - crosshairs stroke, defaut value 1.
+
+cl_cross_top_line [value] ,defaut value 1.
+
+cl_cross_bottom_line [value] ,defaut value 1.
+
+cl_cross_left_line [value] ,defaut value 1.
+
+cl_cross_right_line [value] ,defaut value 1.
+
+cl_cross_dot [value] ,defaut value 1.
 
 unfinished command cl_chatbg - [1/0],defaut value 0.
 
