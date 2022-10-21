@@ -61,27 +61,31 @@ cl_logchat - [1/0 ] records the entire chat log during the game, the log is stor
 
 cl_cross - [1/0] custom crosshair, defaut value 0.
 
-cl_cross_color "r g b" - crosshair color, In cl_cross value 0 not work, defaut value "0 255 0".
+cl_cross_color "r g b" - custom crosshair color, defaut value "255 255 255".
 
-cl_cross_alpha [value] - crosshair alpha, defaut value 200.
+cl_cross_alpha [value] - crosshair alpha, defaut value 255.
 
-cl_cross_trick [value] - sight thickness, defaut value 1.
+cl_cross_size [value] - crosshair size, defaut value 1.
 
-cl_cross_dist [value] - crosshair distance from the middle, defaut value 2.
+cl_cross_gap [value] - crosshair distance from the middle, defaut value 2.
 
-cl_cross_lenght [value] - length crosshair, defaut value 5.
+cl_cross_thickness [value] - thickness crosshair, defaut value 5.
 
-cl_cross_stroke [value] - crosshairs stroke, defaut value 1.
+cl_cross_outline [value] - crosshairs outline defaut value 1.
 
-cl_cross_top_line [value] ,defaut value 1.
+cl_cross_top_line [1/0] ,defaut value 1.
 
-cl_cross_bottom_line [value] ,defaut value 1.
+cl_cross_bottom_line [1/0] ,defaut value 1.
 
-cl_cross_left_line [value] ,defaut value 1.
+cl_cross_left_line [1/0] ,defaut value 1.
 
-cl_cross_right_line [value] ,defaut value 1.
+cl_cross_right_line [1/0] ,defaut value 1.
 
-cl_cross_dot [value] ,defaut value 1.
+cl_cross_dot [1/0] ,defaut value 1.
+
+cl_cross_dot_size [value] ,defaut value 1.
+
+cl_cross_dot_color "r g b" ,defaut value "255 255 255".
 
 unfinished command cl_chatbg - [1/0],defaut value 0.
 

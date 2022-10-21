@@ -98,7 +98,7 @@ struct HUDLIST
 #include "hud_spectator.h"
 #include "hud_speedometer.h"
 #include "hud_jumpspeed.h"
-#include "hud_crosshair.h"
+#include "hud_crosshairs.h"
 
 //
 //-----------------------------------------------------

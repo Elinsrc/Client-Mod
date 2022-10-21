@@ -49,6 +49,7 @@ set SOURCES=../dlls/crossbow.cpp ^
 	hud_speedometer.cpp ^
 	hud_jumpspeed.cpp ^
 	hud_update.cpp ^
+	hud_crosshairs.cpp ^
 	in_camera.cpp ^
 	input.cpp ^
 	input_goldsource.cpp ^
