@@ -390,7 +390,7 @@ void CHud::Init( void )
 	hud_color = CVAR_CREATE( "hud_color", "95 95 255", FCVAR_ARCHIVE );
 	CVAR_CREATE( "hud_weapon", "1", FCVAR_ARCHIVE );
 	CVAR_CREATE( "hud_new", "0", FCVAR_ARCHIVE );
-	CVAR_CREATE( "cl_lowerweapon","1", FCVAR_ARCHIVE );
+	CVAR_CREATE( "cl_weaponlowering","1", FCVAR_ARCHIVE );
 	CVAR_CREATE( "cl_weaponsway","1", FCVAR_ARCHIVE );
 	CVAR_CREATE( "cl_gausscolor", "0", FCVAR_ARCHIVE );
 	GaussBeamColor = CVAR_CREATE( "cl_gaussbeam", "255 0 0", FCVAR_ARCHIVE );

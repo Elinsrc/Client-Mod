@@ -616,7 +616,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 		}
 	}
 
-	if ( CVAR_GET_FLOAT("cl_lowerweapon") )
+	if ( CVAR_GET_FLOAT("cl_weaponlowering") )
 	{
 	  vec3_t pl_vel;
 	  VectorCopy(pparams->simvel, pl_vel);
@@ -626,14 +626,14 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	  if (m_flSpeed > 220.0)
 	  {
 	    if ( m_flOfs <= 3 )
-	      m_flOfs += 0.15;
+	      m_flOfs += 0.03;
 	    if(m_flOfs >= 3)
 	      m_flOfs = 3;
 	  }
 	  else
 	  {
 	    if ( m_flOfs >=0 )
-	      m_flOfs -=0.1;
+	      m_flOfs -=0.05;
 	    if(m_flOfs <= 0)
 	      m_flOfs = 0;
 	  }
@@ -685,13 +685,10 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	{
 	  if ( CVAR_GET_FLOAT("cl_weaponsway"))
 	  {
-	    view->origin[i] += bob * 0.6f * pparams->right[i];
-	    view->origin[i] += bob * 0.4f * pparams->up[i];
+	    view->origin[i] += bob * 0.3f * pparams->right[i];
+	    view->origin[i] += bob * 0.2f * pparams->up[i];
 	  }
-	  else
-	  {
-	    view->origin[i] += bob * 0.4f * pparams->forward[i];
-	  }
+	  view->origin[i] += bob * 0.4f * pparams->forward[i];
 	}
 	view->origin[2] += bob;
 
