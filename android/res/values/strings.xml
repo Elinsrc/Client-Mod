@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<string name="launch_button">Launch Client mod!</string>
-	<string name="app_name">Client Mod</string>
-	<string name="cmd_args_text">Command-line arguments</string>
-	<string name="alert_dialog_text">not installed!</string>
-	<string name="about_button">about</string>
-</resources>

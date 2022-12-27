@@ -411,31 +411,31 @@ static constexpr int s_TenPowers[] = {
 	1000000000
 };
 
-int CHud::DrawHudNumberC(int x, int y, int number, int r, int g, int b)
+int CHud::DrawHudNumber(int x, int y, int iNumber, int r, int g, int b)
 {
-	int digit_width = GetSpriteRect(m_HUD_number_0).right - GetSpriteRect(m_HUD_number_0).left;
-	int digit_count = number > 9 ? (int)log10((double)number) + 1 : 1;
+	int iWidth = GetSpriteRect(m_HUD_number_0).right - GetSpriteRect(m_HUD_number_0).left;
+	int iCount = iNumber > 9 ? (int)log10((double)iNumber) + 1 : 1;
 
-	for (int i = digit_count; i > 0; --i)
+	for (int i = iCount; i > 0; --i)
 	{
-		int digit = number / s_TenPowers[i - 1];
+		int digit = iNumber / s_TenPowers[i - 1];
 
 		SPR_Set(GetSprite(m_HUD_number_0 + digit), r, g, b);
 		SPR_DrawAdditive(0, x, y, &GetSpriteRect(m_HUD_number_0 + digit));
-		x += digit_width;
+		x += iWidth;
 
-		number -= digit * s_TenPowers[i - 1];
+		iNumber -= digit * s_TenPowers[i - 1];
 	}
 
 	return x;
 }
 
-int CHud::DrawHudNumberCentered(int x, int y, int number, int r, int g, int b)
+int CHud::DrawHudNumberCentered(int x, int y, int iNumber, int r, int g, int b)
 {
-	int digit_width = GetSpriteRect(m_HUD_number_0).right - GetSpriteRect(m_HUD_number_0).left;
-	int digit_count = number > 9 ? (int)log10((double)number) + 1 : 1;
+	int iWidth = GetSpriteRect(m_HUD_number_0).right - GetSpriteRect(m_HUD_number_0).left;
+	int iCount = iNumber > 9 ? (int)log10((double)iNumber) + 1 : 1;
 
-	return DrawHudNumberC(x - (digit_width * digit_count) / 2, y, number, r, g, b);
+	return DrawHudNumber(x - (iWidth * iCount) / 2, y, iNumber, r, g, b);
 }
 
 int CHud::GetNumWidth( int iNumber, int iFlags )
