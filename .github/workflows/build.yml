@@ -115,7 +115,7 @@ jobs:
       with:
         java-version: 11
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+      uses: android-actions/setup-android@v2
     - name: Build
       run: ./gradlew assemDebug
       working-directory: android
