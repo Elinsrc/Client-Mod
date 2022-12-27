@@ -132,19 +132,3 @@ jobs:
       with:
         name: Client-Mod-windows-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}
-
-    - name: Setup Java
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v2
-    - name: Build
-      run: ./gradlew assemDebug
-      working-directory: android
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: Android
-        path: android/app/build/outputs/apk/debug/app-debug.apk
-
