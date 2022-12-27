@@ -7,6 +7,11 @@ jobs:
       name: Android
       runs-on: ubuntu-latest
       steps:
+        - name: Checkout sources
+          uses: actions/checkout@v2
+          with:
+            fetch-depth: 0
+            submodules: recursive
         - name: Setup Java
           uses: actions/setup-java@v1
           with:
