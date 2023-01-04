@@ -1647,6 +1647,16 @@ void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 	{
 		V_CalcSpectatorRefdef( pparams );	
 	}
+	else if ( CL_IsThirdPerson() )
+	{
+		V_CalcNormalRefdef ( pparams );
+
+		pparams->vieworg = pparams->simorg;
+		pparams->vieworg = pparams->vieworg + pparams->viewheight;
+		pparams->viewangles = pparams->cl_viewangles + pparams->punchangle + g_ev_punchangle;
+
+		V_GetChaseOrigin( pparams->viewangles, pparams->vieworg, cl_chasedist->value, pparams->vieworg );
+	}
 	else if( !pparams->paused )
 	{
 		V_CalcNormalRefdef( pparams );
