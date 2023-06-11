@@ -1,3 +1,4 @@
+
 name: build
 
 on: [push, pull_request]
@@ -26,8 +27,6 @@ jobs:
           with:
             name: Client-Mod-android
             path: android/app/build/outputs/apk/debug/app-debug.apk
-  name: build
-
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -73,7 +72,6 @@ jobs:
         sudo apt update
         ./steam-runtime/setup_chroot.sh --i386 --tarball ./com.valvesoftware.SteamRuntime.Sdk-i386-scout-sysroot.tar.gz
         sudo sed -i 's/groups=sudo/groups=adm/g' /etc/schroot/chroot.d/steamrt_scout_i386.conf
-
     - name: Build on Linux
       if: startsWith(matrix.os, 'ubuntu')
       run: |
@@ -87,7 +85,6 @@ jobs:
         cp vgui_support/vgui-dev/lib/vgui.so build-vgui/cl_dll
         schroot --chroot steamrt_scout_i386 -- cmake --build build-vgui --target all
         schroot --chroot steamrt_scout_i386 -- cmake --build build-vgui --target install
-
     - name: Add msbuild to PATH
       if: startsWith(matrix.os, 'windows')
       uses: microsoft/setup-msbuild@v1.1
@@ -101,7 +98,6 @@ jobs:
       run: |
         cmake -G "Visual Studio 16 2019" -A Win32 -B build -DUSE_VGUI=ON -DCMAKE_INSTALL_PREFIX="dist-vgui"
         msbuild -verbosity:normal /property:Configuration=Release build/INSTALL.vcxproj
-
     - name: Extract branch name
       shell: bash
       run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | tr '/' '_')" >> $GITHUB_OUTPUT
@@ -114,23 +110,23 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v3
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-linux
+        name: Client-Mod-linux
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload linux artifact with vgui
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v3
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-linux-vgui
+        name: Client-Mod-linux-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact
       if: startsWith(matrix.os, 'windows')
       uses: actions/upload-artifact@v3
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-windows
+        name: Client-Mod-windows
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact with vgui
       if: startsWith(matrix.os, 'windows')
       uses: actions/upload-artifact@v3
       with:
-        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-windows-vgui
+        name: Client-Mod-windows-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}
