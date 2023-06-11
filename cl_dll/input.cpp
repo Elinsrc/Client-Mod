@@ -79,6 +79,8 @@ cvar_t	*cl_yawspeed;
 cvar_t	*cl_pitchspeed;
 cvar_t	*cl_anglespeedkey;
 cvar_t	*cl_vsmoothing;
+
+// OpenAG
 cvar_t	*cl_autojump;
 
 extern "C"
@@ -87,6 +89,7 @@ extern "C"
 	int g_inwater = false;
 	int g_walking = true; // Movetype == MOVETYPE_WALK. Filters out noclip, being on ladder, etc.
 }
+
 /*
 ===============================================================================
 
@@ -878,6 +881,7 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 	//
 	cmd->buttons = CL_ButtonBits( 1 );
 
+	// OpenAG
 	{
 		static bool s_jump_was_down_last_frame = false;
 		if( cl_autojump->value != 0.0f )
@@ -896,6 +900,7 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 		}
 		s_jump_was_down_last_frame = ( ( cmd->buttons & IN_JUMP ) != 0 );
 	}
+
 
 #if USE_VGUI
 	// If they're in a modal dialog, ignore the attack button.
@@ -1165,7 +1170,7 @@ void InitInput( void )
 	cl_vsmoothing		= gEngfuncs.pfnRegisterVariable( "cl_vsmoothing", "0.05", FCVAR_ARCHIVE );
 
 	cl_autojump		= gEngfuncs.pfnRegisterVariable( "cl_autojump", "1", FCVAR_ARCHIVE );
-	
+
 	m_pitch			= gEngfuncs.pfnRegisterVariable( "m_pitch","0.022", FCVAR_ARCHIVE );
 	m_yaw			= gEngfuncs.pfnRegisterVariable( "m_yaw","0.022", FCVAR_ARCHIVE );
 	m_forward		= gEngfuncs.pfnRegisterVariable( "m_forward","1", FCVAR_ARCHIVE );

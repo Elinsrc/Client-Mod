@@ -36,8 +36,6 @@
 #include "r_studioint.h"
 #include "com_model.h"
 
-extern cvar_t *GaussBeamColor;
-
 extern engine_studio_api_t IEngineStudio;
 
 static int g_tracerCount[32];
@@ -249,7 +247,7 @@ char *EV_HLDM_DamageDecal( physent_t *pe )
 	}
 	else if( pe->rendermode != kRenderNormal )
 	{
-		sprintf( decalname, "{bproof1" );
+		strcpy( decalname, "{bproof1" );
 	}
 	else
 	{
@@ -818,7 +816,6 @@ extern float g_flApplyVel;
 
 void EV_FireGauss( event_args_t *args )
 {
-	int r, g ,b;
 	int idx;
 	vec3_t origin;
 	vec3_t angles;
@@ -840,9 +837,6 @@ void EV_FireGauss( event_args_t *args )
 	physent_t *pEntity;
 	int m_iBeam, m_iGlow, m_iBalls;
 	vec3_t up, right, forward;
-
-	const char *colors = GaussBeamColor->string;
-	sscanf( colors, "%d %d %d", &r, &g, &b);
 
 	idx = args->entindex;
 	VectorCopy( args->origin, origin );
@@ -905,35 +899,38 @@ void EV_FireGauss( event_args_t *args )
 			}
 			fFirstBeam = 0;
 
-			if ( CVAR_GET_FLOAT("cl_gausscolor") )
-			{
-			  const char *colors = GaussBeamColor->string;
-			  sscanf( colors, "%d %d %d", &r, &g, &b);
-			  
-			  gEngfuncs.pEfxAPI->R_BeamEntPoint( 
-			    idx | 0x1000, tr.endpos, m_iBeam, 0.1f, m_fPrimaryFire ? 1.0f : 2.5f, 0.0f, (m_fPrimaryFire ? 128.0f : flDamage) / 255.0f, 0, 0, 0, r, g, b );
-			}
-			else
-			{
-			  gEngfuncs.pEfxAPI->R_BeamEntPoint(
-			    idx | 0x1000, tr.endpos, m_iBeam, 0.1f, m_fPrimaryFire ? 1.0f : 2.5f, 	0.0f,	(m_fPrimaryFire ? 128.0f : flDamage) / 255.0f, 0, 0, 0, (m_fPrimaryFire ? 255 : 255) / 255.0f, (m_fPrimaryFire ? 128 : 255) / 255.0f, (m_fPrimaryFire ? 0 : 255) / 255.0f );
-			}
+			gEngfuncs.pEfxAPI->R_BeamEntPoint( 
+				idx | 0x1000,
+				tr.endpos,
+				m_iBeam,
+				0.1f,
+				m_fPrimaryFire ? 1.0f : 2.5f,
+				0.0f,
+				(m_fPrimaryFire ? 128.0f : flDamage) / 255.0f,
+				0,
+				0,
+				0,
+				(m_fPrimaryFire ? 255 : 255) / 255.0f,
+				(m_fPrimaryFire ? 128 : 255) / 255.0f,
+				(m_fPrimaryFire ? 0 : 255) / 255.0f
+			);
 		}
 		else
 		{
-			if ( CVAR_GET_FLOAT("cl_gausscolor") )
-			{
-			  const char *colors = GaussBeamColor->string;
-			  sscanf( colors, "%d %d %d", &r, &g, &b);
-			  
-			  gEngfuncs.pEfxAPI->R_BeamPoints( 
-			    vecSrc, tr.endpos, m_iBeam, 0.1f, m_fPrimaryFire ? 1.0f : 2.5f, 0.0f, (m_fPrimaryFire ? 128.0f : flDamage) / 255.0f, 0, 0, 0, r, g, b );
-			}
-			else
-			{
-			  gEngfuncs.pEfxAPI->R_BeamPoints(
-			    vecSrc,	tr.endpos, m_iBeam, 0.1f,	m_fPrimaryFire ? 1.0f : 2.5f,	0.0f,	(m_fPrimaryFire ? 128.0f : flDamage) / 255.0f,	0, 0, 0, (m_fPrimaryFire ? 255 : 255) / 255.0f, (m_fPrimaryFire ? 128 : 255) / 255.0f, (m_fPrimaryFire ? 0 : 255) / 255.0f );
-			}
+			gEngfuncs.pEfxAPI->R_BeamPoints( vecSrc,
+				tr.endpos,
+				m_iBeam,
+				0.1f,
+				m_fPrimaryFire ? 1.0f : 2.5f,
+				0.0f,
+				(m_fPrimaryFire ? 128.0f : flDamage) / 255.0f,
+				0,
+				0,
+				0,
+				(m_fPrimaryFire ? 255 : 255) / 255.0f,
+				(m_fPrimaryFire ? 128 : 255) / 255.0f,
+				(m_fPrimaryFire ? 0 : 255) / 255.0f
+			);
 		}
 
 		pEntity = gEngfuncs.pEventAPI->EV_GetPhysent( tr.ent );

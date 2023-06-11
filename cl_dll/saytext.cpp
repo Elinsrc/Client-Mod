@@ -21,12 +21,12 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
+
 #include <ctime>
 #include <string.h>
 #include <stdio.h>
 
 cvar_t *cl_logchat;
-cvar_t *cl_chatbg;
 
 #if USE_VGUI
 #include "vgui_TeamFortressViewport.h"
@@ -61,7 +61,6 @@ int CHudSayText::Init( void )
 	InitHUDData();
 
 	cl_logchat = CVAR_CREATE("cl_logchat", "0", FCVAR_ARCHIVE);
-	cl_chatbg = CVAR_CREATE("cl_chatbg", "0", FCVAR_ARCHIVE);
 	m_HUD_saytext =		gEngfuncs.pfnRegisterVariable( "hud_saytext", "1", 0 );
 	m_HUD_saytext_time =	gEngfuncs.pfnRegisterVariable( "hud_saytext_time", "5", 0 );
 
@@ -109,19 +108,6 @@ int CHudSayText::Draw( float flTime )
 		return 1;
 #endif
 
-    // shit code unfinished 
-	int ypos = Y_START - gHUD.m_iFontHeight;
-	int xpos = LINE_START ;
-	int scale_x = ScreenHeight / 2;
-	int scale_y = ScreenHeight / gHUD.m_iFontHeight * 4;
-
-	if( cl_chatbg && cl_chatbg->value )
-	{
-		gHUD.DrawDarkRectangle( xpos - 5, ypos - 5, scale_x, scale_y );
-		DrawUtfString( LINE_START, ypos, ScreenHeight, "Chat", 255, 140, 0 );
-		FillRGBA( xpos - 4, ypos +22, ScreenHeight / 2 - 2, 1, 255, 140, 0, 255 );
-	}
-	//
 
 	// make sure the scrolltime is within reasonable bounds,  to guard against the clock being reset
 	flScrollTime = Q_min( flScrollTime, flTime + m_HUD_saytext_time->value );
@@ -151,7 +137,7 @@ int CHudSayText::Draw( float flTime )
 				static char buf[MAX_PLAYER_NAME_LENGTH + 32];
 
 				// draw the first x characters in the player color
-				strncpy( buf, g_szLineBuffer[i], Q_min(g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 32 ) );
+				strncpy( buf, g_szLineBuffer[i], Q_min(g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 31 ) );
 				buf[Q_min( g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 31 )] = 0;
 				DrawSetTextColor( g_pflNameColors[i][0], g_pflNameColors[i][1], g_pflNameColors[i][2] );
 				int x = DrawConsoleString( LINE_START, y, buf );
@@ -195,8 +181,6 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 	ConsolePrint( pszBuf );
 #endif
 
-	int i;
-
 	if (cl_logchat->value != 0.0f)
 	{
 		FILE *logchat = fopen("logchat.txt", "a");
@@ -207,7 +191,8 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 		fprintf( logchat, "%s %s",time_str ,pszBuf );
 		fclose( logchat );
 	}
-	
+
+	int i;
 	// find an empty string slot
 	for( i = 0; i < MAX_LINES; i++ )
 	{

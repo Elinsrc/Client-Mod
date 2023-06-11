@@ -29,11 +29,11 @@
 
 #include "mobility_int.h"
 
-cvar_t *hud_health100; 
-//cvar_t *hud_health80;
-cvar_t *hud_health60;
-cvar_t *hud_health40;
-cvar_t *hud_health20;
+cvar_t *vis_health100;
+cvar_t *vis_health80;
+cvar_t *vis_health60;
+cvar_t *vis_health40;
+cvar_t *vis_health20;
 
 DECLARE_MESSAGE( m_Health, Health )
 DECLARE_MESSAGE( m_Health, Damage )
@@ -73,11 +73,11 @@ int CHudHealth::Init( void )
 
 	memset( m_dmg, 0, sizeof(DAMAGE_IMAGE) * NUM_DMG_TYPES );
 
-	hud_health100 = CVAR_CREATE("hud_health100", "0 250 0", FCVAR_ARCHIVE);
-	//hud_health80 = CVAR_CREATE("hud_health80", "0 0 0", FCVAR_ARCHIVE)
-	hud_health60 = CVAR_CREATE("hud_health60", "250 250 0", FCVAR_ARCHIVE);
-	hud_health40 = CVAR_CREATE("hud_health40", "250 100 0", FCVAR_ARCHIVE);
-	hud_health20 = CVAR_CREATE("hud_health20", "250 0 0", FCVAR_ARCHIVE);
+	vis_health100 = CVAR_CREATE("vis_health100", "0 250 0", FCVAR_ARCHIVE);
+	vis_health80 = CVAR_CREATE("vis_health80", "0 250 0", FCVAR_ARCHIVE);
+	vis_health60 = CVAR_CREATE("vis_health60", "250 250 0", FCVAR_ARCHIVE);
+	vis_health40 = CVAR_CREATE("vis_health40", "250 100 0", FCVAR_ARCHIVE);
+	vis_health20 = CVAR_CREATE("vis_health20", "250 0 0", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem( this );
 	return 1;
@@ -164,55 +164,111 @@ int CHudHealth::MsgFunc_Damage( const char *pszName, int iSize, void *pbuf )
 // Green <-> Yellow <-> Red ramp
 void CHudHealth::GetPainColor( int &r, int &g, int &b )
 {
-  int iHealth = m_iHealth;
-  
-  if ( CVAR_GET_FLOAT("hud_new") )
-  {
-    if( m_iHealth > 59 )
-    {
-      const char *color = hud_health100->string;
-      sscanf( color, "%d %d %d", &r, &g, &b);
-    }
-    else if( m_iHealth > 39 )
-    {
-      const char *color = hud_health60->string;
-      sscanf( color, "%d %d %d", &r, &g, &b);
-    }
-    else if( m_iHealth > 19 )
-    {
-     const char *color = hud_health40->string;
-      sscanf( color, "%d %d %d", &r, &g, &b);
-    }
-    else if( m_iHealth > -1 )
-    {
-      const char *color = hud_health20->string;
-      sscanf( color, "%d %d %d", &r, &g, &b);
-    }
-  }
-  else
-  {
-    #if 0
-        if( iHealth > 25 )
-            iHealth -= 25;
-        else if( iHealth < 0 )
-            iHealth = 0;
-        
-        g = iHealth * 255 / 100;
-        r = 255 - g;
-        b = 0;
+	int iHealth = m_iHealth;
+
+	if ( CVAR_GET_FLOAT("hud_vis") )
+	{
+		if( m_iHealth > 79 )
+		{
+			const char *color = vis_health100->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+		else if( m_iHealth > 59 )
+		{
+			const char *color = vis_health80->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+		else if( m_iHealth > 39 )
+		{
+			const char *color = vis_health60->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+		else if( m_iHealth > 19 )
+		{
+			const char *color = vis_health40->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+		else if( m_iHealth > -1 )
+		{
+			const char *color = vis_health20->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+	}
+	else
+	{
+	#if 0
+		if( iHealth > 25 )
+			iHealth -= 25;
+		else if( iHealth < 0 )
+			iHealth = 0;
+
+		g = iHealth * 255 / 100;
+		r = 255 - g;
+		b = 0;
     #else
-        if( m_iHealth > 25 )
-        {
-            UnpackRGB( r, g, b, RGB_YELLOWISH );
-        }
-        else
-        {
-            r = 250;
-            g = 0;
-            b = 0;
-        }
-    #endif
-  }
+		if( m_iHealth > 25 )
+		{
+			UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+
+		}
+		else
+		{
+			r = 250;
+			g = 0;
+			b = 0;
+		}
+	#endif
+	}
 }
 
 int CHudHealth::Draw( float flTime )
@@ -270,8 +326,7 @@ int CHudHealth::Draw( float flTime )
 
 		int iHeight = gHUD.m_iFontHeight;
 		int iWidth = HealthWidth / 10;
-		//UnpackRGB( r, g, b, RGB_YELLOWISH );
-		GetPainColor( r, g, b );
+		UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 		FillRGBA( x, y, iWidth, iHeight, r, g, b, a );
 	}
 
@@ -420,7 +475,7 @@ int CHudHealth::DrawDamage( float flTime )
 	if( !m_bitsDamage )
 		return 1;
 
-	UnpackRGB( r, g, b, RGB_YELLOWISH );
+	UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 	a = (int)( fabs( sin( flTime * 2.0f ) ) * 256.0f );
 

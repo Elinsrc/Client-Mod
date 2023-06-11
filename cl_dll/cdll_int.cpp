@@ -50,19 +50,9 @@ TeamFortressViewport *gViewPort = NULL;
 #endif
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
 
-extern "C" int g_bhopcap;
 void InitInput( void );
 void EV_HookEvents( void );
 void IN_Commands( void );
-
-int __MsgFunc_Bhopcap( const char *pszName, int iSize, void *pbuf )
-{
-	BEGIN_READ( pbuf, iSize );
-
-	g_bhopcap = READ_BYTE();
-
-	return 1;
-}
 
 /*
 ========================== 
@@ -169,11 +159,12 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 
 	// for now filterstuffcmd is last in the engine interface
 	memcpy( &gEngfuncs, pEnginefuncs, sizeof(cl_enginefunc_t) - sizeof( void * ) );
-	
-	gEngfuncs.pfnClientCmd( "clear" );
-	gEngfuncs.pfnClientCmd( "echo \"^2Client Mod\"" );
-	gEngfuncs.pfnClientCmd( "echo \"^2GitHub page: https://github.com/Elinsrc/Client-Mod/\"" );
-	gEngfuncs.pfnClientCmd( "exec customconfig.cfg" );
+
+	ClientCmd( "clear" );
+	ClientCmd( "toggleconsole" );
+	ClientCmd( "echo \"Client Mod\"" );
+	ClientCmd( "echo \"GitHub page: https://github.com/Elinsrc/Client-Mod/\"" );
+	ClientCmd( "exec customconfig.cfg" );
 
 
 	if( gEngfuncs.pfnGetCvarPointer( "cl_filterstuffcmd" ) == 0 )
@@ -305,8 +296,6 @@ void DLLEXPORT HUD_Init( void )
 #if USE_VGUI
 	Scheme_Init();
 #endif
-
-	gEngfuncs.pfnHookUserMsg( "Bhopcap", __MsgFunc_Bhopcap );
 }
 
 /*

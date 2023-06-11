@@ -88,8 +88,7 @@ public:
 };
 static CHLVoiceStatusHelper g_VoiceStatusHelper;
 #endif
-cvar_t *hud_color;
-cvar_t *GaussBeamColor;
+
 cvar_t *hud_textmode;
 float g_hud_text_color[3];
 
@@ -98,6 +97,8 @@ extern client_sprite_t *GetSpriteList( client_sprite_t *pList, const char *psz, 
 extern cvar_t *sensitivity;
 cvar_t *cl_lw = NULL;
 cvar_t *cl_viewbob = NULL;
+cvar_t *cl_rollspeed;
+cvar_t *cl_rollangle;
 
 void ShutdownInput( void );
 
@@ -386,16 +387,15 @@ void CHud::Init( void )
 	m_pCvarDraw = CVAR_CREATE( "hud_draw", "1", FCVAR_ARCHIVE );
 	cl_lw = gEngfuncs.pfnGetCvarPointer( "cl_lw" );
 	cl_viewbob = CVAR_CREATE( "cl_viewbob", "0", FCVAR_ARCHIVE );
-
-	hud_color = CVAR_CREATE( "hud_color", "95 95 255", FCVAR_ARCHIVE );
-	CVAR_CREATE( "hud_weapon", "1", FCVAR_ARCHIVE );
-	CVAR_CREATE( "hud_new", "0", FCVAR_ARCHIVE );
-	CVAR_CREATE( "cl_weaponlowering","1", FCVAR_ARCHIVE );
-	CVAR_CREATE( "cl_weaponsway","1", FCVAR_ARCHIVE );
-	CVAR_CREATE( "cl_gausscolor", "0", FCVAR_ARCHIVE );
-	GaussBeamColor = CVAR_CREATE( "cl_gaussbeam", "255 0 0", FCVAR_ARCHIVE );
-
+	cl_rollangle = gEngfuncs.pfnRegisterVariable( "cl_rollangle", "0", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
+	cl_rollspeed = gEngfuncs.pfnRegisterVariable( "cl_rollspeed", "200", FCVAR_CLIENTDLL | FCVAR_ARCHIVE );
 	m_pSpriteList = NULL;
+
+	// OpenAG
+	m_pCvarColor = CVAR_CREATE( "hud_color", "", FCVAR_ARCHIVE );
+	CVAR_CREATE( "hud_weapon", "0", FCVAR_ARCHIVE );
+
+	CVAR_CREATE( "hud_vis", "0", FCVAR_ARCHIVE );
 
 	m_szServerName[0] = 0;
 
@@ -537,8 +537,8 @@ void CHud::VidInit( void )
 					sprintf( sz, "sprites/%s.spr", p->szSprite );
 					m_rghSprites[index] = SPR_Load( sz );
 					m_rgrcRects[index] = p->rc;
-					strncpy( &m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH], p->szName, MAX_SPRITE_NAME_LENGTH );
-
+					strncpy( &m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH], p->szName, MAX_SPRITE_NAME_LENGTH - 1 );
+					m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH + ( MAX_SPRITE_NAME_LENGTH - 1 )] = '\0';
 					index++;
 				}
 
@@ -580,8 +580,8 @@ void CHud::VidInit( void )
 				sprintf( sz, "sprites/%s.spr", p->szSprite );
 				m_rghSprites[index] = SPR_Load( sz );
 				m_rgrcRects[index] = p->rc;
-				strncpy( &m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH], p->szName, MAX_SPRITE_NAME_LENGTH );
-
+				strncpy( &m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH], p->szName, MAX_SPRITE_NAME_LENGTH - 1 );
+				m_rgszSpriteNames[index * MAX_SPRITE_NAME_LENGTH + ( MAX_SPRITE_NAME_LENGTH - 1 )] = '\0';
 				index++;
 			}
 

@@ -25,11 +25,11 @@
 #include <string.h>
 #include <stdio.h>
 
-cvar_t *hud_battery100; 
-//cvar_t *hud_battery80;
-cvar_t *hud_battery60;
-cvar_t *hud_battery40;
-cvar_t *hud_battery20;
+cvar_t *vis_battery100;
+cvar_t *vis_battery80;
+cvar_t *vis_battery60;
+cvar_t *vis_battery40;
+cvar_t *vis_battery20;
 
 DECLARE_MESSAGE( m_Battery, Battery )
 
@@ -41,11 +41,11 @@ int CHudBattery::Init( void )
 
 	HOOK_MESSAGE( Battery );
 
-	hud_battery100 = CVAR_CREATE("hud_battery100", "0 250 0", FCVAR_ARCHIVE);
-	//hud_battery80 = CVAR_CREATE("hud_battery80", "0 0 0", FCVAR_ARCHIVE)
-	hud_battery60 = CVAR_CREATE("hud_battery60", "250 250 0", FCVAR_ARCHIVE);
-	hud_battery40 = CVAR_CREATE("hud_battery40", "250 100 0", FCVAR_ARCHIVE);
-	hud_battery20 = CVAR_CREATE("hud_battery20", "250 0 0", FCVAR_ARCHIVE);
+	vis_battery100 = CVAR_CREATE("vis_battery100", "0 250 0", FCVAR_ARCHIVE);
+	vis_battery80 = CVAR_CREATE("vis_battery80", "0 250 0", FCVAR_ARCHIVE);
+	vis_battery60 = CVAR_CREATE("vis_battery60", "250 250 0", FCVAR_ARCHIVE);
+	vis_battery40 = CVAR_CREATE("vis_battery40", "250 100 0", FCVAR_ARCHIVE);
+	vis_battery20 = CVAR_CREATE("vis_battery20", "250 0 0", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem( this );
 
@@ -83,33 +83,88 @@ int CHudBattery::MsgFunc_Battery( const char *pszName,  int iSize, void *pbuf )
 
 void CHudBattery::GetPainColor( int &r, int &g, int &b )
 {
-  if ( CVAR_GET_FLOAT("hud_new") )
-  {
-    int iBattery = m_iBat;
-    
-    if( m_iBat > 59 )
-    {
-      const char *color = hud_battery100->string;
-      sscanf( color, "%d %d %d", &r, &g, &b);
-    }
-    else if( m_iBat > 39 )
-    {
-      const char *color = hud_battery60->string;
-      sscanf( color, "%d %d %d", &r, &g, &b); 
-    }
-    else if( m_iBat > 19 )
-    {
-      const char *color = hud_battery40->string;
-      sscanf( color, "%d %d %d", &r, &g, &b);
-    }
-    else if( m_iBat > -1 )
-    {
-      const char *color = hud_battery20->string;
-      sscanf( color, "%d %d %d", &r, &g, &b);
-    }
-  }
-  else
-    UnpackRGB( r, g, b, RGB_YELLOWISH );
+	if ( CVAR_GET_FLOAT("hud_vis") )
+	{
+		int iBattery = m_iBat;
+
+		if( m_iBat > 79 )
+		{
+			const char *color = vis_battery100->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+		else if( m_iBat > 59 )
+		{
+			const char *color = vis_battery80->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+		else if( m_iBat > 39 )
+		{
+			const char *color = vis_battery60->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+		else if( m_iBat > 19 )
+		{
+			const char *color = vis_battery40->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+		else if( m_iBat > -1 )
+		{
+			const char *color = vis_battery20->string;
+			if (sscanf( color, "%d %d %d", &r, &g, &b) == 3) {
+				r = Q_max(r, 0);
+				g = Q_max(g, 0);
+				b = Q_max(b, 0);
+
+				r = Q_min(r, 255);
+				g = Q_min(g, 255);
+				b = Q_min(b, 255);
+			} else {
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+			}
+		}
+	}
+	else
+		UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 }
 
 int CHudBattery::Draw( float flTime )
@@ -123,7 +178,7 @@ int CHudBattery::Draw( float flTime )
 	rc = *m_prc2;
 	rc.top  += m_iHeight * ( (float)( 100 - ( Q_min( 100, m_iBat ) ) ) * 0.01f );	// battery can go from 0 to 100 so * 0.01 goes from 0 to 1
 
-	//UnpackRGB( r, g, b, RGB_YELLOWISH );
+	//UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 	if( !( gHUD.m_iWeaponBits & ( 1 << ( WEAPON_SUIT ) ) ) )
 		return 1;

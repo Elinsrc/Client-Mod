@@ -19,7 +19,6 @@
 #define CL_UTIL_H
 #include "exportdef.h"
 #include "cvardef.h"
-extern cvar_t	*hud_color;
 
 #if !defined(TRUE)
 #define TRUE 1
@@ -175,19 +174,11 @@ extern vec3_t vec3_origin;
 // disable 'truncation from 'const double' to 'float' warning message
 #pragma warning( disable: 4305 )
 
-inline void UnpackRGB( int &r, int &g, int &b, unsigned long ulRGB ) 
-{ 
-  if ( ulRGB == RGB_YELLOWISH ) 
-  { 
-    const char *colors = hud_color->string;
-    sscanf( colors, "%d %d %d", &r, &g, &b);
-  }
-  else 
-  { 
-    r = (ulRGB & 0xFF0000) >>16;
-    g = (ulRGB & 0xFF00) >> 8;
-    b = ulRGB & 0xFF; 
-  } 
+inline void UnpackRGB( int &r, int &g, int &b, unsigned long ulRGB )\
+{\
+	r = ( ulRGB & 0xFF0000 ) >> 16;\
+	g = ( ulRGB & 0xFF00 ) >> 8;\
+	b = ulRGB & 0xFF;\
 }
 
 HSPRITE LoadSprite( const char *pszName );

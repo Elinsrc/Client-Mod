@@ -288,6 +288,8 @@ int CHudAmmo::Init( void )
 	CVAR_CREATE( "hud_drawhistory_time", HISTORY_DRAW_TIME, 0 );
 	CVAR_CREATE( "hud_fastswitch", "0", FCVAR_ARCHIVE );		// controls whether or not weapons can be selected in one keypress
 
+	CVAR_CREATE( "hud_weapon", "0", FCVAR_ARCHIVE );
+
 	m_iFlags |= HUD_ACTIVE; //!!!
 
 	gWR.Init();
@@ -870,7 +872,7 @@ int CHudAmmo::Draw( float flTime )
 	if( m_fFade > 0 )
 		m_fFade -= ( (float)gHUD.m_flTimeDelta * 20.0f );
 
-	UnpackRGB( r, g, b, RGB_YELLOWISH );
+	UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 	ScaleColors( r, g, b, a );
 
@@ -898,8 +900,7 @@ int CHudAmmo::Draw( float flTime )
 
 			x += AmmoWidth / 2;
 
-			UnpackRGB( r,g,b, RGB_YELLOWISH );
-
+			UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 			// draw the | bar
 			FillRGBA( x, y, iBarWidth, gHUD.m_iFontHeight, r, g, b, a );
 
@@ -921,6 +922,7 @@ int CHudAmmo::Draw( float flTime )
 		SPR_Set( m_pWeapon->hAmmo, r, g, b );
 		SPR_DrawAdditive( 0, x, y - iOffset, &m_pWeapon->rcAmmo );
 	}
+
 	if ( CVAR_GET_FLOAT("hud_weapon") )
 	{
 	  if ( gWR.HasAmmo(m_pWeapon) )
@@ -929,7 +931,7 @@ int CHudAmmo::Draw( float flTime )
 	  }
 	  else
 	  {
-	    UnpackRGB(r,g,b, RGB_REDISH);
+	    UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 	    ScaleColors(r, g, b, 128);
 	  }
 	  SPR_Set(m_pWeapon->hInactive, r, g, b);
@@ -937,6 +939,7 @@ int CHudAmmo::Draw( float flTime )
 	  int iOffset = (m_pWeapon->rcInactive.bottom - m_pWeapon->rcInactive.top)/8;
 	  SPR_DrawAdditive(0, x, y - iOffset , &m_pWeapon->rcInactive);
 	}
+
 	// Does weapon have seconday ammo?
 	if( pw->iAmmo2Type > 0 )
 	{
@@ -983,7 +986,7 @@ int DrawBar( int x, int y, int width, int height, float f )
 		width -= w;
 	}
 
-	UnpackRGB( r, g, b, RGB_YELLOWISH );
+	UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 	FillRGBA( x, y, width, height, r, g, b, 128 );
 
@@ -1051,7 +1054,7 @@ int CHudAmmo::DrawWList( float flTime )
 	{
 		int iWidth;
 
-		UnpackRGB( r, g, b, RGB_YELLOWISH );
+		UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 		if( iActiveSlot == i )
 			a = 255;
@@ -1102,7 +1105,7 @@ int CHudAmmo::DrawWList( float flTime )
 				if( !p || !p->iId )
 					continue;
 
-				UnpackRGB( r, g, b, RGB_YELLOWISH );
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 				// if active, then we must have ammo.
 				if( gpActiveSel == p )
@@ -1139,7 +1142,7 @@ int CHudAmmo::DrawWList( float flTime )
 		else
 		{
 			// Draw Row of weapons.
-			UnpackRGB( r, g, b, RGB_YELLOWISH );
+			UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 			for( int iPos = 0; iPos < MAX_WEAPON_POSITIONS; iPos++ )
 			{
@@ -1150,7 +1153,7 @@ int CHudAmmo::DrawWList( float flTime )
 
 				if( gWR.HasAmmo( p ) )
 				{
-					UnpackRGB( r, g, b, RGB_YELLOWISH );
+					UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 					a = 128;
 				}
 				else

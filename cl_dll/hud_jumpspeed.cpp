@@ -1,5 +1,5 @@
+// OpenAG
 #include <cmath>
-#include <cstring>
 
 #include "hud.h"
 #include "cl_util.h"
@@ -11,12 +11,9 @@ int CHudJumpspeed::Init()
 {
 	m_iFlags = HUD_ACTIVE;
 
-	hud_jumpspeed = CVAR_CREATE("hud_jumpspeed", "1", FCVAR_ARCHIVE);
+	hud_jumpspeed = CVAR_CREATE("hud_jumpspeed", "0", FCVAR_ARCHIVE);
 	hud_jumpspeed_below_cross = CVAR_CREATE("hud_jumpspeed_below_cross", "0", FCVAR_ARCHIVE);
 	hud_jumpspeed_height = CVAR_CREATE("hud_jumpspeed_height", "0", FCVAR_ARCHIVE);
-	cl_colored_jump = CVAR_CREATE("cl_colored_jump", "0", FCVAR_ARCHIVE);
-	hud_jumpcolor = CVAR_CREATE("hud_jumpcolor", "255 160 0", FCVAR_ARCHIVE);
-
 
 	gHUD.AddHudElem(this);
 	return 0;
@@ -34,17 +31,7 @@ int CHudJumpspeed::Draw(float flTime)
 		return 0;
 
 	int r, g, b;
-	
-	if (cl_colored_jump->value != 0.0f)
-	{
-	  const char *colors = hud_jumpcolor->string;
-	  sscanf( colors, "%d %d %d", &r, &g, &b);
-	}
-	else
-	{
-	  UnpackRGB( r, g, b, RGB_YELLOWISH );
-	}
-
+	UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 	int y;
 	if (hud_jumpspeed_below_cross->value != 0.0f)

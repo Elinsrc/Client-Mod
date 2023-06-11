@@ -8,8 +8,6 @@ class CHudJumpspeed : public CHudBase
 	cvar_t* hud_jumpspeed;
 	cvar_t* hud_jumpspeed_below_cross;
 	cvar_t* hud_jumpspeed_height;
-	cvar_t* cl_colored_jump;
-        cvar_t* hud_jumpcolor;
 
 	int fadingFrom[3];
 	float prevVel[3] = { 0.0f, 0.0f, 0.0f };

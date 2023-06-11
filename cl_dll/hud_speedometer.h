@@ -3,6 +3,9 @@
 
 class CHudSpeedometer : public CHudBase
 {
+	cvar_t *hud_speedometer;
+	cvar_t *hud_speedometer_below_cross;
+
 public:
 	virtual int Init();
 	virtual int VidInit();

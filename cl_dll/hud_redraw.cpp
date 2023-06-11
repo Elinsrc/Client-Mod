@@ -148,6 +148,8 @@ int CHud::Redraw( float flTime, int intermission )
 	// if no redrawing is necessary
 	// return 0;
 
+	UpdateDefaultHUDColor();
+
 	if( m_pCvarDraw->value )
 	{
 		HUDLIST *pList = m_pHudList;
@@ -201,9 +203,7 @@ int CHud::Redraw( float flTime, int intermission )
 
 		if( m_hsprCursor == 0 )
 		{
-			char sz[256];
-			sprintf( sz, "sprites/cursor.spr" );
-			m_hsprCursor = SPR_Load( sz );
+			m_hsprCursor = SPR_Load( "sprites/cursor.spr" );
 		}
 
 		SPR_Set( m_hsprCursor, 250, 250, 250 );
@@ -222,6 +222,26 @@ void ScaleColors( int &r, int &g, int &b, int a )
 	r = (int)( r * x );
 	g = (int)( g * x );
 	b = (int)( b * x );
+}
+
+// OpenAG
+void CHud::UpdateDefaultHUDColor()
+{
+	int r, g, b;
+
+	if (sscanf(m_pCvarColor->string, "%d %d %d", &r, &g, &b) == 3) {
+		r = Q_max(r, 0);
+		g = Q_max(g, 0);
+		b = Q_max(b, 0);
+
+		r = Q_min(r, 255);
+		g = Q_min(g, 255);
+		b = Q_min(b, 255);
+
+		m_iDefaultHUDColor = (r << 16) | (g << 8) | b;
+	} else {
+		m_iDefaultHUDColor = RGB_YELLOWISH;
+	}
 }
 
 const unsigned char colors[8][3] =

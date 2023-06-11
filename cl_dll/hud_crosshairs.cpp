@@ -1,5 +1,3 @@
-#include <cmath>
-
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
@@ -61,7 +59,9 @@ int CHudCrosshair::Draw(float time)
 	else
 		gEngfuncs.pfnClientCmd( "crosshair 0" );
 
-	//code written by Ku2zoff
+	// Original code
+	// from https://www.hlfx.ru/forum/showthread.php?s=df9c094f8744c0c1dbff989dc2c2b90f&threadid=3010&postid=83364#post83364
+	// Edited Elinsrc
 	int isize = XRES(cl_cross_size->value);
 	int iLength = XRES(cl_cross_thickness->value);
 	int iDepth = XRES(cl_cross_gap->value);
@@ -71,13 +71,38 @@ int CHudCrosshair::Draw(float time)
 	int outline = cl_cross_outline->value;
 
 	int r, g, b;
-	int rr, gg, bb;
-	int a = cl_cross_alpha->value;
 	const char *cross_color = cl_cross_color->string;
-	sscanf( cross_color, "%d %d %d", &r, &g, &b);
+	if (sscanf( cross_color, "%d %d %d", &r, &g, &b) == 3) {
+		r = Q_max(r, 0);
+		g = Q_max(g, 0);
+		b = Q_max(b, 0);
 
+		r = Q_min(r, 255);
+		g = Q_min(g, 255);
+		b = Q_min(b, 255);
+	} else {
+		r = 255;
+		g = 255;
+		b = 255;
+	}
+
+	int ir, ig, ib;
 	const char *dot_color = cl_cross_dot_color->string;
-	sscanf( dot_color, "%d %d %d", &rr, &gg, &bb);
+	if (sscanf( dot_color, "%d %d %d", &ir, &ig, &ib) == 3) {
+		ir = Q_max(ir, 0);
+		ig = Q_max(ig, 0);
+		ib = Q_max(ib, 0);
+
+		ir = Q_min(ir, 255);
+		ig = Q_min(ig, 255);
+		ib = Q_min(ib, 255);
+	} else {
+		ir = 255;
+		ig = 255;
+		ib = 255;
+	}
+
+	int a = cl_cross_alpha->value;
 
 	// Top outline
 	if ((cl_cross_outline->value) && (cl_cross_top_line->value))
@@ -117,7 +142,7 @@ int CHudCrosshair::Draw(float time)
 	
 	// Dot
 	if (cl_cross_dot->value)
-		FillRGBABlend(xPos - dotsize/2, yPos - dotsize/2, dotsize, dotsize, rr, gg, bb, a);
+		FillRGBABlend(xPos - dotsize/2, yPos - dotsize/2, dotsize, dotsize, ir, ig, ib, a);
 
 	return 0;
 }

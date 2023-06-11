@@ -35,21 +35,19 @@ DEFINES = [
 'XASH_ARMv7',
 'XASH_ARMv8',
 'XASH_BIG_ENDIAN',
-'XASH_BSD',
 'XASH_DOS4GW',
 'XASH_E2K',
 'XASH_EMSCRIPTEN',
 'XASH_FREEBSD',
 'XASH_HAIKU',
 'XASH_IOS',
+'XASH_IRIX',
 'XASH_JS',
 'XASH_LINUX',
+'XASH_LINUX_UNKNOWN',
 'XASH_LITTLE_ENDIAN',
-'XASH_MINGW',
 'XASH_MIPS',
-'XASH_PPC',
 'XASH_MOBILE_PLATFORM',
-'XASH_MSVC',
 'XASH_NETBSD',
 'XASH_OPENBSD',
 'XASH_POSIX',
@@ -59,8 +57,9 @@ DEFINES = [
 'XASH_RISCV_SOFTFP',
 'XASH_SERENITY',
 'XASH_WIN32',
-'XASH_WIN64',
 'XASH_X86',
+'XASH_NSWITCH',
+'XASH_PSVITA',
 ]
 
 def configure(conf):
@@ -76,6 +75,8 @@ def configure(conf):
 	# engine/common/build.c
 	if conf.env.XASH_ANDROID:
 		buildos = "android"
+	elif conf.env.XASH_LINUX_UNKNOWN:
+		buildos = "linuxunkabi"
 	elif conf.env.XASH_WIN32 or conf.env.XASH_LINUX or conf.env.XASH_APPLE:
 		buildos = "" # no prefix for default OS
 	elif conf.env.XASH_FREEBSD:
@@ -92,6 +93,12 @@ def configure(conf):
 		buildos = "haiku"
 	elif conf.env.XASH_SERENITY:
 		buildos = "serenityos"
+	elif conf.env.XASH_NSWITCH:
+		buildos = "nswitch"
+	elif conf.env.XASH_PSVITA:
+		buildos = "psvita"
+	elif conf.env.XASH_IRIX:
+		buildos = "irix"
 	else:
 		conf.fatal("Place your operating system name in build.h and library_naming.py!\n"
 			"If this is a mistake, try to fix conditions above and report a bug")
@@ -99,7 +106,10 @@ def configure(conf):
 	if conf.env.XASH_AMD64:
 		buildarch = "amd64"
 	elif conf.env.XASH_X86:
-		buildarch = ""
+		if conf.env.XASH_WIN32 or conf.env.XASH_LINUX or conf.env.XASH_APPLE:
+			buildarch = ""
+		else:
+			buildarch = "i386"
 	elif conf.env.XASH_ARM and conf.env.XASH_64BIT:
 		buildarch = "arm64"
 	elif conf.env.XASH_ARM:
@@ -127,12 +137,6 @@ def configure(conf):
 			buildarch += "64"
 		if conf.env.XASH_LITTLE_ENDIAN:
 			buildarch += "el"
-	elif conf.env.XASH_PPC:
-		buildarch = "powerpc"
-		if conf.env.XASH_64BIT:
-			buildarch += "64"
-		if conf.env.XASH_LITTLE_ENDIAN:
-			buildarch += "le"
 	elif conf.env.XASH_RISCV:
 		buildarch = "riscv"
 		if conf.env.XASH_64BIT:

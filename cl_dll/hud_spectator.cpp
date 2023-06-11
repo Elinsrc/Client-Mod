@@ -448,12 +448,12 @@ int CHudSpectator::Draw( float flTime )
 		color = GetClientColor( i + 1 );
 
 		// draw the players name and health underneath
-		sprintf( string, "%s", g_PlayerInfoList[i + 1].name );
+		strcpy( string, g_PlayerInfoList[i + 1].name );
 
 		lx = strlen( string ) * 3; // 3 is avg. character length :)
 
 		DrawSetTextColor( color[0], color[1], color[2] );
-		DrawConsoleString( m_vPlayerPos[i][0] - lx,m_vPlayerPos[i][1], string );		
+		DrawConsoleString( m_vPlayerPos[i][0] - lx,m_vPlayerPos[i][1], string );
 	}
 
 	return 1;
@@ -537,7 +537,7 @@ void CHudSpectator::DirectorMessage( int iSize, void *pbuf )
 				msg->holdtime = READ_FLOAT();	// holdtime
 				msg->fxtime = READ_FLOAT();	// fxtime;
 
-				strncpy( m_HUDMessageText[m_lastHudMessage], READ_STRING(), 128 );
+				strncpy( m_HUDMessageText[m_lastHudMessage], READ_STRING(), 127 );
 				m_HUDMessageText[m_lastHudMessage][127] = 0;	// text 
 
 				msg->pMessage = m_HUDMessageText[m_lastHudMessage];
@@ -1239,8 +1239,8 @@ void CHudSpectator::DrawOverviewEntities()
 	float			zScale = ( 90.0f - v_angles[0] ) / 90.0f;
 
 	z = m_OverviewData.layersHeights[0] * zScale;
-	// get yellow/brown HUD color
-	UnpackRGB( ir, ig, ib, RGB_YELLOWISH );
+
+	UnpackRGB( ir, ig, ib, gHUD.m_iDefaultHUDColor );
 	r = (float)ir / 255.0f;
 	g = (float)ig / 255.0f;
 	b = (float)ib / 255.0f;

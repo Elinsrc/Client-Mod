@@ -26,6 +26,8 @@ jobs:
           with:
             name: Client-Mod-android
             path: android/app/build/outputs/apk/debug/app-debug.apk
+  name: build
+
   build:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -112,23 +114,23 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v3
       with:
-        name: Client-Mod-linux
+        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-linux
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload linux artifact with vgui
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
       uses: actions/upload-artifact@v3
       with:
-        name: Client-Mod-linux-vgui
+        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-linux-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact
       if: startsWith(matrix.os, 'windows')
       uses: actions/upload-artifact@v3
       with:
-        name: Client-Mod-windows
+        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-windows
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact with vgui
       if: startsWith(matrix.os, 'windows')
       uses: actions/upload-artifact@v3
       with:
-        name: Client-Mod-windows-vgui
+        name: hlsdk-${{ steps.extract_branch.outputs.branch }}-windows-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}

@@ -78,6 +78,10 @@ extern cvar_t	*cl_vsmoothing;
 extern cvar_t	*cl_viewbob;
 extern Vector   dead_viewangles;
 
+cvar_t	*cl_weaponlag;
+cvar_t	*cl_weaponsway;
+cvar_t	*cl_weaponlowering;
+
 #define	CAM_MODE_RELAX		1
 #define CAM_MODE_FOCUS		2
 
@@ -103,7 +107,6 @@ cvar_t	*cl_bob;
 cvar_t	*cl_bobup;
 cvar_t	*cl_waterdist;
 cvar_t	*cl_chasedist;
-cvar_t	*cl_weaponlag;
 
 // These cvars are not registered (so users can't cheat), so set the ->value field directly
 // Register these cvars in V_Init() if needed for easy tweaking
@@ -367,7 +370,6 @@ void V_CalcViewModelLag( ref_params_t *pparams, Vector &origin, Vector &angles, 
 	}
 }
 
-
 /*
 ==============
 V_AddIdle
@@ -381,6 +383,9 @@ void V_AddIdle( struct ref_params_s *pparams )
 	pparams->viewangles[PITCH] += v_idlescale * sin( pparams->time * v_ipitch_cycle.value ) * v_ipitch_level.value;
 	pparams->viewangles[YAW] += v_idlescale * sin( pparams->time * v_iyaw_cycle.value ) * v_iyaw_level.value;
 }
+
+extern cvar_t *cl_rollspeed;
+extern cvar_t *cl_rollangle;
 
 /*
 ==============
@@ -398,7 +403,7 @@ void V_CalcViewRoll( struct ref_params_s *pparams )
 	if( !viewentity )
 		return;
 
-	side = V_CalcRoll( viewentity->angles, pparams->simvel, pparams->movevars->rollangle, pparams->movevars->rollspeed );
+	side = V_CalcRoll( viewentity->angles, pparams->simvel, cl_rollangle->value, cl_rollspeed->value );
 
 	pparams->viewangles[ROLL] += side;
 
@@ -616,31 +621,6 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 		}
 	}
 
-	if ( CVAR_GET_FLOAT("cl_weaponlowering") )
-	{
-	  vec3_t pl_vel;
-	  VectorCopy(pparams->simvel, pl_vel);
-	  
-	  float m_flSpeed = pl_vel.Length2D();
-	  
-	  if (m_flSpeed > 220.0)
-	  {
-	    if ( m_flOfs <= 3 )
-	      m_flOfs += 0.03;
-	    if(m_flOfs >= 3)
-	      m_flOfs = 3;
-	  }
-	  else
-	  {
-	    if ( m_flOfs >=0 )
-	      m_flOfs -=0.05;
-	    if(m_flOfs <= 0)
-	      m_flOfs = 0;
-	  }
-	
-	pparams->vieworg[2] += m_flOfs;
-	}
-
 	// Treating cam_ofs[2] as the distance
 	if( CL_IsThirdPerson() )
 	{
@@ -659,6 +639,31 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 		{
 			pparams->vieworg[i] += -ofs[2] * camForward[i];
 		}
+	}
+
+	if (cl_weaponlowering->value)
+	{
+	  vec3_t pl_vel;
+	  VectorCopy(pparams->simvel, pl_vel);
+
+	  float m_flSpeed = pl_vel.Length2D();
+
+	  if (m_flSpeed > 220.0)
+	  {
+	    if ( m_flOfs <= 3 )
+	      m_flOfs += 0.03;
+	    if(m_flOfs >= 3)
+	      m_flOfs = 3;
+	  }
+	  else
+	  {
+	    if ( m_flOfs >=0 )
+	      m_flOfs -=0.05;
+	    if(m_flOfs <= 0)
+	      m_flOfs = 0;
+	  }
+
+	pparams->vieworg[2] += m_flOfs;
 	}
 
 	// Give gun our viewangles
@@ -683,29 +688,20 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 
 	for( i = 0; i < 3; i++ )
 	{
-	  if ( CVAR_GET_FLOAT("cl_weaponsway"))
-	  {
-	    view->origin[i] += bob * 0.3f * pparams->right[i];
-	    view->origin[i] += bob * 0.2f * pparams->up[i];
-	  }
-	  view->origin[i] += bob * 0.4f * pparams->forward[i];
+		if (cl_weaponsway->value)
+		{
+			view->origin[i] += bob * 0.3f * pparams->right[i];
+			view->origin[i] += bob * 0.2f * pparams->up[i];
+		}
+		view->origin[i] += bob * 0.4f * pparams->forward[i];
 	}
 	view->origin[2] += bob;
 
 	// throw in a little tilt.
-	if ( CVAR_GET_FLOAT("cl_weaponsway"))
-	{
-	  view->angles[YAW] -= bob * 0.3f;
-	  view->angles[ROLL] -= bob * 0.5f;
-	  view->angles[PITCH] -= bob * 0.3f;
-	}
-	else
-	{
-	  view->angles[YAW] -= bob * 0.5f;
-	  view->angles[ROLL] -= bob * 1.0f;
-	  view->angles[PITCH] -= bob * 0.3f;
-	}
-	
+	view->angles[YAW] -= bob * 0.5f;
+	view->angles[ROLL] -= bob * 1.0f;
+	view->angles[PITCH] -= bob * 0.3f;
+
 	if( cl_viewbob && cl_viewbob->value )
 		VectorCopy( view->angles, view->curstate.angles );
 
@@ -846,7 +842,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 
 	// Apply this at all times
 	{
-		float pitch = camAngles[0];
+		float pitch = pparams->viewangles[0];
 
 		// Normalize angles
 		if( pitch > 180.0f )
@@ -1635,6 +1631,7 @@ void V_CalcSpectatorRefdef( struct ref_params_s * pparams )
 
 void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 {
+	// OpenAG
 	gHUD.m_Speedometer.UpdateSpeed(pparams->simvel);
 	gHUD.m_Jumpspeed.UpdateSpeed(pparams->simvel);
 
@@ -1646,16 +1643,6 @@ void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 	else if( pparams->spectator || g_iUser1 )	// g_iUser true if in spectator mode
 	{
 		V_CalcSpectatorRefdef( pparams );	
-	}
-	else if ( CL_IsThirdPerson() )
-	{
-		V_CalcNormalRefdef ( pparams );
-
-		pparams->vieworg = pparams->simorg;
-		pparams->vieworg = pparams->vieworg + pparams->viewheight;
-		pparams->viewangles = pparams->cl_viewangles + pparams->punchangle + g_ev_punchangle;
-
-		V_GetChaseOrigin( pparams->viewangles, pparams->vieworg, cl_chasedist->value, pparams->vieworg );
 	}
 	else if( !pparams->paused )
 	{
@@ -1728,7 +1715,10 @@ void V_Init( void )
 	cl_bobup = gEngfuncs.pfnRegisterVariable( "cl_bobup","0.5", 0 );
 	cl_waterdist = gEngfuncs.pfnRegisterVariable( "cl_waterdist","4", 0 );
 	cl_chasedist = gEngfuncs.pfnRegisterVariable( "cl_chasedist","112", 0 );
-	cl_weaponlag	= gEngfuncs.pfnRegisterVariable( "cl_weaponlag", "1", FCVAR_ARCHIVE );
+
+	cl_weaponlag = gEngfuncs.pfnRegisterVariable( "cl_weaponlag", "1", FCVAR_ARCHIVE );
+	cl_weaponsway = gEngfuncs.pfnRegisterVariable( "cl_weaponsway", "1", FCVAR_ARCHIVE );
+	cl_weaponlowering = gEngfuncs.pfnRegisterVariable( "cl_weaponlowering", "1", FCVAR_ARCHIVE );
 }
 
 //#define TRACE_TEST	1
