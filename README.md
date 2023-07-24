@@ -58,6 +58,8 @@ cl_cross_right_line [1/0] ,defaut value 1.
 cl_cross_dot [1/0] ,defaut value 1.
 cl_cross_dot_size [value] ,defaut value 1.
 cl_cross_dot_color "r g b" ,defaut value "255 255 255".
+
+r_fakedrawentities [1/2/3/4/5]  works the same as r_drawentities, defaut value 1.
 ```
 
 # Build Instructions
@@ -74,13 +76,13 @@ If **cmake** was installed with Visual Studio Installer, you'll need to run `Dev
 
 Inside the prompt navigate to the hlsdk directory, using `cd` command, e.g.
 ```
-cd C:\Users\username\projects\client-mod
+cd C:\Users\username\projects\Client-Mod
 ```
 
-Note: if client-mod is unpacked on another disk, nagivate there first:
+Note: if Client-Mod is unpacked on another disk, nagivate there first:
 ```
 D:
-cd projects\client-mod
+cd projects\Client-Mod
 ```
 
 ### Building
