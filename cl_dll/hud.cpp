@@ -432,6 +432,7 @@ void CHud::Init( void )
 	m_Speedometer.Init();
 	m_Jumpspeed.Init();
 	m_Crosshair.Init();
+	m_Watermark.Init();
 #if USE_VGUI
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
 #endif
@@ -624,6 +625,7 @@ void CHud::VidInit( void )
 	m_Speedometer.VidInit();
 	m_Jumpspeed.VidInit();
 	m_Crosshair.VidInit();
+	m_Watermark.VidInit();
 #if USE_VGUI
 	GetClientVoiceMgr()->VidInit();
 #endif

@@ -97,6 +97,7 @@ set (CLDLL_SOURCES
 	hud_jumpspeed.cpp
 	hud_update.cpp
 	hud_crosshairs.cpp
+	hud_watermark.cpp
 	in_camera.cpp
 	input.cpp
 	input_goldsource.cpp

@@ -143,6 +143,11 @@ inline void CenterPrint( const char *string )
 	gEngfuncs.pfnCenterPrint( string );
 }
 
+inline int DrawString( int x, int y, const char *string, int r, int g, int b )
+{
+	return gEngfuncs.pfnDrawString( x, y, (char*) string, r, g, b );
+}
+
 // returns the players name of entity no.
 #define GetPlayerInfo ( *gEngfuncs.pfnGetPlayerInfo )
 
