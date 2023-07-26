@@ -338,8 +338,9 @@ int DLLEXPORT HUD_UpdateClientData( client_data_t *pcldata, float flTime )
 {
 	IN_Commands();
 
+#if BUILD_DISCORD_RPC
 	discord_integration::on_update_client_data( );
-
+#endif
 	return gHUD.UpdateClientData( pcldata, flTime );
 }
 

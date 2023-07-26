@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <unordered_set>
+#include <time.h>
 
 #include "discord_rpc.h"
 
