@@ -20,6 +20,12 @@
 #include "exportdef.h"
 #include "cvardef.h"
 
+#include "net_api.h"
+
+#include <stdio.h> // for safe_sprintf()
+#include <stdarg.h>  // "
+#include <string> // for strncpy()
+
 #if !defined(TRUE)
 #define TRUE 1
 #define FALSE 0
@@ -158,6 +164,51 @@ inline void PlaySound( int iSound, float vol ) { gEngfuncs.pfnPlaySoundByIndex( 
 #define Q_max(a, b)  (((a) > (b)) ? (a) : (b))
 #define Q_min(a, b)  (((a) < (b)) ? (a) : (b))
 #define fabs(x)	   ((x) > 0 ? (x) : 0 - (x))
+
+
+//// OpenAG
+template<typename T, size_t N>
+char (&ArraySizeHelper(T (&)[N]))[N];
+#define ARRAYSIZED(x) sizeof(ArraySizeHelper(x))
+
+static size_t get_map_name(char* dest, size_t count)
+{
+	auto map_path = gEngfuncs.pfnGetLevelName();
+
+	const char* slash = strrchr(map_path, '/');
+	if (!slash)
+		slash = map_path - 1;
+
+	const char* dot = strrchr(map_path, '.');
+	if (!dot)
+		dot = map_path + strlen(map_path);
+
+	size_t bytes_to_copy = Q_min(count - 1, static_cast<size_t>(dot - slash - 1));
+
+	strncpy(dest, slash + 1, bytes_to_copy);
+	dest[bytes_to_copy] = '\0';
+
+	return bytes_to_copy;
+}
+
+static size_t get_player_count()
+{
+	size_t player_count = 0;
+
+	for (int i = 0; i < MAX_PLAYERS; ++i) {
+		// Make sure the information is up to date.
+		gEngfuncs.pfnGetPlayerInfo(i + 1, &g_PlayerInfoList[i + 1]);
+
+		// This player slot is empty.
+		if (g_PlayerInfoList[i + 1].name == nullptr)
+			continue;
+
+		++player_count;
+	}
+
+	return player_count;
+}
+////
 
 void ScaleColors( int &r, int &g, int &b, int a );
 

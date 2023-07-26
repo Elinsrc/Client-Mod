@@ -20,6 +20,10 @@
 #include "pmtrace.h"	
 #include "pm_shared.h"
 
+#if BUILD_DISCORD_RPC
+#include "discord_integration.h"
+#endif
+
 void Game_AddObjects( void );
 
 extern vec3_t v_origin;
@@ -155,6 +159,9 @@ void DLLEXPORT HUD_ProcessPlayerState( struct entity_state_s *dst, const struct 
 		g_iPlayerClass = dst->playerclass;
 		g_iTeamNumber = dst->team;
 
+#if BUILD_DISCORD_RPC
+		discord_integration::set_state( discord_integration::game_state::PLAYING );
+#endif
 		g_iUser1 = src->iuser1;
 		g_iUser2 = src->iuser2;
 		g_iUser3 = src->iuser3;

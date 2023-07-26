@@ -31,6 +31,8 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 include(CheckIncludeFile)
 include(CheckCSourceCompiles)
@@ -48,6 +50,8 @@ option(USE_NOVGUI_SCOREBOARD "Prefer non-VGUI Scoreboard when USE_VGUI is enable
 option(USE_VOICEMGR "Enable VOICE MANAGER." OFF)
 option(BUILD_CLIENT "Build client dll" ON)
 option(BUILD_SERVER "Build server dll" OFF)
+
+option(BUILD_DISCORD_RPC "Build discord_rpc" OFF)
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 4 OR
 	((WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -158,4 +162,11 @@ endif()
 
 if(NOT BUILD_SERVER AND NOT BUILD_CLIENT)
 	message(FATAL_ERROR "Nothing to build")
+endif()
+
+if(BUILD_DISCORD_RPC)
+	message(STATUS "Building discord_rpc enabled")
+	set(BUILD_EXAMPLES OFF CACHE BOOL "build discord-rpc examples" FORCE)
+	set(CLANG_FORMAT_SUFFIX "-dummy")
+	add_subdirectory(3rdparty/discord-rpc)
 endif()

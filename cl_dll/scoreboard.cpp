@@ -35,6 +35,10 @@ cvar_t *cl_showpacketloss;
 #include "vgui_TeamFortressViewport.h"
 #endif
 
+#if BUILD_DISCORD_RPC
+#include "discord_integration.h"
+#endif
+
 DECLARE_COMMAND( m_Scoreboard, ShowScores )
 DECLARE_COMMAND( m_Scoreboard, HideScores )
 
@@ -526,6 +530,10 @@ int CHudScoreboard::MsgFunc_ScoreInfo( const char *pszName, int iSize, void *pbu
 
 #if USE_VGUI
 		gViewPort->UpdateOnPlayerInfo();
+#endif
+
+#if BUILD_DISCORD_RPC
+		discord_integration::on_player_count_update();
 #endif
 	}
 

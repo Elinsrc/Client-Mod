@@ -75,13 +75,14 @@ jobs:
     - name: Build on Linux
       if: startsWith(matrix.os, 'ubuntu')
       run: |
-        schroot --chroot steamrt_scout_i386 -- cmake -B build -S . -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist"
+        schroot --chroot steamrt_scout_i386 -- cmake -B build -S . -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist" -DBUILD_DISCORD_RPC=ON
+
         schroot --chroot steamrt_scout_i386 -- cmake --build build --target all
         schroot --chroot steamrt_scout_i386 -- cmake --build build --target install
     - name: Build on Linux with vgui
       if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.cc, 'gcc')
       run: |
-        schroot --chroot steamrt_scout_i386 -- cmake -B build-vgui -S . -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VGUI=ON -DCMAKE_INSTALL_PREFIX="$PWD/dist-vgui"
+        schroot --chroot steamrt_scout_i386 -- cmake -B build-vgui -S . -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VGUI=ON -DCMAKE_INSTALL_PREFIX="$PWD/dist-vgui" -DBUILD_DISCORD_RPC=ON
         cp vgui_support/vgui-dev/lib/vgui.so build-vgui/cl_dll
         schroot --chroot steamrt_scout_i386 -- cmake --build build-vgui --target all
         schroot --chroot steamrt_scout_i386 -- cmake --build build-vgui --target install
@@ -91,12 +92,12 @@ jobs:
     - name: Build on Windows
       if: startsWith(matrix.os, 'windows')
       run: |
-        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DCMAKE_INSTALL_PREFIX="dist"
+        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DCMAKE_INSTALL_PREFIX="dist" -DBUILD_DISCORD_RPC=ON
         msbuild -verbosity:normal /property:Configuration=Release build/INSTALL.vcxproj
     - name: Build on Windows with vgui
       if: startsWith(matrix.os, 'windows')
       run: |
-        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DUSE_VGUI=ON -DCMAKE_INSTALL_PREFIX="dist-vgui"
+        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DUSE_VGUI=ON -DCMAKE_INSTALL_PREFIX="dist-vgui" -DBUILD_DISCORD_RPC=ON
         msbuild -verbosity:normal /property:Configuration=Release build/INSTALL.vcxproj
     - name: Extract branch name
       shell: bash

@@ -54,6 +54,10 @@ if (USE_VGUI)
 	endif()
 endif()
 
+if(BUILD_DISCORD_RPC)
+	add_definitions(-DBUILD_DISCORD_RPC)
+endif()
+
 set (CLDLL_SOURCES
 	../dlls/crossbow.cpp
 	../dlls/crowbar.cpp
@@ -155,7 +159,16 @@ else()
 		scoreboard.cpp)
 endif()
 
+if (BUILD_DISCORD_RPC)
+	list(APPEND CLDLL_SOURCES
+		discord_integration.cpp)
+endif()
+
 include_directories (. hl/ ../dlls ../dlls/wpn_shared ../common ../engine ../pm_shared ../game_shared ../public)
+
+if (BUILD_DISCORD_RPC)
+	include_directories(../3rdparty/discord-rpc/include)
+endif()
 
 if (USE_VGUI)
 	SET(CMAKE_SKIP_RPATH TRUE)
@@ -200,6 +213,10 @@ endif()
 
 set_target_properties (${CLDLL_LIBRARY} PROPERTIES
 	POSITION_INDEPENDENT_CODE 1)
+
+if(BUILD_DISCORD_RPC)
+	target_link_libraries(client discord-rpc)
+endif()
 
 if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Android")
 	set(CLDLL_NAME "client")

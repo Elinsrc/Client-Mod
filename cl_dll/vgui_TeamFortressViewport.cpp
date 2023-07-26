@@ -57,6 +57,10 @@
 #include "shake.h"
 #include "screenfade.h"
 
+#if BUILD_DISCORD_RPC
+#include "discord_integration.h"
+#endif
+
 void IN_SetVisibleMouse(bool visible);
 class CCommandMenu;
 
@@ -2065,6 +2069,10 @@ int TeamFortressViewport::MsgFunc_ScoreInfo( const char *pszName, int iSize, voi
 			 g_PlayerExtraInfo[cl].teamnumber = 0;
 
 		UpdateOnPlayerInfo();
+
+#if BUILD_DISCORD_RPC
+		discord_integration::on_player_count_update();
+#endif
 	}
 
 	return 1;
