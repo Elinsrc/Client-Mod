@@ -50,7 +50,7 @@ namespace discord_integration
 					}
 					else
 					{
-                        refresh_player_stats();
+						refresh_player_stats();
 					}
 
 					dirty = true;
@@ -97,10 +97,10 @@ namespace discord_integration
 
 
 			inline void update_presence_if_dirty()
-            {
-	            if (dirty)
-		            update_presence();
-            }
+			{
+				if (dirty)
+					update_presence();
+			}
 
 		protected:
 			void update_presence()

@@ -36,9 +36,7 @@
 int iJumpSpectator;
 extern float vJumpOrigin[3];
 extern float vJumpAngles[3];
-extern int g_onground;
-extern int g_inwater;
-extern int g_walking;
+extern void update_player_info(int onground, int inwater, int walking);
 #endif
 
 static int pm_shared_initialized = 0;
@@ -3331,9 +3329,11 @@ void PM_Move( struct playermove_s *ppmove, int server )
 		pmove->friction = 1.0f;
 	}
 #ifdef CLIENT_DLL
-	g_onground = ( pmove->onground != -1 );
-	g_inwater = ( pmove->waterlevel > 1 );
-	g_walking = ( pmove->movetype == MOVETYPE_WALK );
+	update_player_info(
+		pmove->onground != -1,
+		pmove->waterlevel > 1,
+		pmove->movetype == MOVETYPE_WALK
+	);
 #endif
 }
 
