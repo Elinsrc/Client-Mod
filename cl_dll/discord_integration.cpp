@@ -12,6 +12,10 @@
 #include "cl_util.h"
 #include "discord_integration.h"
 
+#if USE_VGUI
+#include "vgui_TeamFortressViewport.h"
+#endif
+
 namespace discord_integration
 {
 	namespace
@@ -125,9 +129,15 @@ namespace discord_integration
 					sprintf(map, "Map: %s", map_name);
 
 					char ServerName[256];
+#if USE_VGUI
+					sprintf(ServerName, "Server: %s", gViewPort->m_szServerName);
+					if (gViewPort->m_szServerName[0])
+						presence.details = ServerName;
+#else
 					sprintf(ServerName, "Server: %s", gHUD.m_szServerName);
 					if(gHUD.m_szServerName[0])
 						presence.details = ServerName;
+#endif
 
 					presence.state = map;
 					presence.partySize = player_count;
