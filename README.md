@@ -9,7 +9,7 @@ Added server name to no vgui scoreboard and current date with time.
 Added commands:
 
 ```
-cl_autojump - [1/0] f enabled, will jump automatically as soon as you touch the ground while +jump is held. Taken from OpenAG.
+cl_autojump - [1/0] Will jump automatically as soon as you touch the ground while +jump is held. Taken from OpenAG.
 +ducktap — Performs a duck tap automatically as soon as you touch the ground (presses +duck for 1 frame). Taken from OpenAG.
 ```
 * **When this command is enabled the jump button may not work**, solved by command **cl_lw 1**.
