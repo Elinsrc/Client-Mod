@@ -394,8 +394,11 @@ void CHud::Init( void )
 	// OpenAG
 	m_pCvarColor = CVAR_CREATE( "hud_color", "", FCVAR_ARCHIVE );
 	CVAR_CREATE( "hud_weapon", "0", FCVAR_ARCHIVE );
+	//
 
 	CVAR_CREATE( "hud_vis", "0", FCVAR_ARCHIVE );
+	CVAR_CREATE( "cl_gauss_balls", "1", FCVAR_ARCHIVE );
+	CVAR_CREATE( "cl_gauss_hits", "1", FCVAR_ARCHIVE );
 
 	m_szServerName[0] = 0;
 

@@ -47,6 +47,9 @@ hud_jumpspeed_height - [1/0] Adjusts the positio jumpspeed, defaut value is 0.
 
 hud_watermark - [1/0], defaut value is 0.
 
+cl_gauss_balls - [1/0] Small bouncing balls from Gauss hits, defaut value is 1.
+cl_gauss_hits - [1/0] A large glowing sprite from a Gauss hits, defaut value is 1.
+
 cl_cross - [1/0] Custom crosshair, defaut value 0.
 cl_cross_color "r g b" - Custom crosshair color, defaut value "255 255 255".
 cl_cross_alpha [value] - Crosshair alpha, defaut value 255.
