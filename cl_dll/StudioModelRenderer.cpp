@@ -30,8 +30,6 @@
 // Global engine <-> studio model rendering code interface
 engine_studio_api_t IEngineStudio;
 
-cvar_t	*r_fakedrawentities;
-
 /////////////////////
 // Implementation of CStudioModelRenderer.h
 #define LEGS_BONES_COUNT	8

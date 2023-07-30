@@ -7,6 +7,8 @@ int CHudWatermark::Init()
 {
 	m_iFlags = 0;
 
+	hud_watermark = CVAR_CREATE("hud_watermark", "1", FCVAR_ARCHIVE);
+
 	gHUD.AddHudElem(this);
 	return 0;
 }
@@ -21,6 +23,9 @@ int CHudWatermark::VidInit()
 
 int CHudWatermark::Draw(float time)
 {
+	if (hud_watermark->value == 0.0f)
+		return 0;
+
 	if (refresh_draw_until || (draw_until > gHUD.m_flTime + 15.0f)) {
 		refresh_draw_until = false;
 		draw_until = gHUD.m_flTime + 15.0f;

@@ -36,22 +36,24 @@ vis_health20 "r g b"
 
 cl_weaponlowering - [1/0] The weapon in the player's hand will lower depending on the speed of movement, default value is 1.
 cl_weaponsway - [1/0] Swaying of the weapon when moving, default value is 1.
-cl_weaponlag - [1/0] weapon lag when turning, default value is 1.
+cl_weaponlag - [1/0] Weapon lag when turning, default value is 1.
 
-hud_speedometer - [1/0] shows the player's speed, default value is 0. Taken from OpenAG.
-hud_speedometer_below_cross - [1/0] adjusts the position of the speedometer to the sight, defaut value is 0.
+hud_speedometer - [1/0] Shows the player's speed, default value is 0. Taken from OpenAG.
+hud_speedometer_below_cross - [1/0] Adjusts the position of the speedometer to the sight, defaut value is 0.
 
-hud_jumpspeed - [1/0] shows the player's speed at the moment of the jump, default value is 0. Taken from OpenAG.
-hud_jumpspeed_below_cross - [1/0] adjusts the position of the jumpspeed to the sight, defaut value is 0.
-hud_jumpspeed_height - [1/0] adjusts the positio jumpspeed, defaut value is 0.
+hud_jumpspeed - [1/0] Shows the player's speed at the moment of the jump, default value is 0. Taken from OpenAG.
+hud_jumpspeed_below_cross - [1/0] Adjusts the position of the jumpspeed to the sight, defaut value is 0.
+hud_jumpspeed_height - [1/0] Adjusts the positio jumpspeed, defaut value is 0.
 
-cl_cross - [1/0] custom crosshair, defaut value 0.
-cl_cross_color "r g b" - custom crosshair color, defaut value "255 255 255".
-cl_cross_alpha [value] - crosshair alpha, defaut value 255.
-cl_cross_size [value] - crosshair size, defaut value 1.
-cl_cross_gap [value] - crosshair distance from the middle, defaut value 2.
-cl_cross_thickness [value] - thickness crosshair, defaut value 5.
-cl_cross_outline [value] - crosshairs outline defaut value 1.
+hud_watermark - [1/0], defaut value is 0.
+
+cl_cross - [1/0] Custom crosshair, defaut value 0.
+cl_cross_color "r g b" - Custom crosshair color, defaut value "255 255 255".
+cl_cross_alpha [value] - Crosshair alpha, defaut value 255.
+cl_cross_size [value] - Crosshair size, defaut value 1.
+cl_cross_gap [value] - Crosshair distance from the middle, defaut value 2.
+cl_cross_thickness [value] - Thickness crosshair, defaut value 5.
+cl_cross_outline [value] - Crosshairs outline defaut value 1.
 cl_cross_top_line [1/0] ,defaut value 1.
 cl_cross_bottom_line [1/0] ,defaut value 1.
 cl_cross_left_line [1/0] ,defaut value 1.
@@ -60,7 +62,7 @@ cl_cross_dot [1/0] ,defaut value 1.
 cl_cross_dot_size [value] ,defaut value 1.
 cl_cross_dot_color "r g b" ,defaut value "255 255 255".
 
-r_fakedrawentities [1/2/3/4/5]  works the same as r_drawentities, defaut value 1.
+r_fakedrawentities [1/2/3/4/5] Works the same as r_drawentities, defaut value 1.
 ```
 
 # Build Instructions
