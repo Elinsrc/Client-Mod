@@ -6,15 +6,18 @@
 #include <unordered_set>
 #include <time.h>
 
-#include "discord_rpc.h"
+#include <discord_rpc.h>
 
 #include "hud.h"
 #include "cl_util.h"
-#include "discord_integration.h"
 
 #if USE_VGUI
 #include "vgui_TeamFortressViewport.h"
 #endif
+
+#include "discord_integration.h"
+
+using namespace std::literals;
 
 namespace discord_integration
 {
@@ -28,6 +31,14 @@ namespace discord_integration
 
 		// For tracking if we're in-game.
 		bool updated_client_data = false;
+
+		// Possible game states.
+		enum class game_state
+		{
+			NOT_PLAYING = 0,
+			PLAYING,
+			SPECTATING,
+		};
 
 		// Class that handles tracking state changes.
 		class DiscordState {
@@ -156,12 +167,15 @@ namespace discord_integration
 
 			// Flag indicating there are some changes not sent to Discord yet.
             bool dirty;
-		} discord_state;
+		};
+
+		// Pointer so the constructor doesn't run too early.
+		std::unique_ptr<DiscordState> discord_state;
 
 		// Time of the last update.
 		float last_update_time;
 
-		void handle_ready()
+		void handle_ready(const DiscordUser*)
 		{
 			gEngfuncs.Con_Printf("Connected to Discord.\n");
 		}
@@ -182,7 +196,7 @@ namespace discord_integration
 		DiscordEventHandlers handlers{};
 		Discord_Initialize(CLIENT_ID, &handlers, 1, STEAM_APP_ID);
 
-		discord_state = DiscordState();
+		discord_state = std::make_unique<DiscordState>();
 
 		Discord_RunCallbacks();
 
@@ -191,17 +205,22 @@ namespace discord_integration
 
 	void shutdown()
 	{
+		discord_state.reset();
 		Discord_Shutdown();
 	}
 
-	void set_state(game_state new_state)
+	void set_spectating(bool spectating)
 	{
-		discord_state.set_game_state(new_state);
+		if (spectating)
+			discord_state->set_game_state(game_state::SPECTATING);
+		else
+			discord_state->set_game_state(game_state::PLAYING);
 	}
 
-	void set_gamemode(std::string new_gamemode)
+
+	void set_gamemode(std::string gamemode)
 	{
-		discord_state.set_gamemode(std::move(new_gamemode));
+		discord_state->set_gamemode(std::move(gamemode));
 	}
 
 	void on_update_client_data()
@@ -212,10 +231,10 @@ namespace discord_integration
 	void on_frame()
 	{
 		if (!updated_client_data)
-			discord_state.set_game_state(game_state::NOT_PLAYING);
-		else if (discord_state.get_game_state() == game_state::NOT_PLAYING)
+			discord_state->set_game_state(game_state::NOT_PLAYING);
+		else if (discord_state->get_game_state() == game_state::NOT_PLAYING)
 			// Only set this if we weren't playing, otherwise we might overwrite some other state.
-			set_state(game_state::PLAYING);
+			discord_state->set_game_state(game_state::PLAYING);
 
 		updated_client_data = false;
 
@@ -225,7 +244,7 @@ namespace discord_integration
 		{
 			last_update_time = current_time;
 			on_player_count_update();
-			discord_state.update_presence_if_dirty();
+			discord_state->update_presence_if_dirty();
 		}
 
 		Discord_RunCallbacks();
@@ -233,6 +252,6 @@ namespace discord_integration
 
 	void on_player_count_update()
 	{
-		discord_state.refresh_player_stats();
+		discord_state->refresh_player_stats();
 	}
 }

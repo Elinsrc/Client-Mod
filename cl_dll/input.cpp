@@ -32,6 +32,10 @@ extern "C"
 #include "vgui_TeamFortressViewport.h"
 #endif
 
+#if BUILD_DISCORD_RPC
+#include "discord_integration.h"
+#endif
+
 extern "C" 
 {
 	struct kbutton_s DLLEXPORT *KB_Find( const char *name );
@@ -1278,4 +1282,8 @@ void ShutdownInput( void )
 void DLLEXPORT HUD_Shutdown( void )
 {
 	ShutdownInput();
+
+#if BUILD_DISCORD_RPC
+	discord_integration::shutdown();
+#endif
 }

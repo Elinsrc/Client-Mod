@@ -160,7 +160,10 @@ void DLLEXPORT HUD_ProcessPlayerState( struct entity_state_s *dst, const struct 
 		g_iTeamNumber = dst->team;
 
 #if BUILD_DISCORD_RPC
-		discord_integration::set_state( discord_integration::game_state::PLAYING );
+		if (src->iuser1 != 0)
+			discord_integration::set_spectating(true);
+		else if (g_iUser1 != 0)
+			discord_integration::set_spectating(false);
 #endif
 		g_iUser1 = src->iuser1;
 		g_iUser2 = src->iuser2;
