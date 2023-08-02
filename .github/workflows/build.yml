@@ -49,55 +49,38 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: recursive
-
-    - name: Checkout steam-runtime
-      if: startsWith(matrix.os, 'ubuntu')
-      uses: actions/checkout@v3
-      with:
-        repository: ValveSoftware/steam-runtime
-        path: steam-runtime
-    - name: Cache steam-runtime
-      if: startsWith(matrix.os, 'ubuntu')
-      id: cache-steam-runtime
-      uses: actions/cache@v3
-      with:
-        path: com.valvesoftware.SteamRuntime.Sdk-i386-scout-sysroot.tar.gz
-        key: ${{ runner.os }}-steam-runtime
-    - name: Download steam-runtime
-      if: startsWith(matrix.os, 'ubuntu') && steps.cache-steam-runtime.outputs.cache-hit != 'true'
-      run: wget --no-verbose https://repo.steampowered.com/steamrt-images-scout/snapshots/0.20210610.0/com.valvesoftware.SteamRuntime.Sdk-i386-scout-sysroot.tar.gz
-    - name: Install steam runtime
+    - name: Install development tools
       if: startsWith(matrix.os, 'ubuntu')
       run: |
-        sudo apt update
-        ./steam-runtime/setup_chroot.sh --i386 --tarball ./com.valvesoftware.SteamRuntime.Sdk-i386-scout-sysroot.tar.gz
-        sudo sed -i 's/groups=sudo/groups=adm/g' /etc/schroot/chroot.d/steamrt_scout_i386.conf
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install cmake build-essential gcc-multilib g++-multilib libsdl2-dev:i386
     - name: Build on Linux
       if: startsWith(matrix.os, 'ubuntu')
       run: |
-        schroot --chroot steamrt_scout_i386 -- cmake -B build -S . -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist" -DBUILD_DISCORD_RPC=ON
-
-        schroot --chroot steamrt_scout_i386 -- cmake --build build --target all
-        schroot --chroot steamrt_scout_i386 -- cmake --build build --target install
+        cmake -B build -S . -DBUILD_DISCORD_RPC=ON -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist"
+        cmake --build build --target all
+        cmake --build build --target install
     - name: Build on Linux with vgui
       if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.cc, 'gcc')
       run: |
-        schroot --chroot steamrt_scout_i386 -- cmake -B build-vgui -S . -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DUSE_VGUI=ON -DCMAKE_INSTALL_PREFIX="$PWD/dist-vgui" -DBUILD_DISCORD_RPC=ON
+        cmake -B build-vgui -S . -DUSE_VGUI=ON -DBUILD_DISCORD_RPC=ON -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist-vgui"
         cp vgui_support/vgui-dev/lib/vgui.so build-vgui/cl_dll
-        schroot --chroot steamrt_scout_i386 -- cmake --build build-vgui --target all
-        schroot --chroot steamrt_scout_i386 -- cmake --build build-vgui --target install
+        cmake --build build-vgui --target all
+        cmake --build build-vgui --target install
     - name: Add msbuild to PATH
       if: startsWith(matrix.os, 'windows')
       uses: microsoft/setup-msbuild@v1.1
     - name: Build on Windows
       if: startsWith(matrix.os, 'windows')
       run: |
-        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DCMAKE_INSTALL_PREFIX="dist" -DBUILD_DISCORD_RPC=ON
+        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DBUILD_DISCORD_RPC=ON -DCMAKE_INSTALL_PREFIX="dist"
         msbuild -verbosity:normal /property:Configuration=Release build/INSTALL.vcxproj
     - name: Build on Windows with vgui
       if: startsWith(matrix.os, 'windows')
       run: |
-        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DUSE_VGUI=ON -DCMAKE_INSTALL_PREFIX="dist-vgui" -DBUILD_DISCORD_RPC=ON
+        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DUSE_VGUI=ON -DBUILD_DISCORD_RPC=ON -DCMAKE_INSTALL_PREFIX="dist-vgui"
         msbuild -verbosity:normal /property:Configuration=Release build/INSTALL.vcxproj
     - name: Extract branch name
       shell: bash
