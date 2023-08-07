@@ -45,7 +45,7 @@ hud_jumpspeed - [1/0] Shows the player's speed at the moment of the jump, defaul
 hud_jumpspeed_below_cross - [1/0] Adjusts the position of the jumpspeed to the sight, defaut value is 0.
 hud_jumpspeed_height - [1/0] Adjusts the positio jumpspeed, defaut value is 0.
 
-hud_watermark - [1/0], defaut value is 0.
+hud_watermark - [1/0], defaut value is 1.
 
 cl_gauss_balls - [1/0] Small bouncing balls from Gauss hits, defaut value is 1.
 cl_gauss_hits - [1/0] A large glowing sprite from a Gauss hits, defaut value is 1.
@@ -125,33 +125,7 @@ cmake -G "Visual Studio 16 2019" -A Win32 -B build
 
 After the configuration step, `CLIENT-MOD.sln` should appear in the `build` directory. You can open this solution in Visual Studio and continue developing there.
 
-## Linux x86. Portable steam-compatible build using Steam Runtime in chroot
-
-### Prerequisites
-
-The official way to build Steam compatible games for Linux is through steam-runtime.
-
-Install schroot. On Ubuntu or Debian:
-
-```
-sudo apt install schroot
-```
-
-Clone https://github.com/ValveSoftware/steam-runtime and follow instructions: [download](https://github.com/ValveSoftware/steam-runtime/blob/e014a74f60b45a861d38a867b1c81efe8484f77a/README.md#downloading-a-steam-runtime) and [setup](https://github.com/ValveSoftware/steam-runtime/blob/e014a74f60b45a861d38a867b1c81efe8484f77a/README.md#using-schroot) the chroot.
-
-```
-sudo ./setup_chroot.sh --i386 --tarball ./com.valvesoftware.SteamRuntime.Sdk-i386-scout-sysroot.tar.gz
-```
-
-### Building
-
-Now you can use cmake and make prepending the commands with `schroot --chroot steamrt_scout_i386 --`:
-```
-schroot --chroot steamrt_scout_i386 -- cmake -B build-in-steamrt -S .
-schroot --chroot steamrt_scout_i386 -- cmake --build build-in-steamrt
-```
-
-## Linux x86. Portable steam-compatible build without Steam Runtime
+## Linux x86
 
 ### Prerequisites
 
@@ -173,7 +147,7 @@ cmake .. -DCMAKE_C_FLAGS="-static-libstdc++ -static-libgcc"
 ```
 To ensure portability it's still better to build using Steam Runtime or another chroot of some older distro.
 
-## Linux x86. Portable steam-compatible build in your own chroot
+## Linux x86. Build in your own chroot
 
 ### Prerequisites
 

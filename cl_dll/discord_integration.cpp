@@ -24,7 +24,8 @@ namespace discord_integration
 	namespace
 	{
 		// From Discord developer dashboard.
-		constexpr const char CLIENT_ID[] = "1020272429563650109";
+		constexpr const char XASH_CLIENT_ID[] = "1020272429563650109";
+		constexpr const char GOLDSRC_CLIENT_ID[] = "1133792390306599012";
 
 		// This seems to be consistent across PCs.
 		constexpr const char STEAM_APP_ID[] = "10";
@@ -124,7 +125,7 @@ namespace discord_integration
 
 				DiscordRichPresence presence{};
 
-				presence.largeImageKey = "xash3d-fwgs";
+				presence.largeImageKey = "engine";
 				presence.smallImageKey = "client-mod";
 				presence.largeImageText = "https://github.com/Elinsrc/Client-Mod";
 				presence.smallImageText = "Client-Mod";
@@ -194,7 +195,15 @@ namespace discord_integration
 	void initialize()
 	{
 		DiscordEventHandlers handlers{};
-		Discord_Initialize(CLIENT_ID, &handlers, 1, STEAM_APP_ID);
+
+		if( CVAR_GET_FLOAT("host_ver"))
+		{
+			Discord_Initialize(XASH_CLIENT_ID, &handlers, 1, NULL);
+		}
+		else
+		{
+			Discord_Initialize(GOLDSRC_CLIENT_ID, &handlers, 1, STEAM_APP_ID);
+		}
 
 		discord_state = std::make_unique<DiscordState>();
 
