@@ -41,7 +41,7 @@ int CHudWatermark::Draw(float time)
 
 	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Client-Mod build " __DATE__, r, g, b);
 	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "t.me/Elinsrc", r, g, b);
-    DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "t.me/HalfLifeCollectiveChat", r, g, b);
+	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "t.me/HalfLifeCollectiveChat", r, g, b);
 
 	return 0;
 }

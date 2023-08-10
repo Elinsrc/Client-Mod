@@ -188,7 +188,11 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 		time_t date_time = time(0);
 		strftime(time_str, 80, "[%Y.%m.%d|%T]", localtime(&date_time));
 
-		fprintf( logchat, "%s %s",time_str ,pszBuf );
+		char chat[256];
+		sprintf(chat, "%s", pszBuf);
+		remove_characters(chat);
+
+		fprintf( logchat, "%s %s",time_str ,chat );
 		fclose( logchat );
 	}
 
