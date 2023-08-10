@@ -211,7 +211,7 @@ static size_t get_player_count()
 ////
 
 //// ChatGPT
-inline void remove_characters(char *input_string) {
+inline void remove_color_characters(char *input_string) {
     char *read = input_string;
     char *write = input_string;
 

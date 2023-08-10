@@ -189,8 +189,8 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 		strftime(time_str, 80, "[%Y.%m.%d|%T]", localtime(&date_time));
 
 		char chat[256];
-		sprintf(chat, "%s", pszBuf);
-		remove_characters(chat);
+		strcpy(chat, pszBuf);
+		remove_color_characters(chat);
 
 		fprintf( logchat, "%s %s",time_str ,chat );
 		fclose( logchat );
