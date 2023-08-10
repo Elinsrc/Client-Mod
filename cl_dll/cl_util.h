@@ -210,6 +210,23 @@ static size_t get_player_count()
 }
 ////
 
+//// ChatGPT
+inline void remove_characters(char *input_string) {
+    char *read = input_string;
+    char *write = input_string;
+
+    while (*read) {
+        if (*read == '^' && isdigit(*(read + 1))) {
+            read += 2;
+        } else {
+            *write++ = *read++;
+        }
+    }
+
+    *write = '\0';
+}
+////
+
 void ScaleColors( int &r, int &g, int &b, int a );
 
 #define DotProduct(x, y) ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])

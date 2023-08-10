@@ -135,22 +135,21 @@ namespace discord_integration
 
 				if (cur_state != game_state::NOT_PLAYING)
 				{
-					char map[256];
-					char map_name[64];
-					const auto length = get_map_name(map_name, ARRAYSIZED(map_name));
-					sprintf(map, "Map: %s", map_name);
+					char map[256] = "Map: ";
+					size_t map_len = strlen(map);
+					const size_t length =
+						get_map_name(map+map_len, ARRAYSIZED(map)-map_len);
 
-					char ServerName[256];
+					char ServerName[256] = "Server: ";
 #if USE_VGUI
-					sprintf(ServerName, "Server: %s", gViewPort->m_szServerName);
-					if (gViewPort->m_szServerName[0])
-						presence.details = ServerName;
+					char* szServerName = gViewPort->m_szServerName;
 #else
-					sprintf(ServerName, "Server: %s", gHUD.m_szServerName);
-					if(gHUD.m_szServerName[0])
-						presence.details = ServerName;
+					char* szServerName = gHUD.m_szServerName;
 #endif
-
+					remove_characters(szServerName);
+					strcat(ServerName, szServerName);
+					if (szServerName[0])
+						presence.details = ServerName;
 					presence.state = map;
 					presence.partySize = player_count;
 					presence.partyMax = player_limit;
