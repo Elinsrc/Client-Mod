@@ -146,8 +146,8 @@ namespace discord_integration
 #else
 					char* szServerName = gHUD.m_szServerName;
 #endif
-					remove_color_characters(szServerName);
 					strcat(ServerName, szServerName);
+					remove_color_characters(ServerName);
 					if (szServerName[0])
 						presence.details = ServerName;
 					presence.state = map;
