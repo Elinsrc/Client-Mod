@@ -54,7 +54,7 @@ SBColumnInfo g_ColumnInfo[NUM_COLUMNS] =
 {
 	{NULL,			24,			Label::a_east},		// tracker column
 	{NULL,			140,		Label::a_east},		// name
-	{NULL,			56,			Label::a_east},		// class
+	{"MODEL",			56,			Label::a_east},		// class
 	{"#SCORE",		40,			Label::a_east},
 	{"#DEATHS",		46,			Label::a_east},
 	{"#LATENCY",	46,			Label::a_east},
@@ -667,7 +667,7 @@ void ScorePanel::FillGrid()
 			}				
 
 			// Align 
-			if (col == COLUMN_NAME || col == COLUMN_CLASS)
+			if (col == COLUMN_NAME)
 			{
 				pLabel->setContentAlignment( vgui::Label::a_west );
 			}
@@ -791,7 +791,7 @@ void ScorePanel::FillGrid()
 					}
 					else
 					{
-						sz[0] = '\0';
+						strcpy(sz, pl_info->model);
 					}
 					break;
 

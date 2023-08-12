@@ -98,7 +98,7 @@ We have a minimum width of 1-320 - we could have the field widths scale with it?
 // relative to the side of the scoreboard
 #define NAME_RANGE_MIN  20
 #define NAME_RANGE_MAX  145
-#define NAME_RANGE_MODIFIER  120
+#define NAME_RANGE_MODIFIER  270
 #define KILLS_RANGE_MIN 130
 #define KILLS_RANGE_MAX 170
 #define DIVIDER_POS		180
@@ -109,6 +109,8 @@ We have a minimum width of 1-320 - we could have the field widths scale with it?
 #define PL_RANGE_MIN 315
 #define PL_RANGE_MAX 375
 #define MAX_SERVER_NAME 180
+#define MODEL_RANGE_MIN 0
+#define MODEL_RANGE_MAX 140
 
 int SCOREBOARD_WIDTH = 320;
 
@@ -187,6 +189,7 @@ int CHudScoreboard::Draw( float fTime )
 	else
 		DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Teams", 255, 140, 0 );
 
+	DrawUtfString( MODEL_RANGE_MIN + xpos_rel, ypos, ScreenWidth, "model", 255, 140, 0 );
 	gHUD.DrawHudStringReverse( KILLS_RANGE_MAX + xpos_rel, ypos, 0, "kills", 255, 140, 0 );
 	DrawUtfString( DIVIDER_POS + xpos_rel, ypos, ScreenWidth, "/", 255, 140, 0 );
 	DrawUtfString( DEATHS_RANGE_MIN + xpos_rel + 5, ypos, ScreenWidth, "deaths", 255, 140, 0 );
@@ -455,6 +458,12 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 
 		// draw their name (left to right)
 		DrawUtfString( xpos + nameoffset, ypos, NAME_RANGE_MAX + xpos_rel, pl_info->name, r, g, b );
+
+		// draw model name
+		static char model_name[64];
+		sprintf( model_name, "%s", pl_info->model );
+		xpos = MODEL_RANGE_MIN + xpos_rel;
+		DrawUtfString( xpos, ypos, MODEL_RANGE_MAX + xpos, model_name, r, g, b );
 
 		// draw kills (right to left)
 		xpos = KILLS_RANGE_MAX + xpos_rel;
