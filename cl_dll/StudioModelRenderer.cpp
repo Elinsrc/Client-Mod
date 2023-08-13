@@ -60,9 +60,6 @@ void CStudioModelRenderer::Init( void )
 	m_pCvarDeveloper		= IEngineStudio.GetCvar( "developer" );
 	m_pCvarDrawEntities		= IEngineStudio.GetCvar( "r_drawentities" );
 
-	// Cheat?
-	m_pCvarDrawEntities		= CVAR_CREATE("r_fakedrawentities", "1", FCVAR_ARCHIVE);
-
 	m_pChromeSprite			= IEngineStudio.GetChromeSprite();
 
 	IEngineStudio.GetModelCounters( &m_pStudioModelCount, &m_pModelsDrawn );

@@ -51,7 +51,7 @@ cl_gauss_balls [1/0] - Small bouncing balls from Gauss hits, defaut value is 1.
 cl_gauss_hits [1/0] - A large glowing sprite from a Gauss hits, defaut value is 1.
 
 cl_killsound [1/0] - Sound plays when you kill player, defaut value is 1. Taken from OpenAG.
-cl_killsound_path ["patch"] - Path to playing sound, defaut patch "buttons/bell1.wav". Taken from OpenAG.
+cl_killsound_path ["path"] - Path to playing sound, defaut path "buttons/bell1.wav". Taken from OpenAG.
 
 cl_cross [1/0] - Custom crosshair, defaut value 0.
 cl_cross_color "r g b" - Custom crosshair color, defaut value "255 255 255".
@@ -67,8 +67,6 @@ cl_cross_right_line [1/0], defaut value 1.
 cl_cross_dot [1/0] ,defaut value 1.
 cl_cross_dot_size [value], defaut value 1.
 cl_cross_dot_color "r g b", defaut value "255 255 255".
-
-r_fakedrawentities [1/2/3/4/5] - Works the same as r_drawentities, defaut value 1.
 ```
 
 # Build Instructions

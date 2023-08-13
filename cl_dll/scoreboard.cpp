@@ -174,14 +174,14 @@ int CHudScoreboard::Draw( float fTime )
 
 	int DATE_TIME_POS;
 
-    if( cl_showpacketloss && cl_showpacketloss->value)
-    	DATE_TIME_POS = 260;
-    else
-    	DATE_TIME_POS = 180;
+	if( cl_showpacketloss && cl_showpacketloss->value)
+		DATE_TIME_POS = 260;
+	else
+		DATE_TIME_POS = 180;
 
-    char time_str[80];
-    time_t date_time = time(0);
-    strftime(time_str, 80, "%Y.%m.%d %T", localtime(&date_time));
+	char time_str[80];
+	time_t date_time = time(0);
+	strftime(time_str, 80, "%Y.%m.%d %T", localtime(&date_time));
 	DrawUtfString( DATE_TIME_POS + xpos_rel, info_pos, ScreenWidth, time_str, 255, 140, 0 );
 
 	if( !gHUD.m_Teamplay )
@@ -460,10 +460,8 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 		DrawUtfString( xpos + nameoffset, ypos, NAME_RANGE_MAX + xpos_rel, pl_info->name, r, g, b );
 
 		// draw model name
-		static char model_name[64];
-		sprintf( model_name, "%s", pl_info->model );
 		xpos = MODEL_RANGE_MIN + xpos_rel;
-		DrawUtfString( xpos, ypos, MODEL_RANGE_MAX + xpos, model_name, r, g, b );
+		DrawUtfString( xpos, ypos, MODEL_RANGE_MAX + xpos, pl_info->model, r, g, b );
 
 		// draw kills (right to left)
 		xpos = KILLS_RANGE_MAX + xpos_rel;
