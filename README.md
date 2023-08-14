@@ -16,7 +16,7 @@ cl_autojump [0/1] - Will jump automatically as soon as you touch the ground whil
 +ducktap — Performs a duck tap automatically as soon as you touch the ground (presses +duck for 1 frame). Taken from OpenAG.
 hud_color "r g b" - Sets hud color, values must be enclosed in quotation marks. example: hud_color "255 0 255". Taken from OpenAG.
 hud_weapon [0/1] - Draw current weapon in HUD, default value is 1. Taken from OpenAG.
-cl_logchat [0/1/2 ] - Мalue 1 logs only messages from players. Value 2 logs system messages and players. The chat log is stored next to the "valve" folder and is called "logchat.txt", the default value is 0.
+cl_logchat [0/1/2 ] - Value 1 logs only messages from players. Value 2 logs system messages and players. The chat log is stored next to the "valve" folder and is called "logchat.txt", the default value is 0.
 hud_vis [0/1] - The color of armor and health indicators will change depending on their number, default value is 0.
 ```
 * Comands starting with **vis_health** and **vis_battery** work with **hud_vis 1**. They change the color of the health indicator and change depending on their number.
@@ -45,7 +45,7 @@ hud_jumpspeed [0/1] - Shows the player's speed at the moment of the jump, defaul
 hud_jumpspeed_below_cross [0/1] - Adjusts the position of the jumpspeed to the sight, defaut value is 0.
 hud_jumpspeed_height [0/1] - Adjusts the positio jumpspeed, defaut value is 0.
 
-hud_watermark [0/1], defaut value is 1.
+hud_watermark [0/1] - Shows client author and build date, defaut value is 1.
 
 cl_gauss_balls [0/1] - Small bouncing balls from Gauss hits, defaut value is 1.
 cl_gauss_hits [0/1] - A large glowing sprite from a Gauss hits, defaut value is 1.
