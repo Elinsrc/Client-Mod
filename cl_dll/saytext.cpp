@@ -181,7 +181,7 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 	ConsolePrint( pszBuf );
 #endif
 
-	if (cl_logchat->value != 0.0f)
+	if( clientIndex > 0 && cl_logchat->value == 1 || cl_logchat->value == 2 )
 	{
 		FILE *logchat = fopen("logchat.txt", "a");
 		char time_str[80];
