@@ -2,6 +2,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "parsemsg.h"
+#include "build_info.h"
 
 int CHudWatermark::Init()
 {
@@ -39,9 +40,19 @@ int CHudWatermark::Draw(float time)
 	int r, g, b;
 	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
 
-	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, "Client-Mod build " __DATE__, r, g, b);
+	char build[256];
+	sprintf(build, "Client-Mod: built %s, commit %s, architecture %s, platform %s",
+		BuildInfo::GetDate(),
+		BuildInfo::GetCommitHash(),
+		BuildInfo::GetArchitecture(),
+		BuildInfo::GetPlatform()
+	);
+
+	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, build, r, g, b);
 	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "t.me/Elinsrc", r, g, b);
 	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "t.me/HalfLifeCollectiveChat", r, g, b);
+	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, BuildInfo::GetGitHubLink(), r, g, b);
+	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 6, "To clear this message, type in the console 'hud_watermark 0'", r, g, b);
 
 	return 0;
 }

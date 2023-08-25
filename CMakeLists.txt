@@ -122,6 +122,20 @@ else()
 	message(STATUS "Building for 32 Bit")
 endif()
 
+# get current git commit short hash
+execute_process(COMMAND "git" "describe" "--always" "--dirty" "--abbrev=7"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+	OUTPUT_VARIABLE SHORT_HASH
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+if(SHORT_HASH)
+	message(STATUS "Current Git commit hash: ${SHORT_HASH}")
+	add_definitions(-DXASH_BUILD_COMMIT="${SHORT_HASH}")
+else()
+	message(STATUS "Failed to set current Git commit hash")
+endif()
+
 if (MINGW)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -static-libgcc")
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--add-stdcall-alias")
