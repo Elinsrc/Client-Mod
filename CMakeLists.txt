@@ -51,7 +51,8 @@ option(USE_VOICEMGR "Enable VOICE MANAGER." OFF)
 option(BUILD_CLIENT "Build client dll" ON)
 option(BUILD_SERVER "Build server dll" OFF)
 
-option(BUILD_DISCORD_RPC "Build discord_rpc" OFF)
+option(BUILD_DISCORD_RPC "Build Discord_rpc" OFF)
+option(BUILD_IMGUI "Build Imgui" OFF)
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 4 OR
 	((WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -169,4 +170,8 @@ if(BUILD_DISCORD_RPC)
 	set(BUILD_EXAMPLES OFF CACHE BOOL "build discord-rpc examples" FORCE)
 	set(CLANG_FORMAT_SUFFIX "-dummy")
 	add_subdirectory(3rdparty/discord-rpc)
+endif()
+
+if(BUILD_IMGUI)
+	message(STATUS "Building Imgui enabled")
 endif()

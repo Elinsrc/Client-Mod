@@ -58,21 +58,25 @@ if(BUILD_DISCORD_RPC)
 	add_definitions(-DBUILD_DISCORD_RPC)
 endif()
 
+if(BUILD_IMGUI)
+	add_definitions(-DBUILD_IMGUI)
+endif()
+
 set (CLDLL_SOURCES
-	../dlls/crossbow.cpp
-	../dlls/crowbar.cpp
-	../dlls/egon.cpp
-	../dlls/gauss.cpp
-	../dlls/handgrenade.cpp
-	../dlls/hornetgun.cpp
-	../dlls/mp5.cpp
-	../dlls/python.cpp
-	../dlls/rpg.cpp
-	../dlls/satchel.cpp
-	../dlls/shotgun.cpp
-	../dlls/squeakgrenade.cpp
-	../dlls/tripmine.cpp
-	../dlls/glock.cpp
+	${CMAKE_SOURCE_DIR}/dlls/crossbow.cpp
+	${CMAKE_SOURCE_DIR}/dlls/crowbar.cpp
+	${CMAKE_SOURCE_DIR}/dlls/egon.cpp
+	${CMAKE_SOURCE_DIR}/dlls/gauss.cpp
+	${CMAKE_SOURCE_DIR}/dlls/handgrenade.cpp
+	${CMAKE_SOURCE_DIR}/dlls/hornetgun.cpp
+	${CMAKE_SOURCE_DIR}/dlls/mp5.cpp
+	${CMAKE_SOURCE_DIR}/dlls/python.cpp
+	${CMAKE_SOURCE_DIR}/dlls/rpg.cpp
+	${CMAKE_SOURCE_DIR}/dlls/satchel.cpp
+	${CMAKE_SOURCE_DIR}/dlls/shotgun.cpp
+	${CMAKE_SOURCE_DIR}/dlls/squeakgrenade.cpp
+	${CMAKE_SOURCE_DIR}/dlls/tripmine.cpp
+	${CMAKE_SOURCE_DIR}/dlls/glock.cpp
 	ev_hldm.cpp
 	hl/hl_baseentity.cpp
 	hl/hl_events.cpp
@@ -110,9 +114,9 @@ set (CLDLL_SOURCES
 	menu.cpp
 	message.cpp
 	parsemsg.cpp
-	../pm_shared/pm_debug.c
-	../pm_shared/pm_math.c
-	../pm_shared/pm_shared.c
+	${CMAKE_SOURCE_DIR}/pm_shared/pm_debug.c
+	${CMAKE_SOURCE_DIR}/pm_shared/pm_math.c
+	${CMAKE_SOURCE_DIR}/pm_shared/pm_shared.c
 	saytext.cpp
 	status_icons.cpp
 	statusbar.cpp
@@ -138,14 +142,14 @@ if (USE_VGUI)
 		vgui_SpectatorPanel.cpp
 		vgui_teammenu.cpp
 		voice_status.cpp
-		../game_shared/vgui_checkbutton2.cpp
-		../game_shared/vgui_grid.cpp
-		../game_shared/vgui_helpers.cpp
-		../game_shared/vgui_listbox.cpp
-		../game_shared/vgui_loadtga.cpp
-		../game_shared/vgui_scrollbar2.cpp
-		../game_shared/vgui_slider2.cpp
-		../game_shared/voice_banmgr.cpp
+		${CMAKE_SOURCE_DIR}/game_shared/vgui_checkbutton2.cpp
+		${CMAKE_SOURCE_DIR}/game_shared/vgui_grid.cpp
+		${CMAKE_SOURCE_DIR}/game_shared/vgui_helpers.cpp
+		${CMAKE_SOURCE_DIR}/game_shared/vgui_listbox.cpp
+		${CMAKE_SOURCE_DIR}/game_shared/vgui_loadtga.cpp
+		${CMAKE_SOURCE_DIR}/game_shared/vgui_scrollbar2.cpp
+		${CMAKE_SOURCE_DIR}/game_shared/vgui_slider2.cpp
+		${CMAKE_SOURCE_DIR}/game_shared/voice_banmgr.cpp
 		)
 	if (USE_NOVGUI_MOTD)
 		list(APPEND CLDLL_SOURCES MOTD.cpp)
@@ -164,25 +168,38 @@ if (BUILD_DISCORD_RPC)
 		discord_integration.cpp)
 endif()
 
-include_directories (. hl/ ../dlls ../dlls/wpn_shared ../common ../engine ../pm_shared ../game_shared ../public)
+if (BUILD_IMGUI)
+	list(APPEND CLDLL_SOURCES
+		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui.cpp"
+		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_demo.cpp"
+		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_draw.cpp"
+		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_tables.cpp"
+		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_widgets.cpp")
+endif()
+
+include_directories (. hl/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
 
 if (BUILD_DISCORD_RPC)
-	include_directories(../3rdparty/discord-rpc/include)
+	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/discord-rpc/include)
+endif()
+
+if (BUILD_IMGUI)
+	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/imgui)
 endif()
 
 if (USE_VGUI)
 	SET(CMAKE_SKIP_RPATH TRUE)
 	link_directories(${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/lib)
-	include_directories(../vgui_support/vgui-dev/include)
+	include_directories(${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/include)
 else()
-	include_directories(../utils/fake_vgui/include)
+	include_directories(${CMAKE_SOURCE_DIR}/utils/fake_vgui/include)
 endif()
 
 if(USE_VOICEMGR)
 	#set(CLDLL_SOURCES
 	#	${CLDLL_SOURCES}
-	#	../game_shared/voice_banmgr.cpp
-	#	../game_shared/voice_status.cpp)
+	#	${CMAKE_SOURCE_DIR}/game_shared/voice_banmgr.cpp
+	#	${CMAKE_SOURCE_DIR}/game_shared/voice_status.cpp)
 endif()
 
 add_library (${CLDLL_LIBRARY} SHARED ${CLDLL_SOURCES})
