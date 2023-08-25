@@ -165,7 +165,7 @@ endif()
 
 if (BUILD_DISCORD_RPC)
 	list(APPEND CLDLL_SOURCES
-		discord_integration.cpp)
+		discord-rpc/discord_integration.cpp)
 endif()
 
 if (BUILD_IMGUI)
@@ -180,11 +180,11 @@ endif()
 include_directories (. hl/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
 
 if (BUILD_DISCORD_RPC)
-	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/discord-rpc/include)
+	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/discord-rpc/include discord-rpc)
 endif()
 
 if (BUILD_IMGUI)
-	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/imgui)
+	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/imgui imgui)
 endif()
 
 if (USE_VGUI)
