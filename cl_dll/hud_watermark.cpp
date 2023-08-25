@@ -52,7 +52,7 @@ int CHudWatermark::Draw(float time)
 	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "t.me/Elinsrc", r, g, b);
 	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "t.me/HalfLifeCollectiveChat", r, g, b);
 	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, BuildInfo::GetGitHubLink(), r, g, b);
-	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 6, "To clear this message, type in the console 'hud_watermark 0'", r, g, b);
+	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 6, "To disable this message, type in the console 'hud_watermark 0'", r, g, b);
 
 	return 0;
 }
