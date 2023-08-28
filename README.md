@@ -49,6 +49,7 @@ hud_watermark [0/1] - Shows client author and build date, defaut value is 1.
 
 cl_gauss_balls [0/1] - Small bouncing balls from Gauss hits, defaut value is 1.
 cl_gauss_hits [0/1] - A large glowing sprite from a Gauss hits, defaut value is 1.
+cl_hidecorpses [0/1] - Hides the corpses of players. defaut value is 0.
 
 cl_killsound [0/1] - Sound plays when you kill player, defaut value is 1. Taken from OpenAG.
 cl_killsound_path ["path"] - Path to playing sound, defaut path "buttons/bell1.wav". Taken from OpenAG.
