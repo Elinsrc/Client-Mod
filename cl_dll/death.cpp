@@ -81,7 +81,7 @@ int CHudDeathNotice::Init( void )
 	CVAR_CREATE( "hud_deathnotice_time", "6", FCVAR_ARCHIVE );
 
 	// OpenAG
-	m_pCvarKillSnd = CVAR_CREATE( "cl_killsound", "0", FCVAR_ARCHIVE );
+	m_pCvarKillSnd = CVAR_CREATE( "cl_killsound", "1", FCVAR_ARCHIVE );
 	m_pCvarKillSndPath = CVAR_CREATE( "cl_killsound_path", "buttons/bell1.wav", FCVAR_ARCHIVE );
 
 	return 1;

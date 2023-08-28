@@ -82,6 +82,11 @@ cvar_t	*cl_weaponlag;
 cvar_t	*cl_weaponsway;
 cvar_t	*cl_weaponlowering;
 
+// OpenAG
+cvar_t	*cl_viewmodel_ofs_right;
+cvar_t	*cl_viewmodel_ofs_forward;
+cvar_t	*cl_viewmodel_ofs_up;
+
 #define	CAM_MODE_RELAX		1
 #define CAM_MODE_FOCUS		2
 
@@ -494,6 +499,10 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	vec3_t camAngles, camForward, camRight, camUp;
 	cl_entity_t *pwater;
 
+	float forward_offset = cl_viewmodel_ofs_forward->value;
+	float right_offset = cl_viewmodel_ofs_right->value;
+	float up_offset = cl_viewmodel_ofs_up->value;
+
 	if( gEngfuncs.IsSpectateOnly() )
 	{
 		ent = gEngfuncs.GetEntityByIndex( g_iUser2 );
@@ -694,6 +703,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 			view->origin[i] += bob * 0.2f * pparams->up[i];
 		}
 		view->origin[i] += bob * 0.4f * pparams->forward[i];
+		view->origin[i] += forward_offset * pparams->forward[i] + right_offset * pparams->right[i] + up_offset * pparams->up[i];
 	}
 	view->origin[2] += bob;
 
@@ -1719,6 +1729,11 @@ void V_Init( void )
 	cl_weaponlag = gEngfuncs.pfnRegisterVariable( "cl_weaponlag", "1", FCVAR_ARCHIVE );
 	cl_weaponsway = gEngfuncs.pfnRegisterVariable( "cl_weaponsway", "1", FCVAR_ARCHIVE );
 	cl_weaponlowering = gEngfuncs.pfnRegisterVariable( "cl_weaponlowering", "1", FCVAR_ARCHIVE );
+
+	// OpenAG
+	cl_viewmodel_ofs_right		= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_ofs_right","0", FCVAR_ARCHIVE ); // x = right
+	cl_viewmodel_ofs_forward	= gEngfuncs.pfnRegisterVariable( "cl_viewmodel_ofs_forward","0", FCVAR_ARCHIVE ); // y = forward
+	cl_viewmodel_ofs_up		    = gEngfuncs.pfnRegisterVariable( "cl_viewmodel_ofs_up","0", FCVAR_ARCHIVE ); // z = up
 }
 
 //#define TRACE_TEST	1
