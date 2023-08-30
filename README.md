@@ -4,7 +4,7 @@
 
 Added a new control with additional buttons to activate `Configuration->Touch->Touch options`, select preset `New` and click `Activate`.
 
-Added server name to no vgui scoreboard, player model name and current date with time.
+Added server name to no vgui scoreboard, player model name (included in vgui), curent map name, number of current players, and current date with time.
 
 Added commands:
 

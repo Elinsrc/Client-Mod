@@ -108,7 +108,6 @@ We have a minimum width of 1-320 - we could have the field widths scale with it?
 #define PING_RANGE_MAX	295
 #define PL_RANGE_MIN 315
 #define PL_RANGE_MAX 375
-#define MAX_SERVER_NAME 180
 #define MODEL_RANGE_MIN 0
 #define MODEL_RANGE_MAX 140
 
@@ -118,7 +117,7 @@ int SCOREBOARD_WIDTH = 320;
 #define ROW_GAP  (gHUD.m_scrinfo.iCharHeight)
 #define ROW_RANGE_MIN 15
 #define ROW_RANGE_MAX ( ScreenHeight - 50 )
-#define ROW_TOP 20
+#define ROW_TOP 40
 
 int CHudScoreboard::Draw( float fTime )
 {
@@ -168,21 +167,36 @@ int CHudScoreboard::Draw( float fTime )
 		gHUD.DrawDarkRectangle( xpos - 5, info_pos - 5, FAR_RIGHT, ROW_RANGE_MAX );
 
 	char ServerName[90];
-	if(gHUD.m_szServerName[0])
-	snprintf(ServerName,80,"%s",gHUD.m_szServerName);
-	DrawUtfString( xpos, info_pos, MAX_SERVER_NAME + xpos_rel, ServerName, 255, 140, 0 );
+	snprintf(ServerName,80,"Server: %s",gHUD.m_szServerName );
+	DrawUtfString( xpos, info_pos, ScreenWidth, ServerName, 255, 140, 0 );
 
 	int DATE_TIME_POS;
+	int PLAYER_COUNT_POS;
 
 	if( cl_showpacketloss && cl_showpacketloss->value)
+	{
 		DATE_TIME_POS = 260;
+		PLAYER_COUNT_POS = 360;
+	}
 	else
+	{
 		DATE_TIME_POS = 180;
-
+		PLAYER_COUNT_POS = 280;
+	}
 	char time_str[80];
 	time_t date_time = time(0);
 	strftime(time_str, 80, "%Y.%m.%d %T", localtime(&date_time));
-	DrawUtfString( DATE_TIME_POS + xpos_rel, info_pos, ScreenWidth, time_str, 255, 140, 0 );
+	DrawUtfString( DATE_TIME_POS + xpos_rel, info_pos + 20, ScreenWidth, time_str, 255, 140, 0 );
+
+	char map[256];
+	char map_name[64];
+	const size_t length = get_map_name(map_name, ARRAYSIZED(map_name));
+	sprintf(map, "Map: %s", map_name );
+	DrawUtfString( xpos, info_pos + 20, ScreenWidth, map, 255, 140, 0 );
+
+	char player_count[256];
+	sprintf(player_count, "%d/%d", get_player_count(), gEngfuncs.GetMaxClients());
+	DrawUtfString( PLAYER_COUNT_POS + xpos_rel, info_pos, ScreenWidth, player_count, 255, 140, 0 );
 
 	if( !gHUD.m_Teamplay )
 		DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Player", 255, 140, 0 );
