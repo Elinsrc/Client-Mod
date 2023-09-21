@@ -127,11 +127,11 @@ jobs:
       - name: Repackage binaries
         run: |
           cd artifacts/
-          zip Client-Mod-android.zip Client-Mod-android/app-debug.apk
-          zip Client-Mod-linux.zip Client-Mod-linux/cl_dlls/client.so
-          zip Client-Mod-linux-vgui.zip Client-Mod-linux-vgui/cl_dlls/client.so
-          zip Client-Mod-windows.zip Client-Mod-windows/cl_dlls/client.dll
-          zip Client-Mod-windows-vgui.zip Client-Mod-windows-vgui/cl_dlls/client.dll
+          zip -j Client-Mod-android.zip Client-Mod-android/app-debug.apk
+          zip -j Client-Mod-linux.zip Client-Mod-linux/cl_dlls/client.so
+          zip -j Client-Mod-linux-vgui.zip Client-Mod-linux-vgui/cl_dlls/client.so
+          zip -j Client-Mod-windows.zip Client-Mod-windows/cl_dlls/client.dll
+          zip -j Client-Mod-windows-vgui.zip Client-Mod-windows-vgui/cl_dlls/client.dll
           ls -R .
           cd ../
       - name: Remove old release
