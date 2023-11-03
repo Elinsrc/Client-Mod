@@ -170,17 +170,6 @@ int CHudSayText::MsgFunc_SayText( const char *pszName, int iSize, void *pbuf )
 
 void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientIndex )
 {
-#if USE_VGUI
-	if( gViewPort && gViewPort->AllowedToPrintText() == FALSE )
-	{
-		// Print it straight to the console
-		ConsolePrint( pszBuf );
-		return;
-	}
-#else
-	ConsolePrint( pszBuf );
-#endif
-
 	if( clientIndex > 0 && cl_logchat->value == 1 || cl_logchat->value == 2 )
 	{
 		FILE *logchat = fopen("logchat.txt", "a");
