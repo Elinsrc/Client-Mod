@@ -124,6 +124,15 @@ jobs:
         uses: actions/download-artifact@v3.0.1
         with:
           path: artifacts
+      - name: Remove old release
+        uses: dev-drprasad/delete-tag-and-release@v1.0
+        with:
+          tag_name: continuous
+          delete_release: true
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          repo: Elinsrc/Client-Mod
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Repackage binaries
         run: |
           cd artifacts/
@@ -134,16 +143,12 @@ jobs:
           zip -j Client-Mod-windows-vgui.zip Client-Mod-windows-vgui/cl_dlls/client.dll
           ls -R .
           cd ../
-      - name: Remove old release
-        uses: dev-drprasad/delete-tag-and-release@v0.2.1
-        with:
-          delete_release: true
-          tag_name: continuous
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          sleep 60s
       - name: Upload new release
         uses: svenstaro/upload-release-action@v2
         with:
+          repo_name: Elinsrc/Client-Mod
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
           file: artifacts/*.zip
