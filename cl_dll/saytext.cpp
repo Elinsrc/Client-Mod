@@ -26,7 +26,9 @@
 #include <string.h>
 #include <stdio.h>
 
-cvar_t *cl_logchat;
+cvar_t *m_pCvarLogchat;
+cvar_t *m_pCvarChatSound;
+cvar_t *m_pCvarChatSoundPath;
 
 #if USE_VGUI
 #include "vgui_TeamFortressViewport.h"
@@ -60,7 +62,10 @@ int CHudSayText::Init( void )
 
 	InitHUDData();
 
-	cl_logchat = CVAR_CREATE("cl_logchat", "0", FCVAR_ARCHIVE);
+	m_pCvarLogchat = CVAR_CREATE("cl_logchat", "0", FCVAR_ARCHIVE);
+	m_pCvarChatSound = CVAR_CREATE("cl_chatsound", "1", FCVAR_ARCHIVE);
+	m_pCvarChatSoundPath = CVAR_CREATE("cl_chatsound_path", "misc/talk.wav", FCVAR_ARCHIVE);
+
 	m_HUD_saytext =		gEngfuncs.pfnRegisterVariable( "hud_saytext", "1", 0 );
 	m_HUD_saytext_time =	gEngfuncs.pfnRegisterVariable( "hud_saytext_time", "5", 0 );
 
@@ -170,7 +175,7 @@ int CHudSayText::MsgFunc_SayText( const char *pszName, int iSize, void *pbuf )
 
 void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientIndex )
 {
-	if( clientIndex > 0 && cl_logchat->value == 1 || cl_logchat->value == 2 )
+	if( clientIndex > 0 && m_pCvarLogchat->value == 1 || m_pCvarLogchat->value == 2 )
 	{
 		char logfile[256];
 		sprintf(logfile, "%s_logchat.txt", gEngfuncs.pfnGetGameDirectory() );
@@ -235,7 +240,9 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 	}
 
 	m_iFlags |= HUD_ACTIVE;
-	PlaySound( "misc/talk.wav", 1 );
+
+	if( m_pCvarChatSound->value == 1 || clientIndex > 0 && m_pCvarChatSound->value == 2 )
+		PlaySound( m_pCvarChatSoundPath->string, m_pCvarChatSound->value );
 
 	if( ScreenHeight >= 480 )
 		Y_START = ScreenHeight - 60;

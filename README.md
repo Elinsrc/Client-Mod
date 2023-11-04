@@ -14,9 +14,17 @@ cl_autojump [0/1] - Will jump automatically as soon as you touch the ground whil
 * **When this command is enabled the jump button may not work**, solved by command **cl_lw 1**.
 ```
 +ducktap — Performs a duck tap automatically as soon as you touch the ground (presses +duck for 1 frame). Taken from OpenAG.
+
 hud_color "r g b" - Sets hud color, values must be enclosed in quotation marks. example: hud_color "255 0 255". Taken from OpenAG.
+
 hud_weapon [0/1] - Draw current weapon in HUD, default value is 1. Taken from OpenAG.
-cl_logchat [0/1/2 ] - Value 1 logs only messages from players. Value 2 logs system messages and players. The chat log is stored next to the "valve" folder and is called "logchat.txt", the default value is 0.
+
+cl_logchat [0/1/2 ] - Value 1 logs only messages from players. Value 2 logs system messages and players, default value is 0.
+
+cl_chatsound [0/1/2] - Value 1 play system and players chat notification sound, Value 2 logs only from players, default value is 1.
+
+cl_chatsound_path ["path"] - Path to chat notification playing sound, defaut path "misc/talk.wav".
+
 hud_vis [0/1] - The color of armor and health indicators will change depending on their number, default value is 0.
 ```
 * Comands starting with **vis_health** and **vis_battery** work with **hud_vis 1**. They change the color of the health indicator and change depending on their number.
