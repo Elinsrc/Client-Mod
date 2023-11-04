@@ -172,7 +172,10 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 {
 	if( clientIndex > 0 && cl_logchat->value == 1 || cl_logchat->value == 2 )
 	{
-		FILE *logchat = fopen("logchat.txt", "a");
+		char logfile[256];
+		sprintf(logfile, "%s_logchat.txt", gEngfuncs.pfnGetGameDirectory() );
+
+		FILE *logchat = fopen(logfile, "a");
 		char time_str[80];
 		time_t date_time = time(0);
 		strftime(time_str, 80, "[%Y.%m.%d|%T]", localtime(&date_time));
