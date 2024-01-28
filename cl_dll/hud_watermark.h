@@ -10,5 +10,5 @@ class CHudWatermark : public CHudBase
 public:
 	virtual int Init();
 	virtual int VidInit();
-	virtual int Draw(float time);
+	virtual int Draw(float flTime);
 };

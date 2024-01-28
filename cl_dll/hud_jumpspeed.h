@@ -17,7 +17,7 @@ class CHudJumpspeed : public CHudBase
 public:
 	virtual int Init();
 	virtual int VidInit();
-	virtual int Draw(float time);
+	virtual int Draw(float flTime);
 
 	void UpdateSpeed(const float velocity[3]);
 };

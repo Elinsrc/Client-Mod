@@ -9,8 +9,10 @@
 #include "event_api.h"
 
 // https://github.com/SNMetamorph/goldsrc-monitor
-
+extern "C"
+{
 extern playermove_t *pmove;
+}
 
 int CHudDebug::Init()
 {

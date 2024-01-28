@@ -14,5 +14,5 @@ public:
     virtual int VidInit();
     virtual float GetFrametime();
     virtual const char *GetMovetypeName(int moveType);
-    virtual int Draw(float time);
+    virtual int Draw(float flTime);
 };
