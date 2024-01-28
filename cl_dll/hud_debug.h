@@ -10,9 +10,9 @@ class CHudDebug : public CHudBase
     float m_lastClientTime;
 
 public:
-	virtual int Init();
-	virtual int VidInit();
+    virtual int Init();
+    virtual int VidInit();
     virtual float GetFrametime();
     virtual const char *GetMovetypeName(int moveType);
-	virtual int Draw(float time);
+    virtual int Draw(float time);
 };

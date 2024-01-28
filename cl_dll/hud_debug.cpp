@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "hud.h"
 #include "cl_util.h"
 #include "cl_entity.h"
@@ -12,17 +14,15 @@ extern playermove_t *pmove;
 
 int CHudDebug::Init()
 {
-	m_iFlags = HUD_ACTIVE;
-
+    m_iFlags = HUD_ACTIVE;
     hud_debug = CVAR_CREATE("hud_debug", "0", FCVAR_ARCHIVE);
-
-	gHUD.AddHudElem(this);
-	return 0;
+    gHUD.AddHudElem(this);
+    return 0;
 }
 
 int CHudDebug::VidInit()
 {
-	return 1;
+    return 1;
 }
 
 float CHudDebug::GetFrametime()
@@ -59,7 +59,7 @@ const char *CHudDebug::GetMovetypeName(int moveType)
 int CHudDebug::Draw(float flTime)
 {
     if (hud_debug->value == 0.0f)
-		return 0;
+        return 0;
 
     int r, g, b;
 
@@ -90,7 +90,7 @@ int CHudDebug::Draw(float flTime)
 
     cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
 
-    float velocityNum = std::hypot(pmove->velocity[0], pmove->velocity[1]);
+    float velocityNum = std::round(std::hypot(pmove->velocity[0], pmove->velocity[1]));
 
     char pl_velocity[30];
     sprintf(pl_velocity, "Velocity: %.2f u/s (%.2f, %.2f, %.2f)", velocityNum, pmove->velocity.x, pmove->velocity.y, pmove->velocity.z);
