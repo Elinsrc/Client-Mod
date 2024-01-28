@@ -94,52 +94,52 @@ int CHudDebug::Draw(float flTime)
 
     float velocityNum = std::round(std::hypot(pmove->velocity[0], pmove->velocity[1]));
 
-    char pl_velocity[30];
+    char pl_velocity[256];
     sprintf(pl_velocity, "Velocity: %.2f u/s (%.2f, %.2f, %.2f)", velocityNum, pmove->velocity.x, pmove->velocity.y, pmove->velocity.z);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 5, pl_velocity, r, g, b);
 
-    char pl_origin[30];
+    char pl_origin[256];
     sprintf(pl_origin, "Origin: (%.2f, %.2f, %.2f)", localPlayer->origin.x, localPlayer->origin.y, localPlayer->origin.z);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 6, pl_origin, r, g, b);
 
-    char pl_angles[30];
+    char pl_angles[256];
     sprintf(pl_angles, "Anges: (%.2f, %.2f, %.2f)", localPlayer->angles.x, localPlayer->angles.y, localPlayer->angles.z);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 7, pl_angles, r, g, b);
 
-    char pl_movetype[30];
+    char pl_movetype[256];
     sprintf(pl_movetype, "Movetype: %s", GetMovetypeName(localPlayer->curstate.movetype));
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 8, pl_movetype, r, g, b);
 
     vec3_t viewOffset;
     gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOffset);
 
-    char pl_viewOffset[30];
+    char pl_viewOffset[256];
     sprintf(pl_viewOffset, "View Offset: (%.2f, %.2f, %.2f)", viewOffset.x, viewOffset.y, viewOffset.z);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 10, pl_viewOffset, r, g, b);
 
     const vec3_t &punchAngle = pmove->punchangle;
 
-    char pl_punchAngle[30];
+    char pl_punchAngle[256];
     sprintf(pl_punchAngle, "Punch Angle: (%.2f, %.2f, %.2f)", punchAngle.x, punchAngle.y, punchAngle.z);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 11, pl_punchAngle, r, g, b);
 
-    char pl_flags[30];
+    char pl_flags[256];
     sprintf(pl_flags, "Player Flags: %d", pmove->flags);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 12, pl_flags, r, g, b);
 
-    char pl_hulltype[30];
+    char pl_hulltype[256];
     sprintf(pl_hulltype, "Hull Type: %d", pmove->usehull);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 13, pl_hulltype, r, g, b);
 
-    char pl_gravity[30];
+    char pl_gravity[256];
     sprintf(pl_gravity, "Gravity: %.2f", pmove->gravity);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 14, pl_gravity, r, g, b);
 
-    char pl_friction[30];
+    char pl_friction[256];
     sprintf(pl_friction, "Friction: %.2f", pmove->friction);
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 15, pl_friction, r, g, b);
 
-    char pl_onground[30];
+    char pl_onground[256];
     sprintf(pl_onground, "On Ground: %s", pmove->onground ? "yes" : "no");
     DrawString(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 16, pl_onground, r, g, b);
 
