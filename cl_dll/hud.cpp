@@ -437,6 +437,7 @@ void CHud::Init( void )
 	m_Jumpspeed.Init();
 	m_Crosshair.Init();
 	m_Watermark.Init();
+	m_Debug.Init();
 #if USE_VGUI
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
 #endif
@@ -630,6 +631,7 @@ void CHud::VidInit( void )
 	m_Jumpspeed.VidInit();
 	m_Crosshair.VidInit();
 	m_Watermark.VidInit();
+	m_Debug.VidInit();
 #if USE_VGUI
 	GetClientVoiceMgr()->VidInit();
 #endif

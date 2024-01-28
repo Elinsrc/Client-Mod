@@ -100,6 +100,7 @@ struct HUDLIST
 #include "hud_jumpspeed.h"
 #include "hud_crosshairs.h"
 #include "hud_watermark.h"
+#include "hud_debug.h"
 
 //
 //-----------------------------------------------------
@@ -619,6 +620,7 @@ public:
 	CHudJumpspeed   m_Jumpspeed;
 	CHudCrosshair	m_Crosshair;
 	CHudWatermark	m_Watermark;
+	CHudDebug	m_Debug;
 #if !USE_VGUI || USE_NOVGUI_SCOREBOARD
 	CHudScoreboard	m_Scoreboard;
 #endif
