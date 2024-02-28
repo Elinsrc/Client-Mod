@@ -5,9 +5,7 @@ import java.time.temporal.ChronoUnit
 apply plugin: 'com.android.application'
 
 android {
-    compileSdk 33
-    ndkVersion '25.2.9519653'
-    buildToolsVersion '33.0.2'
+    ndkVersion '26.1.10909125'
     namespace 'su.xash.clientmod'
 
     packagingOptions {
@@ -19,16 +17,10 @@ android {
     defaultConfig {
         applicationId 'su.xash'
         applicationIdSuffix 'clientmod'
-        versionName '0.99'
-        versionCode getBuildNum()
-        minSdkVersion 16
-        targetSdk 33
-
-        externalNativeBuild {
-            cmake {
-                version '3.22.1'
-            }
-        }
+        versionName '1.5'
+        minSdkVersion 19
+        targetSdk 34
+        compileSdk 34
     }
 
     externalNativeBuild {
@@ -66,19 +58,15 @@ android {
         abortOnError false
     }
 
-    aaptOptions {
-        noCompress ''
+     sourceSets {
+        main {
+            assets {
+                srcDirs += "app/src/main/assets"
+            }
+        }
     }
-}
 
-dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-}
-
-static def getBuildNum() {
-    LocalDateTime now = LocalDateTime.now()
-    LocalDateTime releaseDate = LocalDateTime.of(2018, Month.DECEMBER, 7, 0, 0, 0)
-    int qBuildNum = releaseDate.until(now, ChronoUnit.DAYS)
-    int minuteOfDay = now.getHour() * 60 + now.getMinute()
-    return qBuildNum * 10000 + minuteOfDay
+    androidResources {
+        noCompress += ''
+    }
 }
