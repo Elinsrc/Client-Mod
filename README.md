@@ -61,7 +61,8 @@ hud_rainbow_val [value], default value is 100.
 hud_rainbow_speed [value], default value is 40.
 hud_rainbow_xphase [value], default value is 0.4.
 hud_rainbow_yphase [value], default value is 0.7.
-hud_rainbow_chat [0/1], default value is 0
+hud_rainbow_chat [0/1], default value is 0.
+hud_rainbow_deathnotice [0/1], default value is 0.
 
 cl_gauss_balls [0/1] - Small bouncing balls from Gauss hits, defaut value is 1.
 cl_gauss_hits [0/1] - A large glowing sprite from a Gauss hits, defaut value is 1.

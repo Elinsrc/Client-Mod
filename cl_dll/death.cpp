@@ -27,6 +27,8 @@
 #include "vgui_TeamFortressViewport.h"
 #endif
 
+cvar_t *m_HUD_rainbow_death;
+
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg )
 
 struct DeathNoticeItem {
@@ -83,6 +85,7 @@ int CHudDeathNotice::Init( void )
 	// OpenAG
 	m_pCvarKillSnd = CVAR_CREATE( "cl_killsound", "1", FCVAR_ARCHIVE );
 	m_pCvarKillSndPath = CVAR_CREATE( "cl_killsound_path", "buttons/bell1.wav", FCVAR_ARCHIVE );
+	m_HUD_rainbow_death =	gEngfuncs.pfnRegisterVariable( "hud_rainbow_deathnotice", "0", FCVAR_ARCHIVE );
 
 	return 1;
 }
@@ -101,6 +104,10 @@ int CHudDeathNotice::VidInit( void )
 
 int CHudDeathNotice::Draw( float flTime )
 {
+	bool enableRainbow = m_HUD_rainbow_death->value;
+	if (!enableRainbow)
+		gHUD.m_Rainbow.PushDisable();
+
 	int x, y, r, g, b;
 
 	for( int i = 0; i < MAX_DEATHNOTICES; i++ )
@@ -162,6 +169,9 @@ int CHudDeathNotice::Draw( float flTime )
 			}
 		}
 	}
+
+	if (!enableRainbow)
+		gHUD.m_Rainbow.PopDisable();
 
 	return 1;
 }
