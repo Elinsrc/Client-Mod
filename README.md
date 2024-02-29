@@ -55,6 +55,14 @@ hud_jumpspeed_height [0/1] - Adjusts the positio jumpspeed, defaut value is 0.
 
 hud_watermark [0/1] - Shows client author and build date, defaut value is 1.
 
+hud_rainbow [0/1] - Paints HUD rainbow, default value is 0. Taken from OpenAG.
+hud_rainbow_sat [value], default value is 100.
+hud_rainbow_val [value], default value is 100.
+hud_rainbow_speed [value], default value is 40.
+hud_rainbow_xphase [value], default value is 0.4.
+hud_rainbow_yphase [value], default value is 0.7.
+hud_rainbow_chat [0/1], default value is 0
+
 cl_gauss_balls [0/1] - Small bouncing balls from Gauss hits, defaut value is 1.
 cl_gauss_hits [0/1] - A large glowing sprite from a Gauss hits, defaut value is 1.
 cl_hidecorpses [0/1] - Hides the corpses of players. defaut value is 0.

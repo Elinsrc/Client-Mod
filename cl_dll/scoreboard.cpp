@@ -168,7 +168,7 @@ int CHudScoreboard::Draw( float fTime )
 
 	char ServerName[90];
 	if(gHUD.m_szServerName[0])
-		snprintf(ServerName,80,"Server: %s",gHUD.m_szServerName );
+		snprintf(ServerName,80,"%s",gHUD.m_szServerName );
 	DrawUtfString( xpos, info_pos, ScreenWidth, ServerName, 255, 140, 0 );
 
 	int PLAYER_DATE_POS;
@@ -186,27 +186,27 @@ int CHudScoreboard::Draw( float fTime )
 	char map[256];
 	char map_name[64];
 	const size_t length = get_map_name(map_name, ARRAYSIZED(map_name));
-	sprintf(map, "Map: %s", map_name );
-	DrawUtfString( xpos, info_pos + 20, ScreenWidth, map, 255, 140, 0 );
+	sprintf(map, "%s", map_name );
+	gHUD.DrawHudString( xpos, info_pos + 20, ScreenWidth, map, 255, 140, 0 );
 
 	char player_count[256];
 	sprintf(player_count, "%d/%d", get_player_count(), gEngfuncs.GetMaxClients());
 	gHUD.DrawHudStringReverse( PLAYER_DATE_POS + xpos_rel, info_pos, 0, player_count, 255, 140, 0 );
 
 	if( !gHUD.m_Teamplay )
-		DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Player", 255, 140, 0 );
+		gHUD.DrawHudString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Player", 255, 140, 0 );
 	else
-		DrawUtfString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Teams", 255, 140, 0 );
+		gHUD.DrawHudString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Teams", 255, 140, 0 );
 
-	DrawUtfString( MODEL_RANGE_MIN + xpos_rel, ypos, ScreenWidth, "model", 255, 140, 0 );
+	gHUD.DrawHudString( MODEL_RANGE_MIN + xpos_rel, ypos, ScreenWidth, "model", 255, 140, 0 );
 	gHUD.DrawHudStringReverse( KILLS_RANGE_MAX + xpos_rel, ypos, 0, "kills", 255, 140, 0 );
-	DrawUtfString( DIVIDER_POS + xpos_rel, ypos, ScreenWidth, "/", 255, 140, 0 );
-	DrawUtfString( DEATHS_RANGE_MIN + xpos_rel + 5, ypos, ScreenWidth, "deaths", 255, 140, 0 );
-	DrawUtfString( PING_RANGE_MAX + xpos_rel - 35, ypos, ScreenWidth, "latency", 255, 140, 0 );
+	gHUD.DrawHudString( DIVIDER_POS + xpos_rel, ypos, ScreenWidth, "/", 255, 140, 0 );
+	gHUD.DrawHudString( DEATHS_RANGE_MIN + xpos_rel + 5, ypos, ScreenWidth, "deaths", 255, 140, 0 );
+	gHUD.DrawHudString( PING_RANGE_MAX + xpos_rel - 35, ypos, ScreenWidth, "latency", 255, 140, 0 );
 
 	if( can_show_packetloss )
 	{
-		DrawUtfString( PL_RANGE_MAX + xpos_rel - 35, ypos, ScreenWidth, "pkt loss", 255, 140, 0 );
+		gHUD.DrawHudString( PL_RANGE_MAX + xpos_rel - 35, ypos, ScreenWidth, "pkt loss", 255, 140, 0 );
 	}
 
 	list_slot += 1.2f;
@@ -335,7 +335,7 @@ int CHudScoreboard::Draw( float fTime )
 
 		// draw divider
 		xpos = DIVIDER_POS + xpos_rel;
-		DrawUtfString( xpos, ypos, xpos + 20, "/", r, g, b );
+		gHUD.DrawHudString( xpos, ypos, xpos + 20, "/", r, g, b );
 
 		// draw deaths
 		xpos = DEATHS_RANGE_MAX + xpos_rel;
@@ -355,7 +355,7 @@ int CHudScoreboard::Draw( float fTime )
 			xpos = ( ( PL_RANGE_MAX - PL_RANGE_MIN ) / 2) + PL_RANGE_MIN + xpos_rel + 25;
 
 			sprintf( buf, "  %d", team_info->packetloss );
-			DrawUtfString( xpos, ypos, xpos+50, buf, r, g, b );
+			gHUD.DrawHudString( xpos, ypos, xpos+50, buf, r, g, b );
 		}
 
 		team_info->already_drawn = TRUE;  // set the already_drawn to be TRUE, so this team won't get drawn again
@@ -470,7 +470,7 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 
 		// draw model name
 		xpos = MODEL_RANGE_MIN + xpos_rel;
-		DrawUtfString( xpos, ypos, MODEL_RANGE_MAX + xpos, pl_info->model, r, g, b );
+		gHUD.DrawHudString( xpos, ypos, MODEL_RANGE_MAX + xpos, pl_info->model, r, g, b );
 
 		// draw kills (right to left)
 		xpos = KILLS_RANGE_MAX + xpos_rel;
@@ -478,7 +478,7 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 
 		// draw divider
 		xpos = DIVIDER_POS + xpos_rel;
-		DrawUtfString( xpos, ypos, xpos + 20, "/", r, g, b );
+		gHUD.DrawHudString( xpos, ypos, xpos + 20, "/", r, g, b );
 
 		// draw deaths
 		xpos = DEATHS_RANGE_MAX + xpos_rel;
@@ -505,7 +505,7 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 
 			xpos = ( ( PL_RANGE_MAX - PL_RANGE_MIN ) / 2 ) + PL_RANGE_MIN + xpos_rel + 25;
 
-			DrawUtfString( xpos, ypos, xpos+50, buf, r, g, b );
+			gHUD.DrawHudString( xpos, ypos, xpos+50, buf, r, g, b );
 		}
 
 		pl_info->name = NULL;  // set the name to be NULL, so this client won't get drawn again

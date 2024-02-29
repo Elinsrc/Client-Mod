@@ -115,6 +115,7 @@ set (CLDLL_SOURCES
 	menu.cpp
 	message.cpp
 	parsemsg.cpp
+	rainbow.cpp
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_debug.c
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_math.c
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_shared.c

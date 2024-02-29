@@ -58,14 +58,6 @@ android {
         abortOnError false
     }
 
-     sourceSets {
-        main {
-            assets {
-                srcDirs += "app/src/main/assets"
-            }
-        }
-    }
-
     androidResources {
         noCompress += ''
     }

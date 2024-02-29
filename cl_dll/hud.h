@@ -101,6 +101,7 @@ struct HUDLIST
 #include "hud_crosshairs.h"
 #include "hud_watermark.h"
 #include "hud_debug.h"
+#include "rainbow.h"
 
 //
 //-----------------------------------------------------
@@ -578,6 +579,7 @@ public:
 	int DrawHudNumberString( int xpos, int ypos, int iMinX, int iNumber, int r, int g, int b );
 	int GetNumWidth( int iNumber, int iFlags );
 	int DrawHudStringLen( const char *szIt );
+	int GetHudStringWidth(const char* string);
 	void DrawDarkRectangle( int x, int y, int wide, int tall );
 
 private:
@@ -621,6 +623,7 @@ public:
 	CHudCrosshair	m_Crosshair;
 	CHudWatermark	m_Watermark;
 	CHudDebug	m_Debug;
+	CRainbow m_Rainbow;
 #if !USE_VGUI || USE_NOVGUI_SCOREBOARD
 	CHudScoreboard	m_Scoreboard;
 #endif
