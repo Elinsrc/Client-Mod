@@ -9,7 +9,10 @@
 #include "event_api.h"
 
 #ifdef _WIN32
-#include <Windows.h>
+#define HSPRITE DeletedWinapi_HSPRITE// prevent windows.h from defining it
+#include <windows.h>
+#undef HSPRITE
+typedef int HSPRITE;
 #else
 #include <time.h>
 #endif
