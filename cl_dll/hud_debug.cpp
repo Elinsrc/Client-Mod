@@ -8,6 +8,12 @@
 #include "pm_defs.h"
 #include "event_api.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <time.h>
+#endif
+
 // https://github.com/SNMetamorph/goldsrc-monitor
 extern "C"
 {
@@ -27,14 +33,36 @@ int CHudDebug::VidInit()
     return 1;
 }
 
+static float GetCurrentSysTime()
+{
+#ifdef _WIN32
+    static LARGE_INTEGER frequency;
+    if (frequency.QuadPart == 0)
+        QueryPerformanceFrequency(&frequency);
+
+    LARGE_INTEGER now;
+    QueryPerformanceCounter(&now);
+    return now.QuadPart / double(frequency.QuadPart);
+#else
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    return now.tv_sec + now.tv_nsec / 1000000000.0;
+#endif
+}
+
 float CHudDebug::GetFrametime()
 {
-    float clientTime = gEngfuncs.GetClientTime();
-    float timeDelta = clientTime - m_lastClientTime;
+    const float smoothFactor    = 0.24f;
+    const float diffThreshold   = 0.13f;
+    float currSysTime           = GetCurrentSysTime();
+    float timeDelta             = currSysTime - m_lastSysTime;
 
-    m_frameTime += (timeDelta - m_frameTime);
-    m_lastFrameTime = m_frameTime;
-    m_lastClientTime = clientTime;
+    if ((timeDelta - m_lastFrameTime) > diffThreshold)
+        timeDelta = m_lastFrameTime;
+
+    m_frameTime       += (timeDelta - m_frameTime) * smoothFactor;
+    m_lastFrameTime   = m_frameTime;
+    m_lastSysTime     = currSysTime;
     return m_frameTime;
 }
 

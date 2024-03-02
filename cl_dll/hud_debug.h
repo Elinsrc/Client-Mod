@@ -7,7 +7,7 @@ class CHudDebug : public CHudBase
 
     float m_frameTime;
     float m_lastFrameTime;
-    float m_lastClientTime;
+    float m_lastSysTime;
 
 public:
     virtual int Init();
