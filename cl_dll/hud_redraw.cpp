@@ -263,6 +263,45 @@ int CHud::DrawHudString( int xpos, int ypos, int iMaxX, const char *szIt, int r,
 	return xpos + gEngfuncs.pfnDrawString( xpos, ypos, szIt, r, g, b);
 }
 
+int CHud::DrawChar( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b )
+{
+	// xash3d: reset unicode state
+	TextMessageDrawChar( 0, 0, 0, 0, 0, 0 );
+
+	// draw the string until we hit the null character or a newline character
+	for( ; *szIt != 0 && *szIt != '\n'; szIt++ )
+	{
+		int w = gHUD.m_scrinfo.charWidths['M'];
+		if( xpos + w  > iMaxX )
+			return xpos;
+		if( ( *szIt == '^' ) && ( *( szIt + 1 ) >= '0') && ( *( szIt + 1 ) <= '7') )
+		{
+			szIt++;
+			r = colors[*szIt - '0'][0];
+			g = colors[*szIt - '0'][1];
+			b = colors[*szIt - '0'][2];
+			if( !*(++szIt) )
+				return xpos;
+		}
+		int c = (unsigned int)(unsigned char)*szIt;
+
+		xpos += TextMessageDrawChar( xpos, ypos, c, r, g, b );
+	}
+
+	return xpos;
+}
+
+int CHud::DrawCharReverse( int xpos, int ypos, int iMinX, const char *szString, int r, int g, int b )
+{
+	// find the end of the string
+	for( const char *szIt = szString; *szIt != 0; szIt++ )
+		xpos -= gHUD.m_scrinfo.charWidths[(unsigned char)*szIt];
+	if( xpos < iMinX )
+		xpos = iMinX;
+	DrawChar( xpos, ypos, gHUD.m_scrinfo.iWidth, szString, r, g, b );
+	return xpos;
+}
+
 int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b )
 {
 	if (IsXashFWGS())

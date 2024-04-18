@@ -576,6 +576,8 @@ public:
 	int DrawHudNumberCentered( int x, int y, int iNumber, int r, int g, int b );
 	int DrawHudString( int x, int y, int iMaxX, const char *szString, int r, int g, int b );
 	int DrawHudStringReverse( int xpos, int ypos, int iMinX, const char *szString, int r, int g, int b );
+	int DrawChar( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b );
+	int DrawCharReverse( int xpos, int ypos, int iMinX, const char *szString, int r, int g, int b );
 	int DrawHudNumberString( int xpos, int ypos, int iMinX, int iNumber, int r, int g, int b );
 	int GetNumWidth( int iNumber, int iFlags );
 	int DrawHudStringLen( const char *szIt );
