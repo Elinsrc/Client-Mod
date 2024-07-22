@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -59,6 +59,8 @@ float g_ColorGrey[3]	= { 0.8, 0.8, 0.8 };
 cvar_t *m_pCvarKillSnd;
 cvar_t *m_pCvarKillSndPath;
 
+cvar_t *m_pCvarDeathBg;
+
 float *GetClientColor( int clientIndex )
 {
 	switch( g_PlayerExtraInfo[clientIndex].teamnumber )
@@ -81,6 +83,8 @@ int CHudDeathNotice::Init( void )
 	HOOK_MESSAGE( DeathMsg );
 
 	CVAR_CREATE( "hud_deathnotice_time", "6", FCVAR_ARCHIVE );
+
+	m_pCvarDeathBg = CVAR_CREATE( "hud_deathnotice_bg", "1", FCVAR_ARCHIVE );
 
 	// OpenAG
 	m_pCvarKillSnd = CVAR_CREATE( "cl_killsound", "1", FCVAR_ARCHIVE );
@@ -133,19 +137,27 @@ int CHudDeathNotice::Draw( float flTime )
 #endif
 		{
 			// Draw the death notice
-			y = YRES( DEATHNOTICE_TOP ) + 2 + ( 20 * i );  //!!!
+			y = YRES( DEATHNOTICE_TOP ) + 2 + ( 25 * i );  //!!!
 
 			int id = ( rgDeathNoticeList[i].iId == -1 ) ? m_HUD_d_skull : rgDeathNoticeList[i].iId;
-			x = ScreenWidth - ConsoleStringLen( rgDeathNoticeList[i].szVictim ) - ( gHUD.GetSpriteRect(id).right - gHUD.GetSpriteRect(id).left );
+			x = ScreenWidth - ConsoleStringLen( rgDeathNoticeList[i].szVictim ) - ( gHUD.GetSpriteRect(id).right - gHUD.GetSpriteRect(id).left ) - 10;
 
 			if( !rgDeathNoticeList[i].iSuicide )
 			{
 				x -= ( 5 + ConsoleStringLen( rgDeathNoticeList[i].szKiller ) );
 
+				if (m_pCvarDeathBg->value > 0.0f)
+					FillRGBABlend( x - 5, y, ConsoleStringLen( rgDeathNoticeList[i].szVictim ) + ConsoleStringLen( rgDeathNoticeList[i].szKiller ) + ( gHUD.GetSpriteRect(id).right - gHUD.GetSpriteRect(id).left ) + 15, 20 , 0, 0, 0, 255 * 0.6 );
+
 				// Draw killers name
 				if( rgDeathNoticeList[i].KillerColor )
 					DrawSetTextColor( rgDeathNoticeList[i].KillerColor[0], rgDeathNoticeList[i].KillerColor[1], rgDeathNoticeList[i].KillerColor[2] );
 				x = 5 + DrawConsoleString( x, y, rgDeathNoticeList[i].szKiller );
+			}
+			else
+			{
+				if (m_pCvarDeathBg->value > 0.0f)
+					FillRGBABlend( x - 5, y, ConsoleStringLen( rgDeathNoticeList[i].szVictim ) + ( gHUD.GetSpriteRect(id).right - gHUD.GetSpriteRect(id).left ) + 10, 20 , 0, 0, 0, 255 * 0.6 );
 			}
 
 			r = 255; g = 80; b = 0;

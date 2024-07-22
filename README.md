@@ -65,6 +65,8 @@ hud_rainbow_chat [0/1], default value is 0.
 hud_rainbow_deathnotice [0/1], default value is 0.
 hud_rainbow_statusbar [0/1], default value is 0.
 
+hud_deathnotice_bg [0/1] - Death notification background, default value is 0.
+
 cl_gauss_balls [0/1] - Small bouncing balls from Gauss hits, defaut value is 1.
 cl_gauss_hits [0/1] - A large glowing sprite from a Gauss hits, defaut value is 1.
 cl_hidecorpses [0/1] - Hides the corpses of players. defaut value is 0.
