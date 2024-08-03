@@ -177,8 +177,11 @@ if (BUILD_IMGUI)
 		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_draw.cpp"
 		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_tables.cpp"
 		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_widgets.cpp"
-		"imgui/imgui_int.cpp"
-		"imgui/imgui_impl_opengl3.cpp")
+		"imgui/imgui_manager.cpp"
+		"imgui/imgui_impl_opengl3.cpp"
+		"imgui/imgui_window_system.cpp"
+		"imgui/ui_main.cpp"
+		"imgui/ui_demo_window.cpp")
 endif()
 
 include_directories (. hl/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)

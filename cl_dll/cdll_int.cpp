@@ -41,7 +41,7 @@
 #endif
 
 #if BUILD_IMGUI
-#include "imgui_int.h"
+#include "imgui_manager.h"
 #endif
 
 extern "C"
@@ -180,7 +180,7 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 
 
 #if BUILD_IMGUI
-	hl_imgui::Initialize();
+	g_ImGuiManager.Initialize();
 #endif
 
 	if( gEngfuncs.pfnGetCvarPointer( "cl_filterstuffcmd" ) == 0 )
@@ -292,6 +292,10 @@ int DLLEXPORT HUD_VidInit( void )
 #elif USE_VGUI
 	VGui_Startup();
 #endif
+
+#if BUILD_IMGUI
+	g_ImGuiManager.VidInitialize();
+#endif
 	return 1;
 }
 
@@ -328,7 +332,7 @@ int DLLEXPORT HUD_Redraw( float time, int intermission )
 	gHUD.Redraw( time, intermission );
 
 #if BUILD_IMGUI
-	hl_imgui::NewFrame();
+	g_ImGuiManager.NewFrame();
 #endif
 
 	return 1;

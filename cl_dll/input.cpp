@@ -37,7 +37,7 @@ extern "C"
 #endif
 
 #if BUILD_IMGUI
-#include "imgui_int.h"
+#include "imgui_manager.h"
 #endif
 
 extern "C" 
@@ -476,6 +476,11 @@ int DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBinding
 	if (gViewPort)
 		return gViewPort->KeyInput(down, keynum, pszCurrentBinding);
 #endif
+
+#if BUILD_IMGUI
+	return g_ImGuiManager.KeyInput(down != 0, keynum, pszCurrentBinding) ? 1 : 0;
+#endif
+
 	return 1;
 }
 
@@ -1292,6 +1297,6 @@ void DLLEXPORT HUD_Shutdown( void )
 #endif
 
 #if BUILD_IMGUI
-	hl_imgui::Terminate();
+	g_ImGuiManager.Terminate();
 #endif
 }
