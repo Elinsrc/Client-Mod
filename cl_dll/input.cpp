@@ -36,6 +36,10 @@ extern "C"
 #include "discord_integration.h"
 #endif
 
+#if BUILD_IMGUI
+#include "imgui_int.h"
+#endif
+
 extern "C" 
 {
 	struct kbutton_s DLLEXPORT *KB_Find( const char *name );
@@ -1285,5 +1289,9 @@ void DLLEXPORT HUD_Shutdown( void )
 
 #if BUILD_DISCORD_RPC
 	discord_integration::shutdown();
+#endif
+
+#if BUILD_IMGUI
+	hl_imgui::Terminate();
 #endif
 }

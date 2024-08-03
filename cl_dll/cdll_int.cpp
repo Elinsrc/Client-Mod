@@ -40,6 +40,10 @@
 #include "discord_integration.h"
 #endif
 
+#if BUILD_IMGUI
+#include "imgui_int.h"
+#endif
+
 extern "C"
 {
 #include "pm_shared.h"
@@ -172,6 +176,11 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 
 #if BUILD_DISCORD_RPC
 	discord_integration::initialize( );
+#endif
+
+
+#if BUILD_IMGUI
+	hl_imgui::Initialize();
 #endif
 
 	if( gEngfuncs.pfnGetCvarPointer( "cl_filterstuffcmd" ) == 0 )
@@ -317,6 +326,10 @@ redraw the HUD.
 int DLLEXPORT HUD_Redraw( float time, int intermission )
 {
 	gHUD.Redraw( time, intermission );
+
+#if BUILD_IMGUI
+	hl_imgui::NewFrame();
+#endif
 
 	return 1;
 }
