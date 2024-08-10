@@ -569,8 +569,27 @@ void CHud::DrawHudModelName(int x, int y, float topcolor, float bottomcolor, con
 	HUEtoRGB(topcolor, top.r, top.g, top.b);
 	HUEtoRGB(bottomcolor, bottom.r, bottom.g, bottom.b);
 
-	int length = GetHudStringWidth(firstcolor.c_str());
+	int Width = GetHudStringWidth(firstcolor.c_str());
 
 	DrawHudString( x, y, ScreenWidth, firstcolor.c_str(), top.r, top.g, top.b );
-	DrawHudString( x + length, y, ScreenWidth, secondcolor.c_str(), bottom.r, bottom.g, bottom.b );
+	DrawHudString( x + Width, y, ScreenWidth, secondcolor.c_str(), bottom.r, bottom.g, bottom.b );
+}
+
+int CHud::DrawText(int x, int y, const char* szString, int r, int g, int b)
+{
+	if ( !szString )
+		return 1;
+
+	gEngfuncs.pfnDrawSetTextColor( r / 255.0, g / 255.0, b / 255.0 );
+	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) szString );
+}
+
+int CHud::DrawTextCentered(int x, int y, const char* szString, int r, int g, int b)
+{
+	if ( !szString )
+		return 1;
+
+	int width = DrawHudStringLen(szString);
+	x += DrawText(x - width / 2, y, szString, r, g, b);
+	return x;
 }

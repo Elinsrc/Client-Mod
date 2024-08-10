@@ -585,6 +585,8 @@ public:
 	void DrawDarkRectangle( int x, int y, int wide, int tall );
 	void HUEtoRGB(float hue, int &R, int &G, int &B);
 	void DrawHudModelName(int x, int y, float topcolor, float bottomcolor, const char* model);
+	int DrawText(int x, int y, const char* szString, int r, int g, int b);
+	int DrawTextCentered(int x, int y, const char* szString, int r, int g, int b);
 
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
