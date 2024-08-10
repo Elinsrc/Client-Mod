@@ -16,6 +16,8 @@
 // hud_redraw.cpp
 //
 #include <cmath>
+#include <iostream>
+#include <string>
 
 #include "hud.h"
 #include "cl_util.h"
@@ -508,4 +510,69 @@ void CHud::DrawDarkRectangle( int x, int y, int wide, int tall )
 	FillRGBA( x, y, 1, tall - 1, 255, 140, 0, 255 );
 	FillRGBA( x + wide - 1, y + 1, 1, tall - 1, 255, 140, 0, 255 );
 	FillRGBA( x, y + tall - 1, wide - 1, 1, 255, 140, 0, 255 );
+}
+
+void CHud::HUEtoRGB(float hue, int &R, int &G, int &B)
+{
+	hue = (hue < 0) ? 0 : (hue > 255) ? 255 : hue;
+    float h = hue / 255.0f;
+	float r, g, b;
+
+    if (h < 1.0f/6.0f) {
+        r = 1.0f;
+        g = h * 6.0f;
+        b = 0.0f;
+    } else if (h < 2.0f/6.0f) {
+        r = 1.0f - (h - 1.0f/6.0f) * 6.0f;
+        g = 1.0f;
+        b = 0.0f;
+    } else if (h < 3.0f/6.0f) {
+        r = 0.0f;
+        g = 1.0f;
+        b = (h - 2.0f/6.0f) * 6.0f;
+    } else if (h < 4.0f/6.0f) {
+        r = 0.0f;
+        g = 1.0f - (h - 3.0f/6.0f) * 6.0f;
+        b = 1.0f;
+    } else if (h < 5.0f/6.0f) {
+        r = (h - 4.0f/6.0f) * 6.0f;
+        g = 0.0f;
+        b = 1.0f;
+    } else {
+        r = 1.0f;
+        g = 0.0f;
+        b = 1.0f - (h - 5.0f/6.0f) * 6.0f;
+    }
+
+    R = static_cast<int>(r * 255);
+    G = static_cast<int>(g * 255);
+    B = static_cast<int>(b * 255);
+}
+
+struct {
+  int r;
+  int g;
+  int b;
+} top, bottom;
+
+int CHud::DrawHudModelName(int x, int y, float topcolor, float bottomcolor, const char* model)
+{
+	std::string firstcolor;
+	std::string secondcolor;
+	std::string modelname = model;
+
+	size_t mid = modelname.length() / 2;
+
+	firstcolor = modelname.substr(0, mid);
+	secondcolor = modelname.substr(mid);
+
+	gHUD.HUEtoRGB(topcolor, top.r, top.g, top.b);
+	gHUD.HUEtoRGB(bottomcolor, bottom.r, bottom.g, bottom.b);
+
+	int length = gHUD.GetHudStringWidth(firstcolor.c_str());
+
+	gHUD.DrawHudString( x, y, ScreenWidth, firstcolor.c_str(), top.r, top.g, top.b );
+	gHUD.DrawHudString( x + length, y, ScreenWidth, secondcolor.c_str(), bottom.r, bottom.g, bottom.b );
+
+	return 0;
 }

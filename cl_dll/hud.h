@@ -583,6 +583,8 @@ public:
 	int DrawHudStringLen( const char *szIt );
 	int GetHudStringWidth(const char* string);
 	void DrawDarkRectangle( int x, int y, int wide, int tall );
+	void HUEtoRGB(float hue, int &R, int &G, int &B);
+	int DrawHudModelName(int x, int y, float topcolor, float bottomcolor, const char* model);
 
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.

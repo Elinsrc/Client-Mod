@@ -470,7 +470,7 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 
 		// draw model name
 		xpos = MODEL_RANGE_MIN + xpos_rel;
-		gHUD.DrawHudString( xpos, ypos, MODEL_RANGE_MAX + xpos, pl_info->model, r, g, b );
+		gHUD.DrawHudModelName(xpos, ypos, pl_info->topcolor, pl_info->bottomcolor, pl_info->model);
 
 		// draw kills (right to left)
 		xpos = KILLS_RANGE_MAX + xpos_rel;
