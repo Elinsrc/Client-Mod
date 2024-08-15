@@ -589,7 +589,7 @@ int CHud::DrawTextCentered(int x, int y, const char* szString, int r, int g, int
 	if ( !szString )
 		return 1;
 
-	int width = DrawHudStringLen(szString);
+	int width = GetHudStringWidth(szString);
 	x += DrawText(x - width / 2, y, szString, r, g, b);
 	return x;
 }
