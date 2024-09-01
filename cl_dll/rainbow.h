@@ -52,7 +52,7 @@ private:
 	pfnEngSrc_pfnSPR_DrawAdditive_t m_pfnSPR_DrawAdditive = nullptr;
 	pfnEngSrc_pfnDrawString_t m_pfnDrawString = nullptr;
 	pfnEngSrc_pfnDrawStringReverse_t m_pfnDrawStringReverse = nullptr;
-	pfnEngSrc_pfnDrawConsoleString_t m_pfnDrawConsoleString = nullptr;
+	//pfnEngSrc_pfnDrawConsoleString_t m_pfnDrawConsoleString = nullptr;
 	pfnEngSrc_pfnFillRGBA_t m_pfnFillRGBA = nullptr;
 
 	/**
@@ -70,7 +70,7 @@ private:
 	static void SPR_DrawAdditiveRainbow(int frame, int x, int y, const struct rect_s *prc);
 	static int DrawString(int x, int y, const char *str, int r, int g, int b);
 	static int DrawStringReverse(int x, int y, const char *str, int r, int g, int b);
-	static int DrawConsoleString(int x, int y, const char *string);
+	//static int DrawConsoleString(int x, int y, const char *string);
 	static void FillRGBARainbow(int x, int y, int width, int height, int r, int g, int b, int a);
 
 	/**

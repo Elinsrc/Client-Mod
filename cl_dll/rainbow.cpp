@@ -23,7 +23,7 @@ void CRainbow::Init()
     m_pfnSPR_DrawAdditive = gEngfuncs.pfnSPR_DrawAdditive;
     m_pfnDrawString = gEngfuncs.pfnDrawString;
     m_pfnDrawStringReverse = gEngfuncs.pfnDrawStringReverse;
-    m_pfnDrawConsoleString = gEngfuncs.pfnDrawConsoleString;
+    //m_pfnDrawConsoleString = gEngfuncs.pfnDrawConsoleString;
     m_pfnFillRGBA = gEngfuncs.pfnFillRGBA;
 }
 
@@ -78,7 +78,7 @@ void CRainbow::HookFuncs()
     gEngfuncs.pfnSPR_DrawAdditive = &SPR_DrawAdditiveRainbow;
     gEngfuncs.pfnDrawString = &DrawString;
     gEngfuncs.pfnDrawStringReverse = &DrawStringReverse;
-    gEngfuncs.pfnDrawConsoleString = &DrawConsoleString;
+    //gEngfuncs.pfnDrawConsoleString = &DrawConsoleString;
     gEngfuncs.pfnFillRGBA = &FillRGBARainbow;
     m_bIsEnabled = true;
 }
@@ -89,7 +89,7 @@ void CRainbow::UnhookFuncs()
     gEngfuncs.pfnSPR_DrawAdditive = m_pfnSPR_DrawAdditive;
     gEngfuncs.pfnDrawString = m_pfnDrawString;
     gEngfuncs.pfnDrawStringReverse = m_pfnDrawStringReverse;
-    gEngfuncs.pfnDrawConsoleString = m_pfnDrawConsoleString;
+    //gEngfuncs.pfnDrawConsoleString = m_pfnDrawConsoleString;
     gEngfuncs.pfnFillRGBA = m_pfnFillRGBA;
     m_bIsEnabled = false;
 }
@@ -134,7 +134,7 @@ int CRainbow::DrawStringReverse(int x, int y, const char *str, int r, int g, int
     return x + DrawString(x - width, y, str, r, g, b);
 }
 
-int CRainbow::DrawConsoleString(int x, int y, const char *string)
+/*int CRainbow::DrawConsoleString(int x, int y, const char *string)
 {
     if (gHUD.m_Rainbow.m_iDisableStack > 0)
     {
@@ -147,7 +147,7 @@ int CRainbow::DrawConsoleString(int x, int y, const char *string)
         gEngfuncs.pfnDrawSetTextColor(r * 255.f, g * 255.f, b * 255.f);
         return gHUD.m_Rainbow.m_pfnDrawConsoleString(x, y, str) - x;
     });
-}
+}*/
 
 void CRainbow::FillRGBARainbow(int x, int y, int width, int height, int r, int g, int b, int a)
 {
