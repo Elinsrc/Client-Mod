@@ -29,7 +29,6 @@
 cvar_t *m_pCvarLogchat;
 cvar_t *m_pCvarChatSound;
 cvar_t *m_pCvarChatSoundPath;
-cvar_t *m_HUD_rainbow_chat;
 
 #if USE_VGUI
 #include "vgui_TeamFortressViewport.h"
@@ -69,7 +68,6 @@ int CHudSayText::Init( void )
 
 	m_HUD_saytext =		gEngfuncs.pfnRegisterVariable( "hud_saytext", "1", 0 );
 	m_HUD_saytext_time =	gEngfuncs.pfnRegisterVariable( "hud_saytext_time", "5", 0 );
-	m_HUD_rainbow_chat =	gEngfuncs.pfnRegisterVariable( "hud_rainbow_chat", "0", FCVAR_ARCHIVE );
 
 	m_iFlags |= HUD_INTERMISSION; // is always drawn during an intermission
 
@@ -114,11 +112,6 @@ int CHudSayText::Draw( float flTime )
 	if( ( gViewPort && gViewPort->AllowedToPrintText() == FALSE ) || !m_HUD_saytext->value )
 		return 1;
 #endif
-
-	bool enableRainbow = m_HUD_rainbow_chat->value;
-	if (!enableRainbow)
-		gHUD.m_Rainbow.PushDisable();
-
 	// make sure the scrolltime is within reasonable bounds,  to guard against the clock being reset
 	flScrollTime = Q_min( flScrollTime, flTime + m_HUD_saytext_time->value );
 
@@ -164,9 +157,6 @@ int CHudSayText::Draw( float flTime )
 
 		y += line_height;
 	}
-
-	if (!enableRainbow)
-		gHUD.m_Rainbow.PopDisable();
 
 	return 1;
 }

@@ -61,9 +61,6 @@ hud_rainbow_val [value], default value is 100.
 hud_rainbow_speed [value], default value is 40.
 hud_rainbow_xphase [value], default value is 0.4.
 hud_rainbow_yphase [value], default value is 0.7.
-hud_rainbow_chat [0/1], default value is 0.
-hud_rainbow_deathnotice [0/1], default value is 0.
-hud_rainbow_statusbar [0/1], default value is 0.
 
 hud_deathnotice_bg [0/1] - Death notification background, default value is 0.
 

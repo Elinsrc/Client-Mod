@@ -26,8 +26,6 @@
 #include <string.h>
 #include <stdio.h>
 
-cvar_t *m_HUD_rainbow_StatusBar;
-
 DECLARE_MESSAGE( m_StatusBar, StatusText )
 DECLARE_MESSAGE( m_StatusBar, StatusValue )
 
@@ -46,7 +44,6 @@ int CHudStatusBar::Init( void )
 	Reset();
 
 	CVAR_CREATE( "hud_centerid", "0", FCVAR_ARCHIVE );
-	m_HUD_rainbow_StatusBar =	gEngfuncs.pfnRegisterVariable( "hud_rainbow_statusbar", "0", FCVAR_ARCHIVE );
 
 	return 1;
 }
@@ -177,10 +174,6 @@ void CHudStatusBar::ParseStatusString( int line_num )
 
 int CHudStatusBar::Draw( float fTime )
 {
-	bool enableRainbow = m_HUD_rainbow_StatusBar->value;
-	if (!enableRainbow)
-		gHUD.m_Rainbow.PushDisable();
-
 	if( m_bReparseString )
 	{
 		for( int i = 0; i < MAX_STATUSBAR_LINES; i++ )
@@ -214,9 +207,6 @@ int CHudStatusBar::Draw( float fTime )
 
 		DrawConsoleString( x, y, m_szStatusBar[i] );
 	}
-
-	if (!enableRainbow)
-		gHUD.m_Rainbow.PopDisable();
 
 	return 1;
 }
