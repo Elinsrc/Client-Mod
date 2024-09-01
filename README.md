@@ -89,6 +89,9 @@ cl_cross_dot_color "r g b", defaut value "255 255 255".
 cl_viewmodel_ofs_right [value] — Offsets the gun viewmodel to the right (or to the left if cl_righthand is set to 1), 0 for no offset. Taken from OpenAG.
 cl_viewmodel_ofs_forward [value] — Offsets the gun viewmodel forward, 0 for no offset. Taken from OpenAG.
 cl_viewmodel_ofs_up [value] — Offsets the gun viewmodel upwards, 0 for no offset. Taken from OpenAG.
+
+cl_debug [1/0] - Show client info, defaut value 0.
+cl_debug_showfps [1/0] - Show curent fps and framerate, defaut value 1.
 ```
 
 # Build Instructions

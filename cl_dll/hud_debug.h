@@ -3,7 +3,8 @@
 
 class CHudDebug : public CHudBase
 {
-    cvar_t *hud_debug;
+    cvar_t *cl_debug;
+    cvar_t *cl_debug_showfps;
 
     float m_frameTime;
     float m_lastFrameTime;
@@ -14,5 +15,6 @@ public:
     virtual int VidInit();
     virtual float GetFrametime();
     virtual const char *GetMovetypeName(int moveType);
+    virtual void formatTime(float totalSeconds, char* output);
     virtual int Draw(float flTime);
 };
