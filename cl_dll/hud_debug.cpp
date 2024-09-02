@@ -40,13 +40,20 @@ int CHudDebug::VidInit()
 static float GetCurrentSysTime()
 {
 #ifdef _WIN32
-    static LARGE_INTEGER frequency;
-    if (frequency.QuadPart == 0)
-        QueryPerformanceFrequency(&frequency);
+    static LARGE_INTEGER	perfFreq;
+    static LARGE_INTEGER	clockStart;
+    LARGE_INTEGER		    currentTime;
+    LONGLONG                timeDiff;
 
-    LARGE_INTEGER now;
-    QueryPerformanceCounter(&now);
-    return now.QuadPart / double(frequency.QuadPart);
+    if (!perfFreq.QuadPart)
+    {
+        QueryPerformanceFrequency(&perfFreq);
+        QueryPerformanceCounter(&clockStart);
+    }
+
+    QueryPerformanceCounter(&currentTime);
+    timeDiff = currentTime.QuadPart - clockStart.QuadPart;
+    return (float)timeDiff / (float)perfFreq.QuadPart;
 #else
     struct timespec now;
     clock_gettime(CLOCK_MONOTONIC, &now);
