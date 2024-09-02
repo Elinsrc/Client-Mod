@@ -140,7 +140,7 @@ void CHudDebug::formatTime(float totalSeconds, char* output)
     sprintf(output, "Map Time: %s", buffer);
 }
 
-extern struct Color {
+extern struct RGBColor {
     int r;
     int g;
     int b;
