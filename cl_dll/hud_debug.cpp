@@ -140,10 +140,10 @@ void CHudDebug::formatTime(float totalSeconds, char* output)
     sprintf(output, "Map Time: %s", buffer);
 }
 
-extern struct {
-	int r;
-	int g;
-	int b;
+extern struct Color {
+    int r;
+    int g;
+    int b;
 } top, bottom;
 
 int CHudDebug::Draw(float flTime)

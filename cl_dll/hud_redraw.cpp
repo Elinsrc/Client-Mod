@@ -549,11 +549,13 @@ void CHud::HUEtoRGB(float hue, int &R, int &G, int &B)
 	B = static_cast<int>(b * 255);
 }
 
-struct {
-	int r;
-	int g;
-	int b;
-} top, bottom;
+struct Color {
+    int r;
+    int g;
+    int b;
+};
+
+struct Color top, bottom;
 
 void CHud::DrawHudModelName(int x, int y, float topcolor, float bottomcolor, const char* model)
 {
