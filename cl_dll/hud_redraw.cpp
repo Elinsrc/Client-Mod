@@ -575,7 +575,7 @@ void CHud::DrawHudModelName(int x, int y, float topcolor, float bottomcolor, con
 	DrawHudString( x + Width, y, ScreenWidth, secondcolor.c_str(), bottom.r, bottom.g, bottom.b );
 }
 
-int CHud::DrawText(int x, int y, const char* szString, int r, int g, int b)
+int CHud::DrawHudText(int x, int y, const char* szString, int r, int g, int b)
 {
 	if ( !szString )
 		return 1;
@@ -584,12 +584,12 @@ int CHud::DrawText(int x, int y, const char* szString, int r, int g, int b)
 	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) szString );
 }
 
-int CHud::DrawTextCentered(int x, int y, const char* szString, int r, int g, int b)
+int CHud::DrawHudTextCentered(int x, int y, const char* szString, int r, int g, int b)
 {
 	if ( !szString )
 		return 1;
 
 	int width = GetHudStringWidth(szString);
-	x += DrawText(x - width / 2, y, szString, r, g, b);
+	x += DrawHudText(x - width / 2, y, szString, r, g, b);
 	return x;
 }
