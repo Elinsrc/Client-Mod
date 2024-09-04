@@ -372,84 +372,132 @@ vec3_t CHudDebug::GetEntityVelocityApprox(cl_entity_t *entity, int approxStep)
     return vec3_t(0, 0, 0);
 }
 
+void CHudDebug::TraceLine(vec3_t &origin, vec3_t &dir, float lineLen, pmtrace_t *traceData)
+{
+    vec3_t lineStart;
+    vec3_t lineEnd;
+    cl_entity_t *localPlayer;
+
+    lineStart   = origin;
+    lineEnd     = lineStart + (dir * lineLen);
+    localPlayer = gEngfuncs.GetLocalPlayer();
+
+    gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
+    gEngfuncs.pEventAPI->EV_PushPMStates();
+    gEngfuncs.pEventAPI->EV_SetSolidPlayers(localPlayer->index - 1);
+    gEngfuncs.pEventAPI->EV_SetTraceHull(2);
+    gEngfuncs.pEventAPI->EV_PlayerTrace(
+        lineStart, lineEnd, PM_NORMAL,
+        -1, traceData
+    );
+    gEngfuncs.pEventAPI->EV_PopPMStates();
+}
+
+int CHudDebug::TraceEntity(vec3_t origin, vec3_t dir, float distance, vec3_t &intersect)
+{
+    pmtrace_t traceData;
+
+    TraceLine(origin, dir, distance, &traceData);
+    intersect = origin + dir * distance * traceData.fraction;
+    if (traceData.fraction < 1.f)
+    {
+        if (traceData.ent > 0)
+            return gEngfuncs.pEventAPI->EV_IndexFromTrace(&traceData);
+    }
+    return 0;
+}
+
 void CHudDebug::AllClientsInfo(int r, int g, int b)
 {
-    for (int i = 1; i <= gEngfuncs.GetMaxClients(); i++)
+    const float lineLen = 11590.0f;
+    vec3_t intersectPoint;
+    char str[256];
+    cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
+
+    vec3_t viewOrigin = localPlayer->origin;
+    vec3_t viewAngles, viewDir;
+
+    gEngfuncs.GetViewAngles(viewAngles);
+    gEngfuncs.pfnAngleVectors(viewAngles, viewDir, nullptr, nullptr);
+
+    int entityIndex;
+
+
+    if( g_iUser1 )
+        entityIndex = g_iUser2;
+    else
+        entityIndex = TraceEntity(viewOrigin, viewDir, lineLen, intersectPoint);
+
+    cl_entity_t *pClient = gEngfuncs.GetEntityByIndex(entityIndex);
+
+    if(!entityIndex)
+        return;
+
+    if (!CheckForClient(pClient))
+        return;
+
+    Vector Top = Vector(pClient->origin.x, pClient->origin.y, pClient->origin.z + pClient->curstate.mins.z);
+    Vector Bot = Vector(pClient->origin.x, pClient->origin.y, pClient->origin.z + pClient->curstate.maxs.z);
+
+    float ScreenTop[2], ScreenBot[2];
+
+    bool m_bScreenTop = CalcScreen(Top, ScreenTop);
+    bool m_bScreenBot = CalcScreen(Bot, ScreenBot);
+
+    if (m_bScreenTop && m_bScreenBot)
     {
-        char str[256];
-        cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
-        cl_entity_t *pClient = gEngfuncs.GetEntityByIndex(i);
+        float Height = ScreenBot[1] - ScreenTop[1];
+        int y = Height + ScreenTop[1];
+        int x = ScreenTop[0] - (Height * 0.4f);
 
-        if (!CheckForClient(pClient))
-            continue;
+        sprintf(str, "%s", g_PlayerInfoList[entityIndex].name);
+        gHUD.DrawHudTextCentered(ScreenTop[0], y - 18, str, r, g, b);
 
-        if (pClient == localPlayer || pClient->curstate.messagenum < localPlayer->curstate.messagenum || !gHUD.m_Health.m_iHealth > 0 || gHUD.m_iIntermission)
-            continue;
+        sprintf(str, "Index: %d", pClient->index);
+        gHUD.DrawHudText(x, y, str, r, g, b);
 
-        Vector Top = Vector(pClient->origin.x, pClient->origin.y, pClient->origin.z + pClient->curstate.mins.z);
-        Vector Bot = Vector(pClient->origin.x, pClient->origin.y, pClient->origin.z + pClient->curstate.maxs.z);
+        ClientModelName(pClient, x, y + 20, r, g, b);
 
-        float ScreenTop[2], ScreenBot[2];
+        sprintf(str, "Velocity: %.2f u/s", GetEntityVelocityApprox(pClient, 22).Length2D());
+        gHUD.DrawHudText(x, y + 60, str, r, g, b);
 
-        bool m_bScreenTop = CalcScreen(Top, ScreenTop);
-        bool m_bScreenBot = CalcScreen(Bot, ScreenBot);
+        sprintf(str, "Origin: (%.2f, %.2f, %.2f)", pClient->origin.x, pClient->origin.y, pClient->origin.z);
+        gHUD.DrawHudText(x, y + 80, str, r, g, b);
 
-        if (m_bScreenTop && m_bScreenBot)
-        {
-            float Height = ScreenBot[1] - ScreenTop[1];
-            int y = Height + ScreenTop[1];
-            int x = ScreenTop[0] - (Height * 0.4f);
+        sprintf(str, "Angles: (%.2f, %.2f, %.2f)", pClient->angles.x, pClient->angles.y, pClient->angles.z);
+        gHUD.DrawHudText(x, y + 100, str, r, g, b);
 
-            sprintf(str, "%s", g_PlayerInfoList[i].name);
-            gHUD.DrawHudTextCentered(ScreenTop[0], y - 18, str, r, g, b);
+        sprintf(str, "Movetype: %s", GetMovetypeName(pClient->curstate.movetype));
+        gHUD.DrawHudText(x, y + 120, str, r, g, b);
 
-            sprintf(str, "Index: %d", pClient->index);
-            gHUD.DrawHudText(x, y, str, r, g, b);
+        Vector vDiff = localPlayer->origin - pClient->origin;
+        sprintf(str, "Distance: %.2f", vDiff.Length());
+        gHUD.DrawHudText(x, y + 140, str, r, g, b);
 
-            ClientModelName(pClient, x, y + 20, r, g, b);
+        sprintf(str, "Anim. Frame: %.1f", pClient->curstate.frame);
+        gHUD.DrawHudText(x, y + 180, str, r, g, b);
 
-            sprintf(str, "Velocity: %.2f u/s", GetEntityVelocityApprox(pClient, 22).Length2D());
-            gHUD.DrawHudText(x, y + 60, str, r, g, b);
+        sprintf(str, "Anim. Sequence: %d", pClient->curstate.sequence);
+        gHUD.DrawHudText(x, y + 200, str, r, g, b);
 
-            sprintf(str, "Origin: (%.2f, %.2f, %.2f)", pClient->origin.x, pClient->origin.y, pClient->origin.z);
-            gHUD.DrawHudText(x, y + 80, str, r, g, b);
+        sprintf(str, "Bodygroup Number: %d", pClient->curstate.body);
+        gHUD.DrawHudText(x, y + 220, str, r, g, b);
 
-            sprintf(str, "Angles: (%.2f, %.2f, %.2f)", pClient->angles.x, pClient->angles.y, pClient->angles.z);
-            gHUD.DrawHudText(x, y + 100, str, r, g, b);
+        sprintf(str, "Skin Number: %d", pClient->curstate.skin);
+        gHUD.DrawHudText(x, y + 240, str, r, g, b);
 
-            sprintf(str, "Movetype: %s", GetMovetypeName(pClient->curstate.movetype));
-            gHUD.DrawHudText(x, y + 120, str, r, g, b);
+        sprintf(str, "Render Mode: %s", GetRenderModeName(pClient->curstate.rendermode));
+        gHUD.DrawHudText(x, y + 280, str, r, g, b);
 
-            Vector vDiff = localPlayer->origin - pClient->origin;
-            sprintf(str, "Distance: %.2f", vDiff.Length());
-            gHUD.DrawHudText(x, y + 140, str, r, g, b);
+        sprintf(str, "Render Fx: %s", GetRenderFxName(pClient->curstate.renderfx));
+        gHUD.DrawHudText(x, y + 300, str, r, g, b);
 
-            sprintf(str, "Anim. Frame: %.1f", pClient->curstate.frame);
-            gHUD.DrawHudText(x, y + 180, str, r, g, b);
+        sprintf(str, "Render Amount: %d", pClient->curstate.renderamt);
+        gHUD.DrawHudText(x, y + 320, str, r, g, b);
 
-            sprintf(str, "Anim. Sequence: %d", pClient->curstate.sequence);
-            gHUD.DrawHudText(x, y + 200, str, r, g, b);
-
-            sprintf(str, "Bodygroup Number: %d", pClient->curstate.body);
-            gHUD.DrawHudText(x, y + 220, str, r, g, b);
-
-            sprintf(str, "Skin Number: %d", pClient->curstate.skin);
-            gHUD.DrawHudText(x, y + 240, str, r, g, b);
-
-            sprintf(str, "Render Mode: %s", GetRenderModeName(pClient->curstate.rendermode));
-            gHUD.DrawHudText(x, y + 280, str, r, g, b);
-
-            sprintf(str, "Render Fx: %s", GetRenderFxName(pClient->curstate.renderfx));
-            gHUD.DrawHudText(x, y + 300, str, r, g, b);
-
-            sprintf(str, "Render Amount: %d", pClient->curstate.renderamt);
-            gHUD.DrawHudText(x, y + 320, str, r, g, b);
-
-            sprintf(str, "Render Color: %d %d %d", pClient->curstate.rendercolor.r, pClient->curstate.rendercolor.g, pClient->curstate.rendercolor.b);
-            gHUD.DrawHudText(x, y + 340, str, r, g, b);
-
-            BoxCornerOutline(ScreenTop[0] - (Height * 0.25f), ScreenTop[1], Height / 2, Height, 1, 0, 255, 0, 255);
-        }
+        sprintf(str, "Render Color: %d %d %d", pClient->curstate.rendercolor.r, pClient->curstate.rendercolor.g, pClient->curstate.rendercolor.b);
+        gHUD.DrawHudText(x, y + 340, str, r, g, b);
+        BoxCornerOutline(ScreenTop[0] - (Height * 0.25f), ScreenTop[1], Height / 2, Height, 1, 0, 255, 0, 255);
     }
 }
 

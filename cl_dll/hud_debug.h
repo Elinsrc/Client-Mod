@@ -28,6 +28,8 @@ public:
     virtual void CurrentClientInfo( int r, int g, int b);
     virtual bool CheckForClient(cl_entity_s *pEnt);
     virtual vec3_t GetEntityVelocityApprox(cl_entity_t *entity, int approxStep );
+    virtual void TraceLine(vec3_t &origin, vec3_t &dir, float lineLen, pmtrace_t *traceData);
+    virtual int TraceEntity(vec3_t origin, vec3_t dir, float distance, vec3_t &intersect);
     virtual void AllClientsInfo(int r, int g, int b);
     virtual int Draw(float flTime);
 };
