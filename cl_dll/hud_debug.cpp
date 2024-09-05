@@ -422,7 +422,6 @@ void CHudDebug::AllClientsInfo(int r, int g, int b)
 
     int entityIndex;
 
-
     if( g_iUser1 )
         entityIndex = g_iUser2;
     else
@@ -439,7 +438,7 @@ void CHudDebug::AllClientsInfo(int r, int g, int b)
     Vector Top = Vector(pClient->origin.x, pClient->origin.y, pClient->origin.z + pClient->curstate.mins.z);
     Vector Bot = Vector(pClient->origin.x, pClient->origin.y, pClient->origin.z + pClient->curstate.maxs.z);
 
-    float ScreenTop[2], ScreenBot[2];
+    float ScreenTop[3], ScreenBot[3];
 
     bool m_bScreenTop = CalcScreen(Top, ScreenTop);
     bool m_bScreenBot = CalcScreen(Bot, ScreenBot);
