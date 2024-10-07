@@ -101,6 +101,7 @@ struct HUDLIST
 #include "hud_crosshairs.h"
 #include "hud_watermark.h"
 #include "hud_debug.h"
+#include "hud_strafeguide.h"
 #include "rainbow.h"
 
 //
@@ -564,6 +565,8 @@ public:
 	int		m_iRes;
 	cvar_t  *m_pCvarStealMouse;
 	cvar_t	*m_pCvarDraw;
+	cvar_t	*m_pCvarDrawDeathNoticesAlways;
+	cvar_t	*m_pCvarDrawMessagesAlways;
 
 	// OpenAg
 	cvar_t* m_pCvarColor;
@@ -629,6 +632,7 @@ public:
 	CHudCrosshair	m_Crosshair;
 	CHudWatermark	m_Watermark;
 	CHudDebug	m_Debug;
+	CHudStrafeGuide	m_StrafeGuide;
 	CRainbow m_Rainbow;
 #if !USE_VGUI || USE_NOVGUI_SCOREBOARD
 	CHudScoreboard	m_Scoreboard;

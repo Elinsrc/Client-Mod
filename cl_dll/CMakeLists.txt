@@ -107,6 +107,7 @@ set (CLDLL_SOURCES
 	hud_crosshairs.cpp
 	hud_watermark.cpp
 	hud_debug.cpp
+	hud_strafeguide.cpp
 	in_camera.cpp
 	input.cpp
 	input_goldsource.cpp

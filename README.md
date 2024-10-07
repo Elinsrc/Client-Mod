@@ -53,6 +53,11 @@ hud_jumpspeed [0/1] - Shows the player's speed at the moment of the jump, defaul
 hud_jumpspeed_below_cross [0/1] - Adjusts the position of the jumpspeed to the sight, defaut value is 0.
 hud_jumpspeed_height [0/1] - Adjusts the positio jumpspeed, defaut value is 0.
 
+hud_strafeguide [0/1] - Shows strafeguide, default value is 0. Taken from OpenAG.
+hud_strafeguide_zoom [0/1], defaut value is 1.
+hud_strafeguide_height [value], defaut value 0.
+hud_strafeguide_size [value], defaut value 0.
+
 hud_watermark [0/1] - Shows client author and build date, defaut value is 1.
 
 hud_rainbow [0/1] - Paints HUD rainbow, default value is 0. Taken from OpenAG.
@@ -82,7 +87,7 @@ cl_cross_top_line [0/1], defaut value 1.
 cl_cross_bottom_line [0/1], defaut value 1.
 cl_cross_left_line [0/1], defaut value 1.
 cl_cross_right_line [0/1], defaut value 1.
-cl_cross_dot [0/1] ,defaut value 1.
+cl_cross_dot [0/1], defaut value 1.
 cl_cross_dot_size [value], defaut value 1.
 cl_cross_dot_color "r g b", defaut value "255 255 255".
 

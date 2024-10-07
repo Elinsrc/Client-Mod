@@ -394,6 +394,8 @@ void CHud::Init( void )
 	// OpenAG
 	m_pCvarColor = CVAR_CREATE( "hud_color", "", FCVAR_ARCHIVE );
 	CVAR_CREATE( "hud_weapon", "0", FCVAR_ARCHIVE );
+	m_pCvarDrawDeathNoticesAlways = CVAR_CREATE( "cl_draw_deathnotices_always", "0", FCVAR_ARCHIVE );
+	m_pCvarDrawMessagesAlways = CVAR_CREATE( "cl_draw_messages_always", "0", FCVAR_ARCHIVE );
 	//
 
 	CVAR_CREATE( "hud_vis", "0", FCVAR_ARCHIVE );
@@ -438,6 +440,7 @@ void CHud::Init( void )
 	m_Crosshair.Init();
 	m_Watermark.Init();
 	m_Debug.Init();
+	m_StrafeGuide.Init();
 	m_Rainbow.Init();
 #if USE_VGUI
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
@@ -633,6 +636,7 @@ void CHud::VidInit( void )
 	m_Crosshair.VidInit();
 	m_Watermark.VidInit();
 	m_Debug.VidInit();
+	m_StrafeGuide.VidInit();
 #if USE_VGUI
 	GetClientVoiceMgr()->VidInit();
 #endif

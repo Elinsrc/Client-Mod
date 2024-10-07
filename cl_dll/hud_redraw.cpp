@@ -175,6 +175,32 @@ int CHud::Redraw( float flTime, int intermission )
 			pList = pList->pNext;
 		}
 	}
+	else
+	{
+		// Hack to draw some HUDs even when hud_draw is 0.
+		if (!intermission && !(m_iHideHUDDisplay & HIDEHUD_ALL))
+		{
+			if (m_Crosshair.m_iFlags & HUD_ACTIVE)
+				m_Crosshair.Draw(flTime);
+
+			if (m_Speedometer.m_iFlags & HUD_ACTIVE)
+				m_Speedometer.Draw(flTime);
+
+			if (m_StrafeGuide.m_iFlags & HUD_ACTIVE)
+				m_StrafeGuide.Draw(flTime);
+
+			if (m_Jumpspeed.m_iFlags & HUD_ACTIVE)
+				m_Jumpspeed.Draw(flTime);
+
+			if (gHUD.m_pCvarDrawDeathNoticesAlways->value != 0.0f
+				&& m_DeathNotice.m_iFlags & HUD_ACTIVE)
+				m_DeathNotice.Draw(flTime);
+
+			if (gHUD.m_pCvarDrawMessagesAlways->value != 0.0f
+				&& m_Message.m_iFlags & HUD_ACTIVE)
+				m_Message.Draw(flTime);
+		}
+	}
 
 	// are we in demo mode? do we need to draw the logo in the top corner?
 	if( m_iLogo )

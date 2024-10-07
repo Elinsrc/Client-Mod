@@ -1644,6 +1644,7 @@ void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 	// OpenAG
 	gHUD.m_Speedometer.UpdateSpeed(pparams->simvel);
 	gHUD.m_Jumpspeed.UpdateSpeed(pparams->simvel);
+	gHUD.m_StrafeGuide.Update(pparams);
 
 	// intermission / finale rendering
 	if( pparams->intermission )
