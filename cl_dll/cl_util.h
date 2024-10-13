@@ -19,8 +19,8 @@
 #define CL_UTIL_H
 #include "exportdef.h"
 #include "cvardef.h"
-
 #include "net_api.h"
+#include "color_tags.h"
 
 #include <stdio.h> // for safe_sprintf()
 #include <stdarg.h>  // "
@@ -120,33 +120,33 @@ inline int DrawConsoleString( int x, int y, const char *string )
 	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) string );
 }
 
-inline void GetConsoleStringSize( const char *string, int *width, int *height )
-{
-	if( hud_textmode->value == 1 )
-		*height = 13, *width = gHUD.DrawHudStringLen( (char*)string );
-	else
-		gEngfuncs.pfnDrawConsoleStringLen( (char*)string, width, height );
-}
-
 int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b );
 
-inline int ConsoleStringLen( const char *string )
+inline int DrawConsoleString( int x, int y, char *string )
 {
-	int _width = 0, _height = 0;
-	if( hud_textmode->value == 1 )
-		return gHUD.DrawHudStringLen( (char*)string );
+	return gHUD.DrawConsoleStringWithColorTags(x, y, string);
+}
+
+inline void GetConsoleStringSize( char *string, int *width, int *height )
+{
+	gHUD.GetConsoleStringSizeWithColorTags(string, *width, *height);
+}
+
+inline int ConsoleStringLen( char *string )
+{
+	int _width, _height;
 	GetConsoleStringSize( string, &_width, &_height );
 	return _width;
 }
 
 inline void ConsolePrint( const char *string )
 {
-	gEngfuncs.pfnConsolePrint( string );
+	gEngfuncs.pfnConsolePrint( color_tags::strip_color_tags_thread_unsafe(string) );
 }
 
 inline void CenterPrint( const char *string )
 {
-	gEngfuncs.pfnCenterPrint( string );
+	gEngfuncs.pfnCenterPrint( color_tags::strip_color_tags_thread_unsafe(string) );
 }
 
 inline int DrawString( int x, int y, const char *string, int r, int g, int b )
@@ -165,11 +165,41 @@ inline void PlaySound( int iSound, float vol ) { gEngfuncs.pfnPlaySoundByIndex( 
 #define Q_min(a, b)  (((a) < (b)) ? (a) : (b))
 #define fabs(x)	   ((x) > 0 ? (x) : 0 - (x))
 
-
-//// OpenAG
+// OpenAG
 template<typename T, size_t N>
 char (&ArraySizeHelper(T (&)[N]))[N];
-#define ARRAYSIZED(x) sizeof(ArraySizeHelper(x))
+#define ARRAYSIZE(x) sizeof(ArraySizeHelper(x))
+
+static size_t count_digits(int n)
+{
+	size_t result = 0;
+
+	do {
+		++result;
+	} while ((n /= 10) != 0);
+
+	return result;
+}
+
+static char* get_server_address()
+{
+	net_status_t netstatus{};
+	gEngfuncs.pNetAPI->Status(&netstatus);
+	return gEngfuncs.pNetAPI->AdrToString(&netstatus.remote_address);
+}
+
+static void sanitize_address(std::string& address)
+{
+	for (size_t i = 0; i < address.size(); ++i) {
+		char c = address[i];
+		if ((c >= '0' && c <= '9') || c == '.' || c == ':')
+			continue;
+
+		// Invalid character.
+		address = address.substr(0, i);
+		break;
+	}
+}
 
 static size_t get_map_name(char* dest, size_t count)
 {
@@ -208,24 +238,63 @@ static size_t get_player_count()
 
 	return player_count;
 }
-////
 
-//// ChatGPT
-inline void remove_color_characters(char *input_string) {
-    char *read = input_string;
-    char *write = input_string;
-
-    while (*read) {
-        if (*read == '^' && isdigit(*(read + 1))) {
-            read += 2;
-        } else {
-            *write++ = *read++;
-        }
-    }
-
-    *write = '\0';
+inline void convert_to_lower_case(const char *str)
+{
+	unsigned char *str_lw = (unsigned char *)str;
+	while (*str_lw) {
+		*str_lw = tolower(*str_lw);
+		str_lw++;
+	}
 }
-////
+
+inline char *safe_strcpy( char *dst, const char *src, int len_dst)
+{
+	if( len_dst <= 0 )
+	{
+		return NULL; // this is bad
+	}
+
+	strncpy(dst,src,len_dst);
+	dst[ len_dst - 1 ] = '\0';
+
+	return dst;
+}
+
+inline int safe_sprintf( char *dst, int len_dst, const char *format, ...)
+{
+	if( len_dst <= 0 )
+	{
+		return -1; // this is bad
+	}
+
+	va_list v;
+
+    va_start(v, format);
+
+	_vsnprintf(dst,len_dst,format,v);
+
+	va_end(v);
+
+	dst[ len_dst - 1 ] = '\0';
+
+	return 0;
+}
+//
+
+inline void remove_color_characters(char *input_string) {
+	char *read = input_string;
+	char *write = input_string;
+
+	while (*read) {
+		if (*read == '^' && isdigit(*(read + 1))) {
+			read += 2;
+		} else {
+			*write++ = *read++;
+		}
+	}
+	*write = '\0';
+}
 
 void ScaleColors( int &r, int &g, int &b, int a );
 

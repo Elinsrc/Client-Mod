@@ -23,13 +23,14 @@
 #include "parsemsg.h"
 #include "triangleapi.h"
 
-#include <ctime>
 #include <string.h>
 #include <stdio.h>
 
 cvar_t *cl_scoreboard_bg;
 cvar_t *cl_showpacketloss;
 
+extern int blue_flag_player_index;
+extern int red_flag_player_index;
 
 #if USE_VGUI
 #include "vgui_TeamFortressViewport.h"
@@ -73,6 +74,11 @@ int CHudScoreboard::Init( void )
 int CHudScoreboard::VidInit( void )
 {
 	// Load sprites here
+	int iSprite = 0;
+	iSprite = gHUD.GetSpriteIndex( "icon_ctf_score" );
+	m_IconFlagScore.spr = gHUD.GetSprite( iSprite );
+	m_IconFlagScore.rc = gHUD.GetSpriteRect( iSprite );
+
 	return 1;
 }
 
@@ -171,34 +177,32 @@ int CHudScoreboard::Draw( float fTime )
 		snprintf(ServerName,80,"%s",gHUD.m_szServerName );
 	DrawUtfString( xpos, info_pos, ScreenWidth, ServerName, 255, 140, 0 );
 
-	int PLAYER_DATE_POS;
+	int COUNT_PLAYERS_POS;
 
 	if( cl_showpacketloss && cl_showpacketloss->value)
-		PLAYER_DATE_POS = 390;
+		COUNT_PLAYERS_POS = 390;
 	else
-		PLAYER_DATE_POS = 310;
+		COUNT_PLAYERS_POS = 310;
 
-	char time_str[80];
-	time_t date_time = time(0);
-	strftime(time_str, 80, "%Y.%m.%d %T", localtime(&date_time));
-	gHUD.DrawHudStringReverse( PLAYER_DATE_POS + xpos_rel, info_pos + 20, 0, time_str, 255, 140, 0 );
 
 	char map[256];
 	char map_name[64];
-	const size_t length = get_map_name(map_name, ARRAYSIZED(map_name));
+	const size_t length = get_map_name(map_name, ARRAYSIZE(map_name));
 	sprintf(map, "%s", map_name );
 	gHUD.DrawHudString( xpos, info_pos + 20, ScreenWidth, map, 255, 140, 0 );
 
 	char player_count[256];
 	sprintf(player_count, "%d/%d", get_player_count(), gEngfuncs.GetMaxClients());
-	gHUD.DrawHudStringReverse( PLAYER_DATE_POS + xpos_rel, info_pos, 0, player_count, 255, 140, 0 );
+	gHUD.DrawHudStringReverse( COUNT_PLAYERS_POS + xpos_rel, info_pos, 0, player_count, 255, 140, 0 );
 
 	if( !gHUD.m_Teamplay )
+	{
 		gHUD.DrawHudString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Player", 255, 140, 0 );
+		gHUD.DrawHudString( MODEL_RANGE_MIN + xpos_rel, ypos, ScreenWidth, "model", 255, 140, 0 );
+	}
 	else
 		gHUD.DrawHudString( xpos, ypos, NAME_RANGE_MAX + xpos_rel, "Teams", 255, 140, 0 );
 
-	gHUD.DrawHudString( MODEL_RANGE_MIN + xpos_rel, ypos, ScreenWidth, "model", 255, 140, 0 );
 	gHUD.DrawHudStringReverse( KILLS_RANGE_MAX + xpos_rel, ypos, 0, "kills", 255, 140, 0 );
 	gHUD.DrawHudString( DIVIDER_POS + xpos_rel, ypos, ScreenWidth, "/", 255, 140, 0 );
 	gHUD.DrawHudString( DEATHS_RANGE_MIN + xpos_rel + 5, ypos, ScreenWidth, "deaths", 255, 140, 0 );
@@ -362,7 +366,7 @@ int CHudScoreboard::Draw( float fTime )
 		list_slot++;
 
 		// draw all the players that belong to this team, indented slightly
-		list_slot = DrawPlayers( xpos_rel, list_slot, 10, team_info->name );
+		list_slot = DrawPlayers( xpos_rel, list_slot, 20, team_info->name );
 	}
 
 	// draw all the players who are not in a team
@@ -465,12 +469,27 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 			FillRGBA( xpos - 5, ypos, FAR_RIGHT, ROW_GAP, 0, 0, 255, 70 );
 		}
 
+		if( blue_flag_player_index == best_player || red_flag_player_index == best_player )
+		{
+			SPR_Set(m_IconFlagScore.spr, 200, 200, 200 );
+			SPR_DrawAdditive( 0, xpos, ypos, &m_IconFlagScore.rc );
+		}
+
+		static char szName[128];
+		if( g_IsSpectator[best_player] )
+			sprintf( szName, "(S) %s", pl_info->name );
+		else
+			sprintf( szName, "%s", pl_info->name );
+
 		// draw their name (left to right)
-		DrawUtfString( xpos + nameoffset, ypos, NAME_RANGE_MAX + xpos_rel, pl_info->name, r, g, b );
+		DrawUtfString( xpos + nameoffset, ypos, NAME_RANGE_MAX + xpos_rel, szName, r, g, b );
 
 		// draw model name
-		xpos = MODEL_RANGE_MIN + xpos_rel;
-		gHUD.DrawHudModelName(xpos, ypos, pl_info->topcolor, pl_info->bottomcolor, pl_info->model);
+		if( !gHUD.m_Teamplay )
+		{
+			xpos = MODEL_RANGE_MIN + xpos_rel;
+			gHUD.DrawHudModelName(xpos, ypos, pl_info->topcolor, pl_info->bottomcolor, pl_info->model);
+		}
 
 		// draw kills (right to left)
 		xpos = KILLS_RANGE_MAX + xpos_rel;

@@ -140,10 +140,17 @@ int CHudSayText::Draw( float flTime )
 				static char buf[MAX_PLAYER_NAME_LENGTH + 32];
 
 				// draw the first x characters in the player color
+				int x = gHUD.DrawConsoleStringWithColorTags(
+						LINE_START,
+						y,
+						buf + 1,
+						true,
+						g_pflNameColors[i][0],
+						g_pflNameColors[i][1],
+						g_pflNameColors[i][2]
+					); // don't draw the control code at the start
 				strncpy( buf, g_szLineBuffer[i], Q_min(g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 31 ) );
 				buf[Q_min( g_iNameLengths[i], MAX_PLAYER_NAME_LENGTH + 31 )] = 0;
-				DrawSetTextColor( g_pflNameColors[i][0], g_pflNameColors[i][1], g_pflNameColors[i][2] );
-				int x = DrawConsoleString( LINE_START, y, buf );
 
 				// color is reset after each string draw
 				DrawConsoleString( x, y, g_szLineBuffer[i] + g_iNameLengths[i] );
@@ -169,6 +176,39 @@ int CHudSayText::MsgFunc_SayText( const char *pszName, int iSize, void *pbuf )
 	SayTextPrint( READ_STRING(), iSize - 1,  client_index );
 
 	return 1;
+}
+
+/*
+ * Copies at most count characters (including the terminating null character)
+ * from src to dest, replacing the location tags with the location names.
+ * The resulting array is always null-terminated except when count == 0.
+ */
+static void convert_locations(char* dest, const char* src, size_t count, int player_id)
+{
+	if (count == 0)
+		return;
+	if (count == 1) {
+		dest[0] = '\0';
+		return;
+	}
+	size_t i = 0;
+	for (; *src != '\0'; ++src) {
+		if (src[0] == '%' && (src[1] == 'l' || src[1] == 'L' || src[1] == 'd' || src[1] == 'D')) {
+			auto loc = gHUD.m_Location.get_player_location(player_id).c_str();
+			auto loc_len = strlen(loc);
+			auto bytes_to_copy = Q_min(loc_len, count - i - 1);
+			strncpy(&dest[i], loc, bytes_to_copy);
+			i += bytes_to_copy;
+			if (i + 1 == count)
+				break;
+			++src;
+		} else {
+			dest[i++] = *src;
+			if (i + 1 == count)
+				break;
+		}
+	}
+	dest[i] = '\0';
 }
 
 void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientIndex )
@@ -226,7 +266,7 @@ void CHudSayText::SayTextPrint( const char *pszBuf, int iBufSize, int clientInde
 		}
 	}
 
-	strncpy( g_szLineBuffer[i], pszBuf, Q_max( iBufSize - 1, MAX_CHARS_PER_LINE - 1 ) );
+	convert_locations( g_szLineBuffer[i], pszBuf, Q_max(iBufSize , MAX_CHARS_PER_LINE), clientIndex );
 
 	// make sure the text fits in one line
 	EnsureTextFitsInOneLineAndWrapIfHaveTo( i );
@@ -277,6 +317,9 @@ void CHudSayText::EnsureTextFitsInOneLineAndWrapIfHaveTo( int line )
 				if( *x == 0 )
 					break;
 			}
+
+			if (x[0] == '^' && x[1] >= '0' && x[1] <= '9')
+				x += 2;
 
 			char buf[2];
 			buf[1] = 0;

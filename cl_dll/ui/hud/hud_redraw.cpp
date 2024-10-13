@@ -380,6 +380,13 @@ int CHud::DrawHudNumberString( int xpos, int ypos, int iMinX, int iNumber, int r
 	return DrawHudStringReverse( xpos, ypos, iMinX, szString, r, g, b );
 }
 
+int CHud::DrawHudNumberStringFixed( int xpos, int ypos, int iNumber, int r, int g, int b )
+{
+	char szString[32];
+	sprintf( szString, "%d", iNumber );
+	return DrawHudStringRightAligned( xpos, ypos, szString, r, g, b );
+}
+
 // draws a string from right to left (right-aligned)
 int CHud::DrawHudStringReverse( int xpos, int ypos, int iMinX, const char *szString, int r, int g, int b )
 {
@@ -623,4 +630,62 @@ int CHud::DrawHudTextCentered(int x, int y, const char* szString, int r, int g, 
 	gEngfuncs.pfnDrawConsoleString(x - Len / 2, y, (char*)szString);
 
 	return x + Len / 2;
+}
+
+int CHud::DrawHudStringCentered(int x, int y, const char* string, int r, int g, int b)
+{
+	auto width = GetHudStringWidth(string);
+	return x + gEngfuncs.pfnDrawString(x - width / 2, y, string, r, g, b);
+}
+
+int CHud::DrawHudStringRightAligned(int x, int y, const char* string, int r, int g, int b)
+{
+	auto width = GetHudStringWidth(string);
+	gEngfuncs.pfnDrawString(x - width, y, string, r, g, b);
+	return x;
+}
+
+int CHud::DrawHudStringWithColorTags(int x, int y, char* string, int default_r, int default_g, int default_b)
+{
+	color_tags::for_each_colored_substr(string, [=, &x](const char* string, bool custom_color, int r, int g, int b) {
+		if (!custom_color) {
+			r = default_r;
+			g = default_g;
+			b = default_b;
+		}
+
+		x += gEngfuncs.pfnDrawString(x, y, string, r, g, b);
+	});
+
+	return x;
+}
+
+int CHud::DrawHudStringCenteredWithColorTags(int x, int y, char* string, int r, int g, int b)
+{
+	auto width = GetHudStringWidthWithColorTags(string);
+	return DrawHudStringWithColorTags(x - width / 2, y, string, r, g, b);
+}
+
+int CHud::GetHudStringWidthWithColorTags(const char* string)
+{
+	return gEngfuncs.pfnDrawString(0, 0, color_tags::strip_color_tags_thread_unsafe(string), 0, 0, 0);
+}
+
+int CHud::DrawConsoleStringWithColorTags(int x, int y, char* string, bool use_default_color, float default_r, float default_g, float default_b)
+{
+	color_tags::for_each_colored_substr(string, [=, &x](const char* string, bool custom_color, int r, int g, int b) {
+		if (custom_color)
+			gEngfuncs.pfnDrawSetTextColor(r / 255.0f, g / 255.0f, b / 255.0f);
+		else if (use_default_color)
+			gEngfuncs.pfnDrawSetTextColor(default_r, default_g, default_b);
+
+		x = gEngfuncs.pfnDrawConsoleString(x, y, string);
+	});
+
+	return x;
+}
+
+void CHud::GetConsoleStringSizeWithColorTags(char* string, int& width, int& height)
+{
+	gEngfuncs.pfnDrawConsoleStringLen(color_tags::strip_color_tags_thread_unsafe(string), &width, &height);
 }

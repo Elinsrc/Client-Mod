@@ -327,6 +327,11 @@ int __MsgFunc_AllowSpec( const char *pszName, int iSize, void *pbuf )
 	return 0;
 }
  
+int __MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf)
+{
+	return gHUD.MsgFunc_Gametype( pszName, iSize, pbuf );
+}
+
 // This is called every time the DLL is loaded
 void CHud::Init( void )
 {
@@ -337,6 +342,7 @@ void CHud::Init( void )
 	HOOK_MESSAGE( ViewMode );
 	HOOK_MESSAGE( SetFOV );
 	HOOK_MESSAGE( Concuss );
+	HOOK_MESSAGE( Gametype );
 
 	// TFFree CommandMenu
 	HOOK_COMMAND( "+commandmenu", OpenCommandMenu );
@@ -442,6 +448,17 @@ void CHud::Init( void )
 	m_Debug.Init();
 	m_StrafeGuide.Init();
 	m_Rainbow.Init();
+	m_Countdown.Init();
+	m_Settings.Init();
+	m_Timer.Init();
+	m_CTF.Init();
+	m_CustomTimer.Init();
+	m_Location.Init();
+	m_NextMap.Init();
+	m_PlayerId.Init();
+	m_SuddenDeath.Init();
+	m_Timeout.Init();
+	m_Vote.Init();
 #if USE_VGUI
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
 #endif
@@ -637,6 +654,17 @@ void CHud::VidInit( void )
 	m_Watermark.VidInit();
 	m_Debug.VidInit();
 	m_StrafeGuide.VidInit();
+	m_Countdown.VidInit();
+	m_Settings.VidInit();
+	m_Timer.VidInit();
+	m_CTF.VidInit();
+	m_CustomTimer.VidInit();
+	m_Location.VidInit();
+	m_NextMap.VidInit();
+	m_PlayerId.VidInit();
+	m_SuddenDeath.VidInit();
+	m_Timeout.VidInit();
+	m_Vote.VidInit();
 #if USE_VGUI
 	GetClientVoiceMgr()->VidInit();
 #endif

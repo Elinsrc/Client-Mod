@@ -104,21 +104,33 @@ set (CLDLL_SOURCES
 	ui/hud/hud_msg.cpp
 	ui/hud/hud_redraw.cpp
 	ui/hud/hud_spectator.cpp
-	ui/hud/hud_speedometer.cpp
-	ui/hud/hud_jumpspeed.cpp
 	ui/hud/hud_update.cpp
 	ui/hud/hud_crosshairs.cpp
 	ui/hud/hud_watermark.cpp
 	ui/hud/hud_debug.cpp
-	ui/hud/hud_strafeguide.cpp
 	ui/hud/menu.cpp
 	ui/hud/message.cpp
-	ui/hud/rainbow.cpp
 	ui/hud/saytext.cpp
 	ui/hud/status_icons.cpp
 	ui/hud/statusbar.cpp
 	ui/hud/text_message.cpp
 	ui/hud/train.cpp
+	ui/hud/OpenAG/color_tags.cpp
+	ui/hud/OpenAG/rainbow.cpp
+	ui/hud/OpenAG/hud_strafeguide.cpp
+	ui/hud/OpenAG/hud_speedometer.cpp
+	ui/hud/OpenAG/hud_jumpspeed.cpp
+	ui/hud/OpenAG/hud_countdown.cpp
+	ui/hud/OpenAG/hud_settings.cpp
+	ui/hud/OpenAG/hud_timer.cpp
+	ui/hud/OpenAG/hud_ctf.cpp
+	ui/hud/OpenAG/hud_customtimer.cpp
+	ui/hud/OpenAG/hud_location.cpp
+	ui/hud/OpenAG/hud_nextmap.cpp
+	ui/hud/OpenAG/hud_playerid.cpp
+	ui/hud/OpenAG/hud_suddendeath.cpp
+	ui/hud/OpenAG/hud_timeout.cpp
+	ui/hud/OpenAG/hud_vote.cpp
 	cdll_int.cpp
 	com_weapons.cpp
 	demo.cpp
@@ -180,7 +192,7 @@ if (BUILD_IMGUI)
 		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_widgets.cpp")
 endif()
 
-include_directories (. hl/ events/ input/ rendering/ ui ui/hud ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
+include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
 
 if (BUILD_DISCORD_RPC)
 	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/discord-rpc/include discord-rpc)

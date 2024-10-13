@@ -138,7 +138,7 @@ namespace discord_integration
 					char map[256] = "Map: ";
 					size_t map_len = strlen(map);
 					const size_t length =
-						get_map_name(map+map_len, ARRAYSIZED(map)-map_len);
+						get_map_name(map+map_len, ARRAYSIZE(map)-map_len);
 
 					char ServerName[256] = "Server: ";
 #if USE_VGUI

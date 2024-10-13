@@ -28,6 +28,7 @@
 #endif
 
 #if USE_SDL2
+#undef ARRAYSIZE
 #define ARRAYSIZE(p)		( sizeof(p) /sizeof(p[0]) )
 #include <dlfcn.h>
 #include <SDL2/SDL_mouse.h>

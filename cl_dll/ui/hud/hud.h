@@ -103,7 +103,17 @@ struct HUDLIST
 #include "hud_debug.h"
 #include "hud_strafeguide.h"
 #include "rainbow.h"
-
+#include "hud_countdown.h"
+#include "hud_settings.h"
+#include "hud_timer.h"
+#include "hud_ctf.h"
+#include "hud_customtimer.h"
+#include "hud_location.h"
+#include "hud_nextmap.h"
+#include "hud_playerid.h"
+#include "hud_suddendeath.h"
+#include "hud_timeout.h"
+#include "hud_vote.h"
 //
 //-----------------------------------------------------
 //
@@ -259,6 +269,14 @@ public:
 	int m_iShowscoresHeld;
 
 	void GetAllPlayersInfo( void );
+private:
+	typedef struct
+	{
+		HSPRITE spr;
+		wrect_t rc;
+	}icon_flagstatus_t;
+
+	icon_flagstatus_t m_IconFlagScore;
 };
 #endif
 
@@ -550,6 +568,7 @@ private:
 	int							m_iSpriteCountAllRes;
 	float						m_flMouseSensitivity;
 	int							m_iConcussionEffect; 
+	int							m_iGameType;
 
 public:
 	HSPRITE						m_hsprCursor;
@@ -590,6 +609,23 @@ public:
 	void DrawHudModelName(int x, int y, float topcolor, float bottomcolor, const char* model);
 	int DrawHudText(int x, int y, const char* szString, int r, int g, int b);
 	int DrawHudTextCentered(int x, int y, const char* szString, int r, int g, int b);
+	int DrawHudStringCentered(int x, int y, const char* string, int r, int g, int b);
+	int DrawHudStringRightAligned(int x, int y, const char* string, int r, int g, int b);
+	int DrawHudNumberStringFixed( int xpos, int ypos, int iNumber, int r, int g, int b );
+	int DrawHudStringWithColorTags(int x, int y, char* string, int r, int g, int b);
+	int DrawHudStringCenteredWithColorTags(int x, int y, char* string, int r, int g, int b);
+	int GetHudStringWidthWithColorTags(const char* string);
+	int DrawConsoleStringWithColorTags(
+		int x,
+		int y,
+		char* string,
+		bool use_default_color = false,
+		float default_r = 0.0f,
+		float default_g = 0.0f,
+		float default_b = 0.0f
+	);
+	void GetConsoleStringSizeWithColorTags(char* string, int& width, int& height);
+
 
 private:
 	// the memory for these arrays are allocated in the first call to CHud::VidInit(), when the hud.txt and associated sprites are loaded.
@@ -608,6 +644,11 @@ public:
 	wrect_t& GetSpriteRect( int index )
 	{
 		return m_rgrcRects[index];
+	}
+
+	int GetGameType() const
+	{
+		return m_iGameType;
 	}
 	
 	int GetSpriteIndex( const char *SpriteName );	// gets a sprite index, for use in the m_rghSprites[] array
@@ -634,6 +675,17 @@ public:
 	CHudDebug	m_Debug;
 	CHudStrafeGuide	m_StrafeGuide;
 	CRainbow m_Rainbow;
+	CHudCountdown	m_Countdown;
+	CHudSettings	m_Settings;
+	CHudTimer		m_Timer;
+	CHudCTF			m_CTF;
+	CHudCustomTimer m_CustomTimer;
+	CHudLocation	m_Location;
+	CHudNextMap		m_NextMap;
+	CHudPlayerId		m_PlayerId;
+	CHudSuddenDeath		m_SuddenDeath;
+	CHudTimeout		m_Timeout;
+	CHudVote		m_Vote;
 #if !USE_VGUI || USE_NOVGUI_SCOREBOARD
 	CHudScoreboard	m_Scoreboard;
 #endif
@@ -659,6 +711,7 @@ public:
 	void _cdecl MsgFunc_ViewMode( const char *pszName, int iSize, void *pbuf );
 	int _cdecl MsgFunc_SetFOV( const char *pszName,  int iSize, void *pbuf );
 	int  _cdecl MsgFunc_Concuss( const char *pszName, int iSize, void *pbuf );
+	int _cdecl MsgFunc_Gametype(const char *pszName, int iSize, void *pbuf);
 
 	// Screen information
 	SCREENINFO	m_scrinfo;
