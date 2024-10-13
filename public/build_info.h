@@ -140,13 +140,13 @@ namespace BuildInfo
 	}
 
 	// Returns project GitHub repository URL.
-	constexpr const char *GetGitHubLink()
+	constexpr char *GetGitHubLink()
 	{
 		return "https://github.com/Elinsrc/Client-Mod";
 	}
 
 	// Returns build host machine date when program was built.
-	constexpr const char *GetDate()
+	constexpr char *GetDate()
 	{
 		return __DATE__;
 	}

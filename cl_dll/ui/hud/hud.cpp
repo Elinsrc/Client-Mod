@@ -22,6 +22,7 @@
 #include "cl_util.h"
 #include <string.h>
 #include <stdio.h>
+#include <ctime>
 #include "parsemsg.h"
 #if USE_VGUI
 #include "vgui_int.h"
@@ -181,6 +182,103 @@ void __CmdFunc_ForceCloseCommandMenu( void )
 		gViewPort->HideCommandMenu();
 	}
 #endif
+}
+
+void __CmdFunc_Agrecord()
+{
+	/*
+	 * Yay overcomplicating stuff.
+	 * All this code makes sure we can fit as much as possible into cmd.
+	 */
+
+	char cmd[256];
+	cmd[ARRAYSIZE(cmd) - 1] = '\0';
+
+	std::time_t curtime = std::time(nullptr);
+
+	auto written = std::strftime(cmd, sizeof(cmd), "record %Y%m%d_%H%M%S_", std::localtime(&curtime));
+	if (written > 0) {
+		char mapname[256];
+		auto mapname_len = get_map_name(mapname, ARRAYSIZE(mapname));
+
+		/*
+		 * We want to leave at least one more byte for '\0'.
+		 * written does not include the '\0'.
+		 * written is strictly less than sizeof(cmd).
+		 * The maximal value for written is sizeof(cmd) - 1.
+		 * So if we wrote ARRAYSIZE(cmd) - 1 bytes, we have no extra bytes left.
+		 */
+		mapname_len = Q_min(mapname_len, ARRAYSIZE(cmd) - written - 1);
+		strncpy(cmd + written, mapname, mapname_len);
+
+		cmd[written + mapname_len] = '\0';
+
+		if (gEngfuncs.Cmd_Argc() >= 2) {
+			size_t bytes_left = ARRAYSIZE(cmd) - written - 1 - mapname_len;
+			if (bytes_left >= 2) {
+				cmd[written + mapname_len] = '_';
+
+				auto arg_len = strlen(gEngfuncs.Cmd_Argv(1));
+				auto bytes_to_write = Q_min(arg_len, bytes_left - 1);
+
+				strncpy(cmd + written + mapname_len + 1, gEngfuncs.Cmd_Argv(1), bytes_to_write);
+
+				cmd[written + mapname_len + 1 + bytes_to_write] = '\0';
+			}
+		}
+
+		gEngfuncs.pfnClientCmd(cmd);
+	}
+}
+
+void __CmdFunc_Append()
+{
+	if (gEngfuncs.Cmd_Argc() != 2) {
+		if (!gEngfuncs.pDemoAPI->IsPlayingback())
+			gEngfuncs.Con_Printf("append <command> - put the command into the end of the command buffer.\n");
+
+		return;
+	}
+
+	ClientCmd(gEngfuncs.Cmd_Argv(1));
+}
+
+void __CmdFunc_Writemap()
+{
+	FILE* saved_maps;
+	char map_name[64];
+	char map_name_to_check[64];
+
+	get_map_name(map_name, ARRAYSIZE(map_name));
+
+	if (map_name[0])
+	{
+		saved_maps = fopen("saved_maps.txt", "r+");
+
+		if (saved_maps)
+		{
+			while (fgets(map_name_to_check, ARRAYSIZE(map_name_to_check), saved_maps))
+			{
+				map_name_to_check[strlen(map_name_to_check) - 1] = '\0';
+
+				if (!strcmp(map_name, map_name_to_check))
+				{
+					gEngfuncs.Con_Printf("Current map is already in saved_maps.txt\n");
+					fclose(saved_maps);
+					return;
+				}
+			}
+		}
+		else
+		{
+			saved_maps = fopen("saved_maps.txt", "a");
+			if(!saved_maps)
+				return;
+		}
+
+		fprintf(saved_maps, "%s\n", map_name);
+		fclose(saved_maps);
+	}
 }
 
 // TFFree Command Menu Message Handlers
@@ -349,6 +447,11 @@ void CHud::Init( void )
 	HOOK_COMMAND( "-commandmenu", CloseCommandMenu );
 	HOOK_COMMAND( "ForceCloseCommandMenu", ForceCloseCommandMenu );
 	HOOK_COMMAND( "special", InputPlayerSpecial );
+
+	HOOK_COMMAND( "agrecord", Agrecord );
+	HOOK_COMMAND( "append", Append );
+	HOOK_COMMAND( "writemap", Writemap );
+	ClientCmd("alias zpecial \"append _zpecial\"");
 
 	HOOK_MESSAGE( ValClass );
 	HOOK_MESSAGE( TeamNames );

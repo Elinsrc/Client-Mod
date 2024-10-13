@@ -40,19 +40,19 @@ int CHudWatermark::Draw(float time)
 	int r, g, b;
 	UnpackRGB(r, g, b, gHUD.m_iDefaultHUDColor);
 
-	char build[256];
-	sprintf(build, "Client-Mod: built %s, commit %s, architecture %s, platform %s",
+	char str[256];
+	sprintf(str, "^2Client-Mod^7: built ^1%s^7, commit ^2%s^7, architecture ^3%s^7, platform ^5%s\n",
 		BuildInfo::GetDate(),
 		BuildInfo::GetCommitHash(),
 		BuildInfo::GetArchitecture(),
 		BuildInfo::GetPlatform()
 	);
-
-	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, build, r, g, b);
-	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "t.me/Elinsrc", r, g, b);
-	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "t.me/HalfLifeCollectiveChat", r, g, b);
-	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, BuildInfo::GetGitHubLink(), r, g, b);
-	DrawString(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 6, "To disable this message, type in the console 'hud_watermark 0'", r, g, b);
+	gHUD.DrawHudStringWithColorTags(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight, str, r, g, b);
+	gHUD.DrawHudStringWithColorTags(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 2, "t.me/Elinsrc", r, g, b);
+	gHUD.DrawHudStringWithColorTags(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 3, "t.me/HalfLifeCollectiveChat", r, g, b);
+	gHUD.DrawHudStringWithColorTags(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 4, BuildInfo::GetGitHubLink(), r, g, b);
+	sprintf(str, "To disable this message, type in the console ^2hud_watermark 0");
+	gHUD.DrawHudStringWithColorTags(ScreenWidth / 20, gHUD.m_scrinfo.iCharHeight * 6, str, r, g, b);
 
 	return 0;
 }
