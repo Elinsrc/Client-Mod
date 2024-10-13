@@ -77,93 +77,93 @@ set (CLDLL_SOURCES
 	${CMAKE_SOURCE_DIR}/dlls/squeakgrenade.cpp
 	${CMAKE_SOURCE_DIR}/dlls/tripmine.cpp
 	${CMAKE_SOURCE_DIR}/dlls/glock.cpp
-	ev_hldm.cpp
+	events/ev_hldm.cpp
+	events/ev_common.cpp
+	events/events.cpp
 	hl/hl_baseentity.cpp
 	hl/hl_events.cpp
 	hl/hl_objects.cpp
 	hl/hl_weapons.cpp
-	ammo.cpp
-	ammo_secondary.cpp
-	ammohistory.cpp
-	battery.cpp
+	input/in_camera.cpp
+	input/input.cpp
+	input/input_goldsource.cpp
+	input/input_mouse.cpp
+	input/input_xash3d.cpp
+	rendering/GameStudioModelRenderer.cpp
+	rendering/StudioModelRenderer.cpp
+	rendering/tri.cpp
+	ui/hud/ammo.cpp
+	ui/hud/ammo_secondary.cpp
+	ui/hud/ammohistory.cpp
+	ui/hud/battery.cpp
+	ui/hud/death.cpp
+	ui/hud/flashlight.cpp
+	ui/hud/geiger.cpp
+	ui/hud/health.cpp
+	ui/hud/hud.cpp
+	ui/hud/hud_msg.cpp
+	ui/hud/hud_redraw.cpp
+	ui/hud/hud_spectator.cpp
+	ui/hud/hud_speedometer.cpp
+	ui/hud/hud_jumpspeed.cpp
+	ui/hud/hud_update.cpp
+	ui/hud/hud_crosshairs.cpp
+	ui/hud/hud_watermark.cpp
+	ui/hud/hud_debug.cpp
+	ui/hud/hud_strafeguide.cpp
+	ui/hud/menu.cpp
+	ui/hud/message.cpp
+	ui/hud/rainbow.cpp
+	ui/hud/saytext.cpp
+	ui/hud/status_icons.cpp
+	ui/hud/statusbar.cpp
+	ui/hud/text_message.cpp
+	ui/hud/train.cpp
 	cdll_int.cpp
 	com_weapons.cpp
-	death.cpp
 	demo.cpp
 	entity.cpp
-	ev_common.cpp
-	events.cpp
-	flashlight.cpp
-	GameStudioModelRenderer.cpp
-	geiger.cpp
-	health.cpp
-	hud.cpp
-	hud_msg.cpp
-	hud_redraw.cpp
-	hud_spectator.cpp
-	hud_speedometer.cpp
-	hud_jumpspeed.cpp
-	hud_update.cpp
-	hud_crosshairs.cpp
-	hud_watermark.cpp
-	hud_debug.cpp
-	hud_strafeguide.cpp
-	in_camera.cpp
-	input.cpp
-	input_goldsource.cpp
-	input_mouse.cpp
-	input_xash3d.cpp
-	menu.cpp
-	message.cpp
 	parsemsg.cpp
-	rainbow.cpp
+	studio_util.cpp
+	util.cpp
+	view.cpp
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_debug.c
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_math.c
-	${CMAKE_SOURCE_DIR}/pm_shared/pm_shared.c
-	saytext.cpp
-	status_icons.cpp
-	statusbar.cpp
-	studio_util.cpp
-	StudioModelRenderer.cpp
-	text_message.cpp
-	train.cpp
-	tri.cpp
-	util.cpp
-	view.cpp)
+	${CMAKE_SOURCE_DIR}/pm_shared/pm_shared.c)
 
 if (USE_VGUI)
 	list(APPEND CLDLL_SOURCES
-		vgui_int.cpp
-		vgui_ClassMenu.cpp
-		vgui_ConsolePanel.cpp
-		vgui_ControlConfigPanel.cpp
-		vgui_CustomObjects.cpp
-		vgui_MOTDWindow.cpp
-		vgui_SchemeManager.cpp
-		vgui_ScorePanel.cpp
-		vgui_TeamFortressViewport.cpp
-		vgui_SpectatorPanel.cpp
-		vgui_teammenu.cpp
-		voice_status.cpp
-		${CMAKE_SOURCE_DIR}/game_shared/vgui_checkbutton2.cpp
-		${CMAKE_SOURCE_DIR}/game_shared/vgui_grid.cpp
-		${CMAKE_SOURCE_DIR}/game_shared/vgui_helpers.cpp
-		${CMAKE_SOURCE_DIR}/game_shared/vgui_listbox.cpp
-		${CMAKE_SOURCE_DIR}/game_shared/vgui_loadtga.cpp
-		${CMAKE_SOURCE_DIR}/game_shared/vgui_scrollbar2.cpp
-		${CMAKE_SOURCE_DIR}/game_shared/vgui_slider2.cpp
-		${CMAKE_SOURCE_DIR}/game_shared/voice_banmgr.cpp
+		ui/VGUI/vgui_int.cpp
+		ui/VGUI/vgui_ClassMenu.cpp
+		ui/VGUI/vgui_ConsolePanel.cpp
+		ui/VGUI/vgui_ControlConfigPanel.cpp
+		ui/VGUI/vgui_CustomObjects.cpp
+		ui/VGUI/vgui_MOTDWindow.cpp
+		ui/VGUI/vgui_SchemeManager.cpp
+		ui/VGUI/vgui_ScorePanel.cpp
+		ui/VGUI/vgui_TeamFortressViewport.cpp
+		ui/VGUI/vgui_SpectatorPanel.cpp
+		ui/VGUI/vgui_teammenu.cpp
+		ui/voice_status.cpp
+		ui/voice_banmgr.cpp
+		ui/VGUI/utils/vgui_checkbutton2.cpp
+		ui/VGUI/utils/vgui_grid.cpp
+		ui/VGUI/utils/vgui_helpers.cpp
+		ui/VGUI/utils/vgui_listbox.cpp
+		ui/VGUI/utils/vgui_loadtga.cpp
+		ui/VGUI/utils/vgui_scrollbar2.cpp
+		ui/VGUI/utils/vgui_slider2.cpp
 		)
 	if (USE_NOVGUI_MOTD)
-		list(APPEND CLDLL_SOURCES MOTD.cpp)
+		list(APPEND CLDLL_SOURCES ui/hud/MOTD.cpp)
 	endif()
 	if (USE_NOVGUI_SCOREBOARD)
-		list(APPEND CLDLL_SOURCES scoreboard.cpp)
+		list(APPEND CLDLL_SOURCES ui/hud/scoreboard.cpp)
 	endif()
 else()
 	list(APPEND CLDLL_SOURCES
-		MOTD.cpp
-		scoreboard.cpp)
+		ui/hud/MOTD.cpp
+		ui/hud/scoreboard.cpp)
 endif()
 
 if (BUILD_DISCORD_RPC)
@@ -180,7 +180,7 @@ if (BUILD_IMGUI)
 		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_widgets.cpp")
 endif()
 
-include_directories (. hl/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
+include_directories (. hl/ events/ input/ rendering/ ui ui/hud ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
 
 if (BUILD_DISCORD_RPC)
 	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/discord-rpc/include discord-rpc)
@@ -193,16 +193,14 @@ endif()
 if (USE_VGUI)
 	SET(CMAKE_SKIP_RPATH TRUE)
 	link_directories(${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/lib)
-	include_directories(${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/include)
+	include_directories(ui/VGUI ui/VGUI/utils/ ${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/include)
 else()
 	include_directories(${CMAKE_SOURCE_DIR}/utils/fake_vgui/include)
 endif()
 
 if(USE_VOICEMGR)
-	#set(CLDLL_SOURCES
-	#	${CLDLL_SOURCES}
-	#	${CMAKE_SOURCE_DIR}/game_shared/voice_banmgr.cpp
-	#	${CMAKE_SOURCE_DIR}/game_shared/voice_status.cpp)
+	#	ui/VGUI/utils/voice_banmgr.cpp
+	#	ui/VGUI/utils/voice_status.cpp)
 endif()
 
 add_library (${CLDLL_LIBRARY} SHARED ${CLDLL_SOURCES})

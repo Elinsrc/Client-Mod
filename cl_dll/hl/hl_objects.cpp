@@ -13,9 +13,9 @@
 *
 ****/
 
-#include "../hud.h"
-#include "../cl_util.h"
-#include "../demo.h"
+#include "hud.h"
+#include "cl_util.h"
+#include "demo.h"
 
 #include "demo_api.h"
 #include "const.h"
