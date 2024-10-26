@@ -9,6 +9,8 @@
 #include "pm_movevars.h"
 #include "ref_params.h"
 
+#include "demo_api.h"
+
 enum border {
 	RED_GREEN,
 	GREEN_WHITE,
@@ -36,7 +38,7 @@ int CHudStrafeGuide::VidInit()
 
 int CHudStrafeGuide::Draw(float time)
 {
-	if (hud_strafeguide->value == 0)
+	if (hud_strafeguide->value == 0 || gEngfuncs.pDemoAPI->IsPlayingback())
 		return 0;
 
 	double fov  = CVAR_GET_FLOAT( "default_fov" ) / 180 * M_PI / 2;

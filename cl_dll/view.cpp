@@ -27,6 +27,8 @@
 #include "hltv.h"
 #include "view.h"
 
+#include "demo_api.h"
+
 // Spectator Mode
 extern "C" 
 {
@@ -1644,7 +1646,10 @@ void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
 	// OpenAG
 	gHUD.m_Speedometer.UpdateSpeed(pparams->simvel);
 	gHUD.m_Jumpspeed.UpdateSpeed(pparams->simvel);
-	gHUD.m_StrafeGuide.Update(pparams);
+
+	// FIXME: Why does an error occur when viewing DEMO?
+	if (!gEngfuncs.pDemoAPI->IsPlayingback())
+		gHUD.m_StrafeGuide.Update(pparams);
 
 	// intermission / finale rendering
 	if( pparams->intermission )
