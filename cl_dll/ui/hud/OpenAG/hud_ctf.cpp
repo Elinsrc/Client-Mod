@@ -16,8 +16,8 @@ int CHudCTF::Init()
 	HOOK_MESSAGE(CTFFlag);
 
 	m_iFlags = 0;
-    blue_flag_player_index = 0;
-    red_flag_player_index = 0;
+	blue_flag_player_index = 0;
+	red_flag_player_index = 0;
 
 	gHUD.AddHudElem(this);
 	return 0;
