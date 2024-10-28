@@ -2,9 +2,7 @@
 
 * **Client-Mod** is a small modification of the **Half-Life** client part for **Xash3D FWGS and GoldSource**
 
-Added a new control with additional buttons to activate `Configuration->Touch->Touch options`, select preset `New` and click `Activate`.
-
-Added server name to no vgui scoreboard, player model name (included in vgui), curent map name, number of current players, and current date with time.
+Added server name to no vgui scoreboard, player model name (included in vgui), curent map name and number of current players.
 
 Added commands:
 
@@ -95,7 +93,7 @@ cl_viewmodel_ofs_right [value] — Offsets the gun viewmodel to the right (or to
 cl_viewmodel_ofs_forward [value] — Offsets the gun viewmodel forward, 0 for no offset. Taken from OpenAG.
 cl_viewmodel_ofs_up [value] — Offsets the gun viewmodel upwards, 0 for no offset. Taken from OpenAG.
 
-cl_debug [1/0] - Show client info, defaut value 0.
+cl_debug [0/1/2] - Show client info, defaut value 0.
 cl_debug_showfps [1/0] - Show curent fps and framerate, defaut value 1.
 ```
 
@@ -251,12 +249,6 @@ aarch64-none-elf-cmake -G"Unix Makefiles" -DCMAKE_PROJECT_CLIENT-MOD_INCLUDE="$D
 make -j
 ```
 
-### Building using waf
-```
-./waf configure -T release --nswitch
-./waf build
-```
-
 ## PlayStation Vita
 
 ### Prerequisites
@@ -269,12 +261,6 @@ make -j
    cmake -DCMAKE_BUILD_TYPE=Release ..
    make -j2 install
    ```
-
-### Building with waf:
-```
-./waf configure -T release --psvita
-./waf build
-```
 
 ### Building with CMake:
 ```
@@ -296,15 +282,6 @@ Install C and C++ compilers (like gcc or clang), cmake and make.
 ```
 cmake -B build -S .
 cmake --build build
-```
-
-### Building with waf
-
-To use waf, you need to install python (2.7 minimum)
-
-```
-(./waf configure -T release)
-(./waf)
 ```
 
 ## Build options
