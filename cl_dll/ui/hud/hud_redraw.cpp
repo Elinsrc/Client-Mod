@@ -180,8 +180,8 @@ int CHud::Redraw( float flTime, int intermission )
 		// Hack to draw some HUDs even when hud_draw is 0.
 		if (!intermission && !(m_iHideHUDDisplay & HIDEHUD_ALL))
 		{
-			if (m_Crosshair.m_iFlags & HUD_ACTIVE)
-				m_Crosshair.Draw(flTime);
+			if (m_Crosshairs.m_iFlags & HUD_ACTIVE)
+				m_Crosshairs.Draw(flTime);
 
 			if (m_Speedometer.m_iFlags & HUD_ACTIVE)
 				m_Speedometer.Draw(flTime);

@@ -670,7 +670,7 @@ public:
 	CHudStatusIcons m_StatusIcons;
 	CHudSpeedometer	m_Speedometer;
 	CHudJumpspeed   m_Jumpspeed;
-	CHudCrosshair	m_Crosshair;
+	CHudCrosshairs	m_Crosshairs;
 	CHudWatermark	m_Watermark;
 	CHudDebug	m_Debug;
 	CHudStrafeGuide	m_StrafeGuide;
