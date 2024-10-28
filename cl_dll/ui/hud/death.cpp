@@ -140,7 +140,7 @@ int CHudDeathNotice::Draw( float flTime )
 				x -= ( 5 + ConsoleStringLen( rgDeathNoticeList[i].szKiller ) );
 
 				if (m_pCvarDeathBg->value > 0.0f)
-					FillRGBABlend( x - 5, y, ConsoleStringLen( rgDeathNoticeList[i].szVictim ) + ConsoleStringLen( rgDeathNoticeList[i].szKiller ) + ( gHUD.GetSpriteRect(id).right - gHUD.GetSpriteRect(id).left ) + 15, 20 , 0, 0, 0, 255 * 0.6 );
+					FillRGBABlend( x - 5, y - 2, ConsoleStringLen( rgDeathNoticeList[i].szVictim ) + ConsoleStringLen( rgDeathNoticeList[i].szKiller ) + ( gHUD.GetSpriteRect(id).right - gHUD.GetSpriteRect(id).left ) + 15, 20 , 0, 0, 0, 255 * 0.6 );
 
 				// Draw killers name
 				if( rgDeathNoticeList[i].KillerColor )
@@ -159,7 +159,7 @@ int CHudDeathNotice::Draw( float flTime )
 			else
 			{
 				if (m_pCvarDeathBg->value > 0.0f)
-					FillRGBABlend( x - 5, y, ConsoleStringLen( rgDeathNoticeList[i].szVictim ) + ( gHUD.GetSpriteRect(id).right - gHUD.GetSpriteRect(id).left ) + 10, 20 , 0, 0, 0, 255 * 0.6 );
+					FillRGBABlend( x - 5, y - 2, ConsoleStringLen( rgDeathNoticeList[i].szVictim ) + ( gHUD.GetSpriteRect(id).right - gHUD.GetSpriteRect(id).left ) + 10, 20 , 0, 0, 0, 255 * 0.6 );
 			}
 
 			r = 255; g = 80; b = 0;
