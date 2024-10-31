@@ -407,33 +407,15 @@ int CHudDebug::TraceEntity(vec3_t origin, vec3_t dir, float distance, vec3_t &in
     return 0;
 }
 
-void CHudDebug::AllClientsInfo(int r, int g, int b)
+void CHudDebug::AllClientsInfo(int r, int g, int b, int ClientIndex )
 {
-    const float lineLen = 11590.0f;
-    vec3_t intersectPoint;
     char str[256];
     cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
 
-    vec3_t viewOrigin = localPlayer->origin;
-    vec3_t viewAngles, viewDir;
-
-    gEngfuncs.GetViewAngles(viewAngles);
-    gEngfuncs.pfnAngleVectors(viewAngles, viewDir, nullptr, nullptr);
-
-    int entityIndex;
-
-    if( g_iUser1 )
-        entityIndex = g_iUser2;
-    else
-        entityIndex = TraceEntity(viewOrigin, viewDir, lineLen, intersectPoint);
-
-    cl_entity_t *pClient = gEngfuncs.GetEntityByIndex(entityIndex);
-
-    if(!entityIndex)
+    if(!ClientIndex)
         return;
 
-    if (!CheckForClient(pClient))
-        return;
+    cl_entity_t *pClient = gEngfuncs.GetEntityByIndex(ClientIndex);
 
     Vector Top = Vector(pClient->origin.x, pClient->origin.y, pClient->origin.z + pClient->curstate.mins.z);
     Vector Bot = Vector(pClient->origin.x, pClient->origin.y, pClient->origin.z + pClient->curstate.maxs.z);
@@ -449,7 +431,7 @@ void CHudDebug::AllClientsInfo(int r, int g, int b)
         int y = Height + ScreenTop[1];
         int x = ScreenTop[0] - (Height * 0.4f);
 
-        sprintf(str, "%s", g_PlayerInfoList[entityIndex].name);
+        sprintf(str, "%s", g_PlayerInfoList[ClientIndex].name);
         gHUD.DrawHudTextCentered(ScreenTop[0], y - 18, str, r, g, b);
 
         sprintf(str, "Index: %d", pClient->index);
@@ -515,7 +497,7 @@ int CHudDebug::Draw(float flTime)
     int g = color[1];
     int b = color[2];
 
-    if (cl_debug->value > 0.0f || cl_debug_showfps->value > 0.0f) {
+    if (DebugMode > 0.0f || cl_debug_showfps->value > 0.0f) {
         sprintf(str, "FPS: %.1f", fps);
         gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight, str, r, g, b);
 
@@ -527,18 +509,40 @@ int CHudDebug::Draw(float flTime)
     g = colors[3][1];
     b = colors[3][2];
 
+    cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
+
+    int ClientIndex;
+    const float lineLen = 11590.0f;
+    vec3_t intersectPoint;
+    vec3_t viewOrigin = localPlayer->origin;
+    vec3_t viewAngles, viewDir;
+
+    gEngfuncs.GetViewAngles(viewAngles);
+    gEngfuncs.pfnAngleVectors(viewAngles, viewDir, nullptr, nullptr);
+
+    if( DebugMode == 3.0f)
+    {
+        if( g_iUser1 )
+            ClientIndex = g_iUser2;
+        else
+            ClientIndex = TraceEntity(viewOrigin, viewDir, lineLen, intersectPoint);
+
+        cl_entity_t *pClient = gEngfuncs.GetEntityByIndex(ClientIndex);
+
+        if (!CheckForClient(pClient))
+            ClientIndex = 0;
+    }
+
     std::string DebugMode_str = "Debug mode: ";
     int DebugModeWidth = gHUD.GetHudStringWidth(DebugMode_str.c_str());
 
-    if (cl_debug->value > 0.0f) {
+    if (DebugMode > 0.0f) {
         sprintf(str, "Map: %s", gEngfuncs.pfnGetLevelName());
         gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 4, str, r, g, b);
 
         float clientTime = gEngfuncs.GetClientTime();
         formatTime(clientTime, str);
         gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 5, str, r, g, b);
-
-        cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
 
         sprintf(str, "Name: %s", g_PlayerInfoList[localPlayer->index].name);
         gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 7, str, r, g, b);
@@ -555,15 +559,21 @@ int CHudDebug::Draw(float flTime)
         case 0:
             break;
         case 1:
-            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "1 (Current Client Info)", 0, 255, 0);
-            CurrentClientInfo(r, g, b);
+            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "1 (Minimal Info)", 0, 255, 0);
             break;
         case 2:
-            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "2 (All Clients Info)", 0, 255, 0);
-            AllClientsInfo(r, g, b);
+            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "2 (Current Client Info)", 0, 255, 0);
+            CurrentClientInfo(r, g, b);
             break;
         case 3:
-            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "3 (Entity Info) UNDONE", 255, 0, 0);
+            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "3 (All Clients Info)", 0, 255, 0);
+            if(!ClientIndex)
+                gHUD.DrawHudTextCentered(ScreenWidth / 2, ScreenWidth / 3, "Aim at a player or follow them in 3rd person observer mode to gain information!", 255, 0, 0);
+            else
+                AllClientsInfo(r, g, b, ClientIndex);
+            break;
+        case 4:
+            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "4 (Entity Info) UNDONE", 255, 0, 0);
             break;
         default:
             gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "(UNKNOWN)", 255, 0, 0);

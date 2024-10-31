@@ -6,6 +6,7 @@ class CHudDebug : public CHudBase
 {
     cvar_t *cl_debug;
     cvar_t *cl_debug_showfps;
+    cvar_t *cl_debug_showname;
 
     float m_frameTime;
     float m_lastFrameTime;
@@ -30,6 +31,6 @@ public:
     virtual vec3_t GetEntityVelocityApprox(cl_entity_t *entity, int approxStep );
     virtual void TraceLine(vec3_t &origin, vec3_t &dir, float lineLen, pmtrace_t *traceData);
     virtual int TraceEntity(vec3_t origin, vec3_t dir, float distance, vec3_t &intersect);
-    virtual void AllClientsInfo(int r, int g, int b);
+    virtual void AllClientsInfo(int r, int g, int b, int ClientIndex);
     virtual int Draw(float flTime);
 };
