@@ -6,7 +6,6 @@ class CHudDebug : public CHudBase
 {
     cvar_t *cl_debug;
     cvar_t *cl_debug_showfps;
-    cvar_t *cl_debug_showname;
 
     float m_frameTime;
     float m_lastFrameTime;
