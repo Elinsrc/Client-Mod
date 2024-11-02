@@ -70,18 +70,24 @@ static float GetCurrentSysTime()
 
 float CHudDebug::GetFrametime()
 {
-    const float smoothFactor = 0.24f;
-    const float diffThreshold = 0.13f;
-    float currSysTime = GetCurrentSysTime();
-    float timeDelta = currSysTime - m_lastSysTime;
+    float calc;
+    double newtime = GetCurrentSysTime();
+    static double nexttime = 0, lasttime = 0;
+    static double framerate = 0;
+    static int framecount = 0;
 
-    if ((timeDelta - m_lastFrameTime) > diffThreshold)
-        timeDelta = m_lastFrameTime;
+    if( newtime >= nexttime )
+    {
+        framerate = framecount / (newtime - lasttime);
+        lasttime = newtime;
+        nexttime = Q_max( nexttime + 1.0, lasttime - 1.0 );
+        framecount = 0;
+    }
 
-    m_frameTime += (timeDelta - m_frameTime) * smoothFactor;
-    m_lastFrameTime = m_frameTime;
-    m_lastSysTime = currSysTime;
-    return m_frameTime;
+    calc = framerate;
+    framecount++;
+
+    return calc;
 }
 
 const char *CHudDebug::GetMovetypeName(int moveType)
@@ -488,20 +494,20 @@ int CHudDebug::Draw(float flTime)
 
     int DebugMode = cl_debug->value;
 
-    float timeDelta = GetFrametime();
-    float fps = 1.f / timeDelta;
-    char str[256];
+    float fps = GetFrametime();
 
     const unsigned char* color = getColorForFPS(static_cast<int>(fps));
     int r = color[0];
     int g = color[1];
     int b = color[2];
 
+    char str[256];
+
     if (DebugMode > 0.0f || cl_debug_showfps->value > 0.0f) {
-        sprintf(str, "FPS: %.1f", fps);
+        sprintf(str, "FPS: %.0f", fps);
         gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight, str, r, g, b);
 
-        sprintf(str, "Frame Time: %.1f ms\n", timeDelta * 1000.f);
+        sprintf(str, "Frame Time: %.0f ms\n", 1000.f / fps);
         gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 2, str, r, g, b);
     }
 
