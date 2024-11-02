@@ -131,6 +131,8 @@ set (CLDLL_SOURCES
 	ui/hud/OpenAG/hud_suddendeath.cpp
 	ui/hud/OpenAG/hud_timeout.cpp
 	ui/hud/OpenAG/hud_vote.cpp
+	ui/hud/OpenAG/hud_splash.cpp
+	ui/hud/OpenAG/hud_longjump.cpp
 	cdll_int.cpp
 	com_weapons.cpp
 	demo.cpp
