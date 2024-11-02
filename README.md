@@ -1,6 +1,6 @@
 # Client-Mod
 
-* **Client-Mod** is a small modification of the **Half-Life** client part for **Xash3D FWGS and GoldSource**
+* **Client-Mod** is a modification of the **Half-Life** client part for **Xash3D FWGS and GoldSource**
 
 Added server name to no vgui scoreboard, player model name (included in vgui), curent map name and number of current players.
 
@@ -9,7 +9,7 @@ Added commands:
 ```
 cl_autojump [0/1] - Will jump automatically as soon as you touch the ground while +jump is held. Taken from OpenAG.
 ```
-* **When this command is enabled the jump button may not work**, solved by command **cl_lw 1**.
+* When **cl_autojump** is enabled, the jump button may not work, solved by command **cl_lw 1**.
 ```
 +ducktap — Performs a duck tap automatically as soon as you touch the ground (presses +duck for 1 frame). Taken from OpenAG.
 

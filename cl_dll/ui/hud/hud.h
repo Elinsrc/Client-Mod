@@ -588,6 +588,7 @@ public:
 	cvar_t	*m_pCvarDraw;
 	cvar_t	*m_pCvarDrawDeathNoticesAlways;
 	cvar_t	*m_pCvarDrawMessagesAlways;
+	cvar_t	*m_pCvarAutostop;
 
 	// OpenAg
 	cvar_t* m_pCvarColor;
