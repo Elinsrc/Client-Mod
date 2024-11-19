@@ -88,15 +88,6 @@ inline struct cvar_s *CVAR_CREATE( const char *cv, const char *val, const int fl
 #define ClientCmd ( *gEngfuncs.pfnClientCmd )
 #define SetCrosshair ( *gEngfuncs.pfnSetCrosshair )
 #define AngleVectors ( *gEngfuncs.pfnAngleVectors )
-extern cvar_t *hud_textmode;
-extern float g_hud_text_color[3];
-inline void DrawSetTextColor( float r, float g, float b )
-{
-	if( hud_textmode->value == 1 )
-		g_hud_text_color[0] = r, g_hud_text_color[1] = g, g_hud_text_color[2] = b;
-	else
-		gEngfuncs.pfnDrawSetTextColor( r, g, b );
-}
 
 // Gets the height & width of a sprite,  at the specified frame
 inline int SPR_Height( HSPRITE x, int f )	{ return gEngfuncs.pfnSPR_Height(x, f); }
@@ -110,14 +101,6 @@ inline client_textmessage_t *TextMessageGet( const char *pName )
 inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b ) 
 {
 	return gEngfuncs.pfnDrawCharacter( x, y, number, r, g, b ); 
-}
-
-inline int DrawConsoleString( int x, int y, const char *string )
-{
-	if( hud_textmode->value == 1 )
-		return gHUD.DrawHudString( x, y, 9999, (char*)string, (int)( (float)g_hud_text_color[0] * 255.0f ),
-			(int)( (float)g_hud_text_color[1] * 255.0f ), (int)( (float)g_hud_text_color[2] * 255.0f ) );
-	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) string );
 }
 
 int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b );
