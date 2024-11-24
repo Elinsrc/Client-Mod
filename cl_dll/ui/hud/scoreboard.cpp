@@ -328,7 +328,7 @@ int CHudScoreboard::Draw( float fTime )
 		sprintf( buf, "%d/%d", team_info->ping, team_info->packetloss );
 		xpos = ( ( PING_RANGE_MAX - PING_RANGE_MIN ) / 2) + PING_RANGE_MIN + xpos_rel + 40;
 		UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
-		gHUD.DrawHudStringReverse( xpos, ypos, xpos - 50, buf, r, g, b );
+		gHUD.DrawHudStringReverse( xpos, ypos, 0, buf, r, g, b );
 
 		team_info->already_drawn = TRUE;  // set the already_drawn to be TRUE, so this team won't get drawn again
 		list_slot++;
@@ -462,7 +462,7 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 		static char buf[64];
 		sprintf( buf, "%d/%d", g_PlayerInfoList[best_player].ping, g_PlayerInfoList[best_player].packetloss );
 		xpos = ( ( PING_RANGE_MAX - PING_RANGE_MIN ) / 2 ) + PING_RANGE_MIN + xpos_rel + 40;
-		gHUD.DrawHudStringReverse( xpos, ypos, xpos - 50, buf, r, g, b );
+		gHUD.DrawHudStringReverse( xpos, ypos, 0, buf, r, g, b );
 
 		pl_info->name = NULL;  // set the name to be NULL, so this client won't get drawn again
 		list_slot++;

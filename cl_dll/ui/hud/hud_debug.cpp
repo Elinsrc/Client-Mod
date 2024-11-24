@@ -290,71 +290,72 @@ void CHudDebug::ClientModelName(cl_entity_s *entity, int x, int y, int r, int g,
 void CHudDebug::CurrentClientInfo(int r, int g, int b)
 {
     char str[256];
+    int xpos = ScreenWidth / 1.4;
 
     cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
     float velocityNum = std::round(std::hypot(pmove->velocity[0], pmove->velocity[1]));
 
     sprintf(str, "Velocity: %.2f u/s (%.2f, %.2f, %.2f)", velocityNum, pmove->velocity.x, pmove->velocity.y, pmove->velocity.z);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 13, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 13, str, r, g, b);
 
     sprintf(str, "Origin: (%.2f, %.2f, %.2f)", localPlayer->origin.x, localPlayer->origin.y, localPlayer->origin.z);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 14, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 14, str, r, g, b);
 
     sprintf(str, "Angles: (%.2f, %.2f, %.2f)", localPlayer->angles.x, localPlayer->angles.y, localPlayer->angles.z);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 15, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 15, str, r, g, b);
 
     sprintf(str, "Movetype: %s", GetMovetypeName(localPlayer->curstate.movetype));
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 16, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 16, str, r, g, b);
 
     vec3_t viewOffset;
     gEngfuncs.pEventAPI->EV_LocalPlayerViewheight(viewOffset);
 
     sprintf(str, "View Offset: (%.2f, %.2f, %.2f)", viewOffset.x, viewOffset.y, viewOffset.z);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 18, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 18, str, r, g, b);
 
     const vec3_t &punchAngle = pmove->punchangle;
 
     sprintf(str, "Punch Angle: (%.2f, %.2f, %.2f)", punchAngle.x, punchAngle.y, punchAngle.z);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 19, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 19, str, r, g, b);
 
     sprintf(str, "Player Flags: %d", pmove->flags);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 20, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 20, str, r, g, b);
 
     sprintf(str, "Hull Type: %d", pmove->usehull);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 21, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 21, str, r, g, b);
 
     sprintf(str, "Gravity: %.2f", pmove->gravity);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 22, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 22, str, r, g, b);
 
     sprintf(str, "Friction: %.2f", pmove->friction);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 23, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 23, str, r, g, b);
 
     sprintf(str, "On Ground: %s", pmove->onground ? "yes" : "no");
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 24, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 24, str, r, g, b);
 
     sprintf(str, "Anim. Frame: %.1f", localPlayer->curstate.frame);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 26, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 26, str, r, g, b);
 
     sprintf(str, "Anim. Sequence: %d", localPlayer->curstate.sequence);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 27, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 27, str, r, g, b);
 
     sprintf(str, "Bodygroup Number: %d", localPlayer->curstate.body);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 28, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 28, str, r, g, b);
 
     sprintf(str, "Skin Number: %d", localPlayer->curstate.skin);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 29, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 29, str, r, g, b);
 
     sprintf(str, "RenderMode: %s", GetRenderModeName(localPlayer->curstate.rendermode));
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 31, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 31, str, r, g, b);
 
     sprintf(str, "RenderFx: %s", GetRenderFxName(localPlayer->curstate.renderfx));
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 32, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 32, str, r, g, b);
 
     sprintf(str, "Render Amount: %d", localPlayer->curstate.renderamt);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 33, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 33, str, r, g, b);
 
     sprintf(str, "Render Color: %d %d %d", localPlayer->curstate.rendercolor.r, localPlayer->curstate.rendercolor.g, localPlayer->curstate.rendercolor.b);
-    gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 34, str, r, g, b);
+    gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 34, str, r, g, b);
 }
 
 bool CHudDebug::CheckForClient(cl_entity_s *pEnt) {
@@ -492,6 +493,8 @@ int CHudDebug::Draw(float flTime)
 {
     gHUD.GetAllPlayersInfo();
 
+    int xpos = ScreenWidth / 1.4;
+
     int DebugMode = cl_debug->value;
 
     float fps = GetFrametime();
@@ -505,10 +508,10 @@ int CHudDebug::Draw(float flTime)
 
     if (DebugMode > 0.0f || cl_debug_showfps->value > 0.0f) {
         sprintf(str, "FPS: %.0f", fps);
-        gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight, str, r, g, b);
+        gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight, str, r, g, b);
 
         sprintf(str, "Frame Time: %.0f ms\n", 1000.f / fps);
-        gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 2, str, r, g, b);
+        gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 2, str, r, g, b);
     }
 
     r = colors[3][0];
@@ -544,45 +547,45 @@ int CHudDebug::Draw(float flTime)
 
     if (DebugMode > 0.0f) {
         sprintf(str, "Map: %s", gEngfuncs.pfnGetLevelName());
-        gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 4, str, r, g, b);
+        gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 4, str, r, g, b);
 
         float clientTime = gEngfuncs.GetClientTime();
         formatTime(clientTime, str);
-        gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 5, str, r, g, b);
+        gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 5, str, r, g, b);
 
         sprintf(str, "Name: %s", g_PlayerInfoList[localPlayer->index].name);
-        gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 7, str, r, g, b);
+        gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 7, str, r, g, b);
 
         sprintf(str, "Index: %d", localPlayer->index);
-        gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 8, str, r, g, b);
+        gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 8, str, r, g, b);
 
-        ClientModelName(localPlayer, ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 9, r, g, b);
+        ClientModelName(localPlayer, xpos, gHUD.m_scrinfo.iCharHeight * 9, r, g, b);
 
-        gHUD.DrawHudText(ScreenWidth / 1.5, gHUD.m_scrinfo.iCharHeight * 11, DebugMode_str.c_str(), r, g, b);
+        gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 11, DebugMode_str.c_str(), r, g, b);
     }
 
     switch (DebugMode) {
         case 0:
             break;
         case 1:
-            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "1 (Minimal Info)", 0, 255, 0);
+            gHUD.DrawHudText(xpos + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "1 (Minimal Info)", 0, 255, 0);
             break;
         case 2:
-            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "2 (Current Client Info)", 0, 255, 0);
+            gHUD.DrawHudText(xpos + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "2 (Current Client Info)", 0, 255, 0);
             CurrentClientInfo(r, g, b);
             break;
         case 3:
-            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "3 (All Clients Info)", 0, 255, 0);
+            gHUD.DrawHudText(xpos + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "3 (All Clients Info)", 0, 255, 0);
             if(!ClientIndex)
                 gHUD.DrawHudTextCentered(ScreenWidth / 2, ScreenWidth / 3, "Aim at a player or follow them in 3rd person observer mode to gain information!", 255, 0, 0);
             else
                 AllClientsInfo(r, g, b, ClientIndex);
             break;
         case 4:
-            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "4 (Entity Info) UNDONE", 255, 0, 0);
+            gHUD.DrawHudText(xpos + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "4 (Entity Info) UNDONE", 255, 0, 0);
             break;
         default:
-            gHUD.DrawHudText(ScreenWidth / 1.5 + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "(UNKNOWN)", 255, 0, 0);
+            gHUD.DrawHudText(xpos + DebugModeWidth, gHUD.m_scrinfo.iCharHeight * 11, "(UNKNOWN)", 255, 0, 0);
             break;
     }
 
