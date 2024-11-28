@@ -322,11 +322,11 @@ int CHud::DrawHudNumberString( int xpos, int ypos, int iNumber, int r, int g, in
 	return DrawHudString( xpos, ypos, szString, r, g, b );
 }
 
-int CHud::DrawHudNumberStringReverse( int xpos, int ypos, int iMinX, int iNumber, int r, int g, int b )
+int CHud::DrawHudNumberStringReverse( int xpos, int ypos, int iNumber, int r, int g, int b )
 {
 	char szString[32];
 	sprintf( szString, "%d", iNumber );
-	return DrawHudStringReverse( xpos, ypos, iMinX, szString, r, g, b );
+	return DrawHudStringReverse( xpos, ypos, szString, r, g, b );
 }
 
 
@@ -338,13 +338,12 @@ int CHud::DrawHudNumberStringFixed( int xpos, int ypos, int iNumber, int r, int 
 }
 
 // draws a string from right to left (right-aligned)
-int CHud::DrawHudStringReverse( int xpos, int ypos, int iMinX, const char *szString, int r, int g, int b )
+int CHud::DrawHudStringReverse( int xpos, int ypos, const char *szString, int r, int g, int b )
 {
 	// find the end of the string
 	for( const char *szIt = szString; *szIt != 0; szIt++ )
 		xpos -= gHUD.m_scrinfo.charWidths[(unsigned char)*szIt];
-	if( xpos < iMinX )
-		xpos = iMinX;
+
 	DrawHudString( xpos, ypos, szString, r, g, b );
 	return xpos;
 }

@@ -195,7 +195,7 @@ int CHudMenu::Draw( float flTime )
 			if ( menu_ralign )
 			{
 				// IMPORTANT: Right-to-left rendered text does not parse escape tokens!
-				menu_x = gHUD.DrawHudStringReverse( menu_x, y, 0, menubuf, menu_r, menu_g, menu_b );
+				menu_x = gHUD.DrawHudStringReverse( menu_x, y, menubuf, menu_r, menu_g, menu_b );
 			}
 			else
 			{
