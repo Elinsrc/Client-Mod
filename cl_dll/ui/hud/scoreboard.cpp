@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1999, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -131,7 +131,7 @@ int CHudScoreboard::Draw( float fTime )
 
 	if( !m_iShowscoresHeld && gHUD.m_Health.m_iHealth > 0 && !gHUD.m_iIntermission )
 		return 1;
-	
+
 	gHUD.m_iNoConsolePrint |= 1 << 0;
 
 	GetAllPlayersInfo();
@@ -588,7 +588,7 @@ int CHudScoreboard::MsgFunc_TeamInfo( const char *pszName, int iSize, void *pbuf
 // accepts three values:
 //		string: team name
 //		short: teams kills
-//		short: teams deaths 
+//		short: teams deaths
 // if this message is never received, then scores will simply be the combined totals of the players.
 int CHudScoreboard::MsgFunc_TeamScore( const char *pszName, int iSize, void *pbuf )
 {

@@ -392,8 +392,15 @@ int __MsgFunc_Spectator( const char *pszName, int iSize, void *pbuf )
 #if USE_VGUI
 	if (gViewPort)
 		return gViewPort->MsgFunc_Spectator( pszName, iSize, pbuf );
+#else
+	BEGIN_READ( pbuf, iSize );
+	short cl = READ_BYTE();
+	if( cl > 0 && cl <= MAX_PLAYERS )
+	{
+		g_IsSpectator[cl] = READ_BYTE();
+	}
+	return 1;
 #endif
-	return 0;
 }
 
 #if USE_VGUI
