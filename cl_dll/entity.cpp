@@ -20,6 +20,10 @@
 #include "pmtrace.h"	
 #include "pm_shared.h"
 
+#if !USE_VGUI
+#include "voice_status.h"
+#endif
+
 #if BUILD_DISCORD_RPC
 #include "discord_integration.h"
 #endif
@@ -543,9 +547,7 @@ void DLLEXPORT HUD_CreateEntities( void )
 	// Add in any game specific objects
 	Game_AddObjects();
 
-#if USE_VGUI
 	GetClientVoiceMgr()->CreateEntities();
-#endif
 }
 
 /*

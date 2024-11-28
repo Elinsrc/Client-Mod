@@ -92,9 +92,7 @@ struct HUDLIST
 
 //
 //-----------------------------------------------------
-#if USE_VGUI
 #include "voice_status.h" // base voice handling class
-#endif
 #include "hud_spectator.h"
 #include "hud_speedometer.h"
 #include "hud_jumpspeed.h"
@@ -279,6 +277,8 @@ private:
 	}icon_flagstatus_t;
 
 	icon_flagstatus_t m_IconFlagScore;
+
+	HSPRITE iVoiceSprite;
 };
 #endif
 

@@ -464,6 +464,8 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 		xpos = ( ( PING_RANGE_MAX - PING_RANGE_MIN ) / 2 ) + PING_RANGE_MIN + xpos_rel + 40;
 		gHUD.DrawHudStringReverse( xpos, ypos, buf, r, g, b );
 
+		GetClientVoiceMgr()->DrawNoVguiSpeakerIcon( xpos + 20, ypos - 5 );
+
 		pl_info->name = NULL;  // set the name to be NULL, so this client won't get drawn again
 		list_slot++;
 	}
