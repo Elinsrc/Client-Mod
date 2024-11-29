@@ -92,6 +92,8 @@ set (CLDLL_SOURCES
 	rendering/GameStudioModelRenderer.cpp
 	rendering/StudioModelRenderer.cpp
 	rendering/tri.cpp
+	ui/voice_status.cpp
+	ui/voice_banmgr.cpp
 	ui/hud/ammo.cpp
 	ui/hud/ammo_secondary.cpp
 	ui/hud/ammohistory.cpp
@@ -158,8 +160,6 @@ if (USE_VGUI)
 		ui/VGUI/vgui_TeamFortressViewport.cpp
 		ui/VGUI/vgui_SpectatorPanel.cpp
 		ui/VGUI/vgui_teammenu.cpp
-		ui/voice_status.cpp
-		ui/voice_banmgr.cpp
 		ui/VGUI/utils/vgui_checkbutton2.cpp
 		ui/VGUI/utils/vgui_grid.cpp
 		ui/VGUI/utils/vgui_helpers.cpp

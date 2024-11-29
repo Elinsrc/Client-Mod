@@ -9,23 +9,25 @@
 #define VOICE_STATUS_H
 #pragma once
 
-
+#if USE_VGUI
 #include "VGUI_Label.h"
 #include "VGUI_LineBorder.h"
 #include "VGUI_ImagePanel.h"
 #include "VGUI_BitmapTGA.h"
 #include "VGUI_InputSignal.h"
 #include "VGUI_Button.h"
+#endif
 #include "voice_common.h"
 #include "cl_entity.h"
 #include "voice_banmgr.h"
+#if USE_VGUI
 #include "vgui_checkbutton2.h"
 #include "vgui_defaultinputsignal.h"
-
+#endif
 
 class CVoiceStatus;
 
-
+#if USE_VGUI
 class CVoiceLabel
 {
 public:
@@ -34,7 +36,7 @@ public:
 	vgui::ImagePanel	*m_pIcon;		// Voice icon next to player name.
 	int					m_clientindex;	// Client index of the speaker. -1 if this label isn't being used.
 };
-
+#endif
 
 // This is provided by each mod to access data that may not be the same across mods.
 class IVoiceStatusHelper
@@ -45,17 +47,20 @@ public:
 	// Get RGB color for voice status text about this player.
 	virtual void			GetPlayerTextColor(int entindex, int color[3]) = 0;
 
+#if USE_VGUI
 	// Force it to update the cursor state.
 	virtual void			UpdateCursorState() = 0;
-
+#endif
 	// Return the height above the bottom that the voice ack icons should be drawn at.
 	virtual int				GetAckIconHeight() = 0;
-
+#if USE_VGUI
 	// Return true if the voice manager is allowed to show speaker labels
 	// (mods usually return false when the scoreboard is up).
 	virtual bool			CanShowSpeakerLabels() = 0;
+#endif
 };
 
+#if USE_VGUI
 //-----------------------------------------------------------------------------
 // Purpose: Holds a color for the shared image
 //-----------------------------------------------------------------------------
@@ -72,9 +77,13 @@ class VoiceImagePanel : public vgui::ImagePanel
 		}
 	}
 };
+#endif
 
-
+#if USE_VGUI
 class CVoiceStatus : public CHudBase, public vgui::CDefaultInputSignal
+#else
+class CVoiceStatus : public CHudBase
+#endif
 {
 public:
 				CVoiceStatus();
@@ -82,11 +91,13 @@ public:
 
 // CHudBase overrides.
 public:
-	
+
 	// Initialize the cl_dll's voice manager.
-	virtual int Init(
-		IVoiceStatusHelper *m_pHelper,
-		vgui::Panel **pParentPanel);
+#if USE_VGUI
+	virtual int Init( IVoiceStatusHelper *m_pHelper, vgui::Panel **pParentPanel);
+#else
+	virtual int Init( IVoiceStatusHelper *m_pHelper );
+#endif
 	
 	// ackPosition is the bottom position of where CVoiceStatus will draw the voice acknowledgement labels.
 	virtual int VidInit();
@@ -103,12 +114,20 @@ public:
 	// entindex is -2 to represent the local client's voice being acked by the server.
 	void	UpdateSpeakerStatus(int entindex, qboolean bTalking);
 
+#if USE_VGUI
 	// sets the correct image in the label for the player
 	void	UpdateSpeakerImage(vgui::Label *pLabel, int iPlayer);
+#endif
 
 	// Call from the HUD_CreateEntities function so it can add sprites above player heads.
 	void	CreateEntities();
 
+#if !USE_VGUI
+	// Draw speaker icon without using vgui
+	void	DrawNoVguiSpeakerIcon( int x, int y ,int playerIndex);
+
+	int		Draw(float time);
+#endif
 	// Called when the server registers a change to who this client can hear.
 	void	HandleVoiceMaskMsg(int iSize, void *pbuf);
 
@@ -118,12 +137,12 @@ public:
 
 // Squelch mode functions.
 public:
-
+#if USE_VGUI
 	// When you enter squelch mode, pass in 
 	void	StartSquelchMode();
 	void	StopSquelchMode();
 	bool	IsInSquelchMode();
-
+#endif
 	// returns true if the target client has been banned
 	// playerIndex is of range 1..maxplayers
 	bool	IsPlayerBlocked(int iPlayerIndex);
@@ -131,11 +150,13 @@ public:
 	// returns false if the player can't hear the other client due to game rules (eg. the other team)
 	bool    IsPlayerAudible(int iPlayerIndex);
 
+	bool	IsPlayerSpeaking(int iPlayerIndex);
+
 	// blocks the target client from being heard
 	void	SetPlayerBlockedState(int iPlayerIndex, bool blocked);
 
 public:
-
+#if USE_VGUI
 	CVoiceLabel*	FindVoiceLabel(int clientindex);	// Find a CVoiceLabel representing the specified speaker. 
 													// Returns NULL if none.
 													// entindex can be -1 if you want a currently-unused voice label.
@@ -144,11 +165,14 @@ public:
 	void			RepositionLabels();
 
 	void			FreeBitmaps();
+#endif
 
 	void			UpdateServerState(bool bForce);
 
+#if USE_VGUI
 	// Update the button artwork to reflect the client's current state.
 	void			UpdateBanButton(int iClient);
+#endif
 
 
 public:
@@ -158,7 +182,10 @@ public:
 	float			m_LastUpdateServerState;		// Last time we called this function.
 	int				m_bServerModEnable;				// What we've sent to the server about our "voice_modenable" cvar.
 
+#if USE_VGUI
 	vgui::Panel		**m_pParentPanel;
+#endif
+
 	CPlayerBitVec	m_VoicePlayers;		// Who is currently talking. Indexed by client index.
 	
 	// This is the gamerules-defined list of players that you can hear. It is based on what teams people are on 
@@ -175,6 +202,7 @@ public:
 	cl_entity_s		m_VoiceHeadModels[VOICE_MAX_PLAYERS];			// These aren't necessarily in the order of players. They are just
 																	// a place for it to put data in during CreateEntities.
 
+#if USE_VGUI
 	IVoiceStatusHelper	*m_pHelper;		// Each mod provides an implementation of this.
 
 	
@@ -191,16 +219,19 @@ public:
 
 	// Squelch mode stuff.
 	bool				m_bInSquelchMode;
-	
+#endif
+
 	HSPRITE				m_VoiceHeadModel;		// Voice head model (goes above players who are speaking).
 	float				m_VoiceHeadModelHeight;	// Height above their head to place the model.
 
+#if USE_VGUI
 	vgui::Image			*m_pSpeakerLabelIcon;	// Icon next to speaker labels.
 
 	// Lower-right icons telling when the local player is talking..
 	vgui::BitmapTGA		*m_pLocalBitmap;		// Represents the local client talking.
 	vgui::BitmapTGA		*m_pAckBitmap;			// Represents the server ack'ing the client talking.
 	vgui::ImagePanel	*m_pLocalLabel;			// Represents the local client talking.
+#endif
 
 	bool				m_bTalking;				// Set to true when the client thinks it's talking.
 	bool				m_bServerAcked;			// Set to true when the server knows the client is talking.
@@ -213,8 +244,10 @@ public:
 
 	bool				m_bBanMgrInitialized;
 
+#if USE_VGUI
 	// Labels telling who is speaking.
 	CVoiceLabel			m_Labels[MAX_VOICE_SPEAKERS];
+#endif
 
 	// Cache the game directory for use when we shut down
 	char *				m_pchGameDir;
