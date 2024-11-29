@@ -336,7 +336,6 @@ void CVoiceStatus::Frame(double frametime)
 #endif
 }
 
-
 void CVoiceStatus::CreateEntities()
 {
 	if(!m_VoiceHeadModel)
@@ -389,31 +388,65 @@ void CVoiceStatus::CreateEntities()
 	}
 }
 
-void CVoiceStatus::DrawNoVguiSpeakerIcon(int xpos, int ypos)
+#if !USE_VGUI
+void CVoiceStatus::DrawNoVguiSpeakerIcon(int xpos, int ypos, int playerIndex)
 {
-	HSPRITE iVoiceSprite = SPR_Load("sprites/voiceicon.spr");
-
-	if (!iVoiceSprite)
-		return;
-
-	int width = SPR_Width(iVoiceSprite, 0);
-	int height = SPR_Height(iVoiceSprite, 0);
+	int r, g, b;
+	bool isSpeaking = IsPlayerSpeaking(playerIndex);
+	r = g = b = isSpeaking ? 255 : 80;
 
 	wrect_t rc;
-	rc.left = 0;
-	rc.right = width;
-	rc.top = 0;
-	rc.bottom = height;
+	SPR_Set(m_VoiceHeadModel, r, g, b);
+	SPR_DrawAdditive(0, xpos, ypos, &rc);
+}
 
-	for(int i=0; i < VOICE_MAX_PLAYERS; i++)
+int CVoiceStatus::Draw(float time)
+{
+	char str[256];
+	cl_entity_t *localPlayer = gEngfuncs.GetLocalPlayer();
+
+	int xpos = 10;
+	int ypos = ScreenHeight / 2;
+	int voiceHeight = 30;
+	wrect_t rc;
+
+	if(IsPlayerSpeaking(localPlayer->index))
 	{
-		if(!m_VoicePlayers[i])
+		SPR_Set(m_VoiceHeadModel, 200, 200, 200);
+		SPR_DrawAdditive(0, ScreenWidth - 60, ScreenHeight - 100, &rc);
+	}
+
+	gHUD.GetAllPlayersInfo();
+
+	if (gHUD.m_Scoreboard.m_iShowscoresHeld)
+		return 1;
+
+	for(int i = 1; i <= MAX_VOICE_SPEAKERS; i++)
+	{
+		if(!IsPlayerSpeaking(i))
 			continue;
 
-		SPR_Set(iVoiceSprite, 255, 255, 255);
-		SPR_DrawAdditive(0, xpos, ypos, &rc);
+		cl_entity_t *pClient = gEngfuncs.GetEntityByIndex( i );
+
+		if (pClient == localPlayer && !CVAR_GET_FLOAT("voice_loopback"))
+            continue;
+
+		sprintf(str, "%s %s", (pClient == localPlayer) ? "[ You ]" : "", g_PlayerInfoList[i].name);
+
+		int x = gHUD.GetHudStringWidthWithColorTags(str);
+
+		gHUD.DrawDarkRectangle( xpos - 5, ypos, xpos + x + 40,  voiceHeight );
+		gHUD.DrawHudStringWithColorTags(xpos , ypos + 6, str, 255, 140, 0);
+
+		SPR_Set(m_VoiceHeadModel, 255, 255, 255);
+		SPR_DrawAdditive(0, xpos + x + 10, ypos, &rc);
+
+		ypos += voiceHeight;
 	}
+
+	return 1;
 }
+#endif
 
 void CVoiceStatus::UpdateSpeakerStatus( int entindex, qboolean bTalking )
 {
@@ -505,7 +538,7 @@ void CVoiceStatus::UpdateSpeakerStatus( int entindex, qboolean bTalking )
 							pLabel->m_pLabel->setBgColor( 0, 0, 0, 255 );
 							pLabel->m_pLabel->setText( "%s", paddedName );
 						}
-						
+
 						pLabel->m_clientindex = iClient;
 					}
 				}
@@ -885,6 +918,12 @@ bool CVoiceStatus::IsPlayerBlocked(int iPlayer)
 bool CVoiceStatus::IsPlayerAudible(int iPlayer)
 {
 	return !!m_AudiblePlayers[iPlayer-1];
+}
+
+bool CVoiceStatus::IsPlayerSpeaking(int iPlayerIndex)
+{
+	assert(iPlayerIndex >= 1 && iPlayerIndex <= MAX_PLAYERS);
+	return m_VoicePlayers[iPlayerIndex - 1];
 }
 
 //-----------------------------------------------------------------------------

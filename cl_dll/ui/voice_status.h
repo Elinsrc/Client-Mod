@@ -122,9 +122,12 @@ public:
 	// Call from the HUD_CreateEntities function so it can add sprites above player heads.
 	void	CreateEntities();
 
+#if !USE_VGUI
 	// Draw speaker icon without using vgui
-	void	DrawNoVguiSpeakerIcon( int x, int y );
+	void	DrawNoVguiSpeakerIcon( int x, int y ,int playerIndex);
 
+	int		Draw(float time);
+#endif
 	// Called when the server registers a change to who this client can hear.
 	void	HandleVoiceMaskMsg(int iSize, void *pbuf);
 
@@ -146,6 +149,8 @@ public:
 
 	// returns false if the player can't hear the other client due to game rules (eg. the other team)
 	bool    IsPlayerAudible(int iPlayerIndex);
+
+	bool	IsPlayerSpeaking(int iPlayerIndex);
 
 	// blocks the target client from being heard
 	void	SetPlayerBlockedState(int iPlayerIndex, bool blocked);
