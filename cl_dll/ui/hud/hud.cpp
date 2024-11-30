@@ -42,7 +42,6 @@ int g_iUser1 = 0;
 int g_iUser2 = 0;
 int g_iUser3 = 0;
 
-#if !USE_VGUI
 // Team Colors
 int iNumberOfTeamColors = 5;
 int iTeamColors[5][3] =
@@ -53,7 +52,6 @@ int iTeamColors[5][3] =
 	{ 225, 205, 45 },	// Yellow
 	{ 145, 215, 140 },	// Green
 };
-#endif
 
 #if USE_VGUI
 #include "vgui_ScorePanel.h"

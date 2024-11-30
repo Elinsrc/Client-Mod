@@ -391,13 +391,18 @@ void CVoiceStatus::CreateEntities()
 #if !USE_VGUI
 void CVoiceStatus::DrawNoVguiSpeakerIcon(int xpos, int ypos, int playerIndex)
 {
-	int r, g, b;
 	bool isSpeaking = IsPlayerSpeaking(playerIndex);
-	r = g = b = isSpeaking ? 255 : 80;
+
+	int iColor = static_cast<int>((sin(gEngfuncs.GetClientTime() * 6) * 127) + 128);
 
 	wrect_t rc;
-	SPR_Set(m_VoiceHeadModel, r, g, b);
-	SPR_DrawAdditive(0, xpos, ypos, &rc);
+
+	if (isSpeaking)
+	{
+		SPR_Set(m_VoiceHeadModel, 0, iColor, 0);
+		SPR_DrawAdditive(0, xpos, ypos, &rc);
+	}
+
 }
 
 int CVoiceStatus::Draw(float time)
@@ -410,10 +415,12 @@ int CVoiceStatus::Draw(float time)
 	int voiceHeight = 30;
 	wrect_t rc;
 
+	int iColor = static_cast<int>((sin(time * 6) * 127) + 128);
+
 	if(IsPlayerSpeaking(localPlayer->index))
 	{
-		SPR_Set(m_VoiceHeadModel, 200, 200, 200);
-		SPR_DrawAdditive(0, ScreenWidth - 60, ScreenHeight - 100, &rc);
+		SPR_Set(m_VoiceHeadModel, 0, iColor, 0 );
+		SPR_DrawAdditive(0, ScreenWidth - 60, ScreenHeight - gHUD.m_iFontHeight * 3 - 40, &rc);
 	}
 
 	gHUD.GetAllPlayersInfo();
@@ -438,7 +445,7 @@ int CVoiceStatus::Draw(float time)
 		gHUD.DrawDarkRectangle( xpos - 5, ypos, xpos + x + 40,  voiceHeight );
 		gHUD.DrawHudStringWithColorTags(xpos , ypos + 6, str, 255, 140, 0);
 
-		SPR_Set(m_VoiceHeadModel, 255, 255, 255);
+		SPR_Set(m_VoiceHeadModel, 0, iColor, 0);
 		SPR_DrawAdditive(0, xpos + x + 10, ypos, &rc);
 
 		ypos += voiceHeight;
