@@ -83,7 +83,7 @@ using namespace vgui;
 
 // Team Colors
 extern int iNumberOfTeamColors;
-extern int iTeamColors[5][3]:
+extern int iTeamColors[5][3];
 
 // Used for Class specific buttons
 const char *sTFClasses[] =
