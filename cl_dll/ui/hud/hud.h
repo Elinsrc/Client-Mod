@@ -92,7 +92,11 @@ struct HUDLIST
 
 //
 //-----------------------------------------------------
+#if USE_VGUI
 #include "voice_status.h" // base voice handling class
+#else
+#include "novgui_voice_status.h"
+#endif
 #include "hud_spectator.h"
 #include "hud_speedometer.h"
 #include "hud_jumpspeed.h"

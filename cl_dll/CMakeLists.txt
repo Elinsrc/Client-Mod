@@ -92,7 +92,6 @@ set (CLDLL_SOURCES
 	rendering/GameStudioModelRenderer.cpp
 	rendering/StudioModelRenderer.cpp
 	rendering/tri.cpp
-	ui/voice_status.cpp
 	ui/voice_banmgr.cpp
 	ui/hud/ammo.cpp
 	ui/hud/ammo_secondary.cpp
@@ -149,6 +148,7 @@ set (CLDLL_SOURCES
 
 if (USE_VGUI)
 	list(APPEND CLDLL_SOURCES
+		ui/voice_status.cpp
 		ui/VGUI/vgui_int.cpp
 		ui/VGUI/vgui_ClassMenu.cpp
 		ui/VGUI/vgui_ConsolePanel.cpp
@@ -176,6 +176,7 @@ if (USE_VGUI)
 	endif()
 else()
 	list(APPEND CLDLL_SOURCES
+		ui/novgui_voice_status.cpp
 		ui/hud/MOTD.cpp
 		ui/hud/scoreboard.cpp)
 endif()
