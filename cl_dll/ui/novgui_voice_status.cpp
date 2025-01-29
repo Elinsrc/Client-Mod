@@ -479,7 +479,9 @@ bool CVoiceStatus::IsPlayerAudible(int iPlayer)
 
 bool CVoiceStatus::IsPlayerSpeaking(int iPlayerIndex)
 {
-	assert(iPlayerIndex >= 1 && iPlayerIndex <= MAX_PLAYERS);
+	if (iPlayerIndex < 1 || iPlayerIndex > MAX_PLAYERS)
+		return false;
+
 	return m_VoicePlayers[iPlayerIndex - 1];
 }
 
