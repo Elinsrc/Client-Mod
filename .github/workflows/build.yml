@@ -12,23 +12,23 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout sources
-          uses: actions/checkout@v3
+          uses: actions/checkout@v4
           with:
             fetch-depth: 0
             submodules: recursive
         - name: Setup Java
-          uses: actions/setup-java@v3
+          uses: actions/setup-java@v4
           with:
             java-version: 17
             distribution: 'temurin'
             cache: gradle
         - name: Setup Android SDK
-          uses: android-actions/setup-android@v2
+          uses: android-actions/setup-android@v3
         - name: Build Android
           run: ./gradlew assembleDebug
           working-directory: android
         - name: Upload artifacts
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: Client-Mod-android
             path: android/app/build/outputs/apk/debug/app-debug.apk
@@ -51,7 +51,7 @@ jobs:
       CXX: ${{ matrix.cxx }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
     - name: Install development tools
@@ -98,25 +98,25 @@ jobs:
       id: extract_gamedir
     - name: Upload linux artifact
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Client-Mod-linux
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload linux artifact with vgui
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Client-Mod-linux-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact
       if: startsWith(matrix.os, 'windows')
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Client-Mod-windows
         path: dist/${{ steps.extract_gamedir.outputs.gamedir }}
     - name: Upload windows artifact with vgui
       if: startsWith(matrix.os, 'windows')
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Client-Mod-windows-vgui
         path: dist-vgui/${{ steps.extract_gamedir.outputs.gamedir }}
@@ -149,8 +149,6 @@ jobs:
           zip -j Client-Mod-windows-vgui.zip Client-Mod-windows-vgui/cl_dlls/client.dll
           ls -R .
           cd ../
-
-          sleep 60s
       - name: Upload new release
         uses: svenstaro/upload-release-action@v2
         with:
