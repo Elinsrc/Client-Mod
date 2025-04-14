@@ -58,10 +58,6 @@ if(BUILD_DISCORD_RPC)
 	add_definitions(-DBUILD_DISCORD_RPC)
 endif()
 
-if(BUILD_IMGUI)
-	add_definitions(-DBUILD_IMGUI)
-endif()
-
 set (CLDLL_SOURCES
 	${CMAKE_SOURCE_DIR}/dlls/crossbow.cpp
 	${CMAKE_SOURCE_DIR}/dlls/crowbar.cpp
@@ -186,23 +182,10 @@ if (BUILD_DISCORD_RPC)
 		discord-rpc/discord_integration.cpp)
 endif()
 
-if (BUILD_IMGUI)
-	list(APPEND CLDLL_SOURCES
-		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui.cpp"
-		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_demo.cpp"
-		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_draw.cpp"
-		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_tables.cpp"
-		"${CMAKE_SOURCE_DIR}/3rdparty/imgui/imgui_widgets.cpp")
-endif()
-
 include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
 
 if (BUILD_DISCORD_RPC)
 	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/discord-rpc/include discord-rpc)
-endif()
-
-if (BUILD_IMGUI)
-	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/imgui imgui)
 endif()
 
 if (USE_VGUI)
