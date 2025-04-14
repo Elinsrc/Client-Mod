@@ -1,99 +1,95 @@
-# Client-Mod
+# Client-Mod [![Build Status](https://github.com/Elinsrc/Client-Mod/actions/workflows/build.yml/badge.svg)](https://github.com/Elinsrc/Client-Mod/actions) <img align="right" src="https://raw.githubusercontent.com/Elinsrc/Client-Mod/refs/heads/master/android/app/src/main/res/drawable/ic_launcher.png" alt="Client-Mod" />
 
-* **Client-Mod** is a modification of the **Half-Life** client part for **Xash3D FWGS and GoldSource**
+ - **Client-Mod** is a modification of the **Half-Life** client part for **Xash3D FWGS and GoldSource**.
 
-Added server name to no vgui scoreboard, player model name (included in vgui), curent map name and number of current players.
+## Configuration (CVars)
+| CVar                        | Default             | Min | Max | Description                                                                                                       |
+|-----------------------------|---------------------|-----|-----|-------------------------------------------------------------------------------------------------------------------|
+| cl_autojump                 | 1                   | 0   | 1   | Will jump automatically as soon as you touch the ground while +jump is held. Taken from OpenAG                    |
+| +ducktap                    |                     | -   | -   | Performs a duck tap automatically as soon as you touch the ground (presses +duck for 1 frame). Taken from OpenAG  |
+| hud_color                   | "255 160 0"         | -   | -   | Sets HUD color, values must be enclosed in quotation marks. Taken from OpenAG                                     |
+| hud_weapon                  | 0                   | 0   | 1   | Draw current weapon in HUD. Taken from OpenAG                                                                     |
+| cl_logchat                  | 0                   | 0   | 2   | Value 1 logs only messages from players. Value 2 logs system messages and players                                 |
+| cl_chatsound                | 1                   | 0   | 2   | Value 1 plays system and player chat notification sound, Value 2 logs only from players                           |
+| cl_chatsound_path           | "misc/talk.wav"     | -   | -   | Path to chat notification playing sound                                                                           |
+| hud_vis                     | 0                   | 0   | 1   | The color of armor and health indicators will change depending on their number                                    |
+| vis_battery100              | "0 250 0"           | -   | -   | Indicator color for 100% battery charge                                                                           |
+| vis_battery80               | "0 250 0"           | -   | -   | Indicator color for 80% battery charge                                                                            |
+| vis_battery60               | "250 250 0"         | -   | -   | Indicator color for 60% battery charge                                                                            |
+| vis_battery40               | "250 100 0"         | -   | -   | Indicator color for 40% battery charge                                                                            |
+| vis_battery20               | "250 0 0"           | -   | -   | Indicator color for 20% battery charge                                                                            |
+| vis_health100               | "0 250 0"           | -   | -   | Indicator color for 100% health                                                                                   |
+| vis_health80                | "0 250 0"           | -   | -   | Indicator color for 80% health                                                                                    |
+| vis_health60                | "250 250 0"         | -   | -   | Indicator color for 60% health                                                                                    |
+| vis_health40                | "250 100 0"         | -   | -   | Indicator color for 40% health                                                                                    |
+| vis_health20                | "250 0 0"           | -   | -   | Indicator color for 20% health                                                                                    |
+| cl_weaponlowering           | 1                   | 0   | 1   | The weapon in the player's hand will lower depending on the speed of movement                                     |
+| cl_weaponsway               | 1                   | 0   | 1   | Swaying of the weapon when moving                                                                                 |
+| cl_weaponlag                | 1                   | 0   | 1   | Weapon lag when turning                                                                                           |
+| hud_speedometer             | 0                   | 0   | 1   | Shows the player speed. Taken from OpenAG                                                                         |
+| hud_speedometer_below_cross | 0                   | 0   | 1   | Adjusts the position of the speedometer to the sight                                                              |
+| hud_jumpspeed               | 0                   | 0   | 1   | Shows the player speed at the moment of the jump. Taken from OpenAG                                               |
+| hud_jumpspeed_below_cross   | 0                   | 0   | 1   | Adjusts the position of the jumpspeed to the sight                                                                |
+| hud_jumpspeed_height        | 0                   | -   | -   | Adjusts the position of jumpspeed                                                                                 |
+| hud_strafeguide             | 0                   | 0   | 1   | Shows strafeguide. Taken from OpenAG                                                                              |
+| hud_strafeguide_zoom        | 1                   | -   | -   |                                                                                                                   |
+| hud_strafeguide_height      | 0                   | -   | -   |                                                                                                                   |
+| hud_strafeguide_size        | 0                   | -   | -   |                                                                                                                   |
+| hud_watermark               | 1                   | -   | -   | Shows client author and build date                                                                                |
+| hud_rainbow                 | 1                   | 0   | 1   | Paints HUD rainbow. Taken from OpenAG                                                                             |
+| hud_rainbow_sat             | 100                 | -   | -   |                                                                                                                   |
+| hud_rainbow_val             | 100                 | -   | -   |                                                                                                                   |
+| hud_rainbow_speed           | 40                  | -   | -   |                                                                                                                   |
+| hud_rainbow_xphase          | 0.4                 | -   | -   |                                                                                                                   |
+| hud_rainbow_yphase          | 0.7                 | -   | -   |                                                                                                                   |
+| hud_deathnotice_bg          | 1                   | 0   | 1   | Death notification background                                                                                     |
+| cl_gauss_balls              | 1                   | 0   | 1   | Small bouncing balls from Gauss hits                                                                              |
+| cl_gauss_hits               | 1                   | 0   | 1   | A large glowing sprite from Gauss hits                                                                            |
+| cl_hidecorpses              | 0                   | 0   | 1   | Hides the corpses of players                                                                                      |
+| cl_killsound                | 1                   | -   | -   | Sound plays when you kill a player. Taken from OpenAG                                                             |
+| cl_killsound_path           | "buttons/bell1.wav" | -   | -   | Path to playing sound. Taken from OpenAG.                                                                         |
+| cl_cross                    | 0                   | 0   | 1   | Custom crosshair                                                                                                  |
+| cl_cross_color              | "255 255 255"       | -   | -   | Custom crosshair color                                                                                            |
+| cl_cross_alpha              | 255                 | -   | -   | Crosshair alpha                                                                                                   |
+| cl_cross_size               | 1                   | -   | -   | Crosshair size                                                                                                    |
+| cl_cross_gap                | 2                   | -   | -   | Crosshair distance from the middle                                                                                |
+| cl_cross_thickness          | 5                   | -   | -   | Thickness of crosshair                                                                                            |
+| cl_cross_outline            | 1                   | 0   | 1   | Crosshair outline                                                                                                 |
+| cl_cross_top_line           | 1                   | 0   | 1   |                                                                                                                   |
+| cl_cross_bottom_line        | 1                   | 0   | 1   |                                                                                                                   |
+| cl_cross_left_line          | 1                   | 0   | 1   |                                                                                                                   |
+| cl_cross_right_line         | 1                   | 0   | 1   |                                                                                                                   |
+| cl_cross_dot_size           | 1                   | -   | -   | Value 0 disables the dot                                                                                          |
+| cl_cross_dot_color          | "255 255 255"       | -   | -   | Custom crosshair dot color                                                                                        |
+| cl_viewmodel_ofs_right      | 0                   | -   | -   | Offsets the gun viewmodel to the right. Taken from OpenAG                                                         |
+| cl_viewmodel_ofs_forward    | 0                   | -   | -   | Offsets the gun viewmodel forward. Taken from OpenAG                                                              |
+| cl_viewmodel_ofs_up         | 0                   | -   | -   | Offsets the gun viewmodel upwards. Taken from OpenAG                                                              |
+| cl_debug                    | 0                   | 0   | 3   | Show client info                                                                                                  |
+| cl_debug_showfps            | 1                   | 0   | 1   | Show current fps and framerate                                                                                    |
 
-Added commands:
-
+## Building
+Clone the source code:
 ```
-cl_autojump [0/1] - Will jump automatically as soon as you touch the ground while +jump is held. Taken from OpenAG.
+git clone https://github.com/Elinsrc/Client-Mod --recursive
 ```
-* When **cl_autojump** is enabled, the jump button may not work, solved by command **cl_lw 1**.
+### Windows
 ```
-+ducktap — Performs a duck tap automatically as soon as you touch the ground (presses +duck for 1 frame). Taken from OpenAG.
-
-hud_color "r g b" - Sets hud color, values must be enclosed in quotation marks. example: hud_color "255 0 255". Taken from OpenAG.
-
-hud_weapon [0/1] - Draw current weapon in HUD, default value is 1. Taken from OpenAG.
-
-cl_logchat [0/1/2 ] - Value 1 logs only messages from players. Value 2 logs system messages and players, default value is 0.
-
-cl_chatsound [0/1/2] - Value 1 play system and players chat notification sound, Value 2 logs only from players, default value is 1.
-
-cl_chatsound_path ["path"] - Path to chat notification playing sound, defaut path "misc/talk.wav".
-
-hud_vis [0/1] - The color of armor and health indicators will change depending on their number, default value is 0.
+cmake -A Win32 -S . -B build
+cmake --build build --config Release
 ```
-* Comands starting with **vis_health** and **vis_battery** work with **hud_vis 1**. They change the color of the health indicator and change depending on their number.
-* Example: **vis_health60 "0 255 0"** is the green color of health when it is greater than 60, the same with **vis_battery**.
+### Linux
 ```
-vis_battery100 "r g b"
-vis_battery80 "r g b"
-vis_battery60 "r g b"
-vis_battery40 "r g b"
-vis_battery20 "r g b"
-
-vis_health100 "r g b"
-vis_health60 "r g b"
-vis_health80 "r g b"
-vis_health40 "r g b"
-vis_health20 "r g b"
-
-cl_weaponlowering [0/1] - The weapon in the player's hand will lower depending on the speed of movement, default value is 1.
-cl_weaponsway [0/1] - Swaying of the weapon when moving, default value is 1.
-cl_weaponlag [0/1] - Weapon lag when turnings, default value is 1.
-
-hud_speedometer [0/1] - Shows the player's speed, default value is 0. Taken from OpenAG.
-hud_speedometer_below_cross [0/1] - Adjusts the position of the speedometer to the sight, defaut value is 0.
-
-hud_jumpspeed [0/1] - Shows the player's speed at the moment of the jump, default value is 0. Taken from OpenAG.
-hud_jumpspeed_below_cross [0/1] - Adjusts the position of the jumpspeed to the sight, defaut value is 0.
-hud_jumpspeed_height [0/1] - Adjusts the positio jumpspeed, defaut value is 0.
-
-hud_strafeguide [0/1] - Shows strafeguide, default value is 0. Taken from OpenAG.
-hud_strafeguide_zoom [0/1], defaut value is 1.
-hud_strafeguide_height [value], defaut value 0.
-hud_strafeguide_size [value], defaut value 0.
-
-hud_watermark [0/1] - Shows client author and build date, defaut value is 1.
-
-hud_rainbow [0/1] - Paints HUD rainbow, default value is 0. Taken from OpenAG.
-hud_rainbow_sat [value], default value is 100.
-hud_rainbow_val [value], default value is 100.
-hud_rainbow_speed [value], default value is 40.
-hud_rainbow_xphase [value], default value is 0.4.
-hud_rainbow_yphase [value], default value is 0.7.
-
-hud_deathnotice_bg [0/1] - Death notification background, default value is 0.
-
-cl_gauss_balls [0/1] - Small bouncing balls from Gauss hits, defaut value is 1.
-cl_gauss_hits [0/1] - A large glowing sprite from a Gauss hits, defaut value is 1.
-cl_hidecorpses [0/1] - Hides the corpses of players. defaut value is 0.
-
-cl_killsound [0/1] - Sound plays when you kill player, defaut value is 1. Taken from OpenAG.
-cl_killsound_path ["path"] - Path to playing sound, defaut path "buttons/bell1.wav". Taken from OpenAG.
-
-cl_cross [0/1] - Custom crosshair, defaut value 0.
-cl_cross_color "r g b" - Custom crosshair color, defaut value "255 255 255".
-cl_cross_alpha [value] - Crosshair alpha, defaut value 255.
-cl_cross_size [value] - Crosshair size, defaut value 1.
-cl_cross_gap [value] - Crosshair distance from the middle, defaut value 2.
-cl_cross_thickness [value] - Thickness crosshair, defaut value 5.
-cl_cross_outline [value] - Crosshairs outline defaut value 1.
-cl_cross_top_line [0/1], defaut value 1.
-cl_cross_bottom_line [0/1], defaut value 1.
-cl_cross_left_line [0/1], defaut value 1.
-cl_cross_right_line [0/1], defaut value 1.
-cl_cross_dot_size [value], value 0 diable dot, defaut value 1.
-cl_cross_dot_color "r g b", defaut value "255 255 255".
-
-cl_viewmodel_ofs_right [value] — Offsets the gun viewmodel to the right (or to the left if cl_righthand is set to 1), 0 for no offset. Taken from OpenAG.
-cl_viewmodel_ofs_forward [value] — Offsets the gun viewmodel forward, 0 for no offset. Taken from OpenAG.
-cl_viewmodel_ofs_up [value] — Offsets the gun viewmodel upwards, 0 for no offset. Taken from OpenAG.
-
-cl_debug [0/1/2] - Show client info, defaut value 0.
-cl_debug_showfps [1/0] - Show curent fps and framerate, defaut value 1.
+cmake -S . -B build
+cmake --build build --config Release
+```
+### Android
+```
+./gradlew assembleDebug
 ```
 
-# [Build Instructions](BUILD.md)
+## Thanks
+ - Thanks To Valve for [Half-Life](https://store.steampowered.com/app/70/HalfLife/) and [hlsdk](https://github.com/ValveSoftware/halflife)
+ - Thanks To [FWGS](https://github.com/FWGS) for [hlsdk-portable](https://github.com/FWGS/hlsdk-portable)
+ - Thanks To [YaLTeR](https://github.com/YaLTeR) for [OpenAG](https://github.com/YaLTeR/OpenAG)
+ - Thanks To [Velaron](https://github.com/Velaron) for [AndroidLauncher](https://github.com/Elinsrc/Client-Mod/tree/master/android)
+ - Thanks To [SNMetamorph](https://github.com/SNMetamorph) for [BuildInfo](https://github.com/Elinsrc/Client-Mod/blob/master/public/build_info.h) and [goldsrc-monitor](https://github.com/SNMetamorph/goldsrc-monitor)([used here](https://github.com/Elinsrc/Client-Mod/blob/master/cl_dll/ui/hud/hud_debug.cpp))
