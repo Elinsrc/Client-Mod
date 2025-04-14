@@ -258,28 +258,37 @@ bool CHudDebug::CalcScreen(float *Origin, float *VecScreen) {
 
 void CHudDebug::ClientModelName(cl_entity_s *entity, int x, int y, int r, int g, int b)
 {
-    std::string firstcolor;
-    std::string secondcolor;
     const char* model = g_PlayerInfoList[entity->index].model;
 
     if (model)
     {
-        std::string modelname = model;
-        std::string model_str = "Model: ";
+        const char* model_str = "Model: ";
+        size_t modelLength = strlen(model);
+        size_t mid = modelLength / 2;
 
-        size_t mid = modelname.length() / 2;
-        firstcolor = modelname.substr(0, mid);
-        secondcolor = modelname.substr(mid);
+        char firstcolor[256];
+        char secondcolor[256];
+
+        strncpy(firstcolor, model, mid);
+        firstcolor[mid] = '\0';
+        strncpy(secondcolor, model + mid, modelLength - mid);
+        secondcolor[modelLength - mid] = '\0';
 
         gHUD.HUEtoRGB(g_PlayerInfoList[entity->index].topcolor, top.r, top.g, top.b);
         gHUD.HUEtoRGB(g_PlayerInfoList[entity->index].bottomcolor, bottom.r, bottom.g, bottom.b);
 
-        int ModelWidth = gHUD.GetHudStringWidth(model_str.c_str());
-        int firstcolorWidth = gHUD.GetHudStringWidth(firstcolor.c_str());
+        int modelWidth, modelHeight;
+        gHUD.GetConsoleStringSizeWithColorTags((char*)model_str, modelWidth, modelHeight);
 
-        gHUD.DrawHudText(x, y, model_str.c_str(), r, g, b);
-        gHUD.DrawHudText(x + ModelWidth, y, firstcolor.c_str(), top.r, top.g, top.b);
-        gHUD.DrawHudText(x + ModelWidth + firstcolorWidth, y, secondcolor.c_str(), bottom.r, bottom.g, bottom.b);
+        int firstColorWidth, firstColorHeight;
+        gHUD.GetConsoleStringSizeWithColorTags(firstcolor, firstColorWidth, firstColorHeight);
+
+        int secondColorWidth, secondColorHeight;
+        gHUD.GetConsoleStringSizeWithColorTags(secondcolor, secondColorWidth, secondColorHeight);
+
+        gHUD.DrawHudText(x, y, model_str, r, g, b);
+        gHUD.DrawHudText(x + modelWidth, y, firstcolor, top.r, top.g, top.b);
+        gHUD.DrawHudText(x + modelWidth + firstColorWidth, y, secondcolor, bottom.r, bottom.g, bottom.b);
     }
     else
     {

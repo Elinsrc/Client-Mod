@@ -541,22 +541,25 @@ struct RGBColor top, bottom;
 
 void CHud::DrawHudModelName(int x, int y, float topcolor, float bottomcolor, const char* model)
 {
-	std::string firstcolor;
-	std::string secondcolor;
-	std::string modelname = model;
+	size_t modelLength = strlen(model);
+	size_t mid = modelLength / 2;
 
-	size_t mid = modelname.length() / 2;
+	char firstcolor[256];
+	char secondcolor[256];
 
-	firstcolor = modelname.substr(0, mid);
-	secondcolor = modelname.substr(mid);
+	strncpy(firstcolor, model, mid);
+	firstcolor[mid] = '\0';
+
+	strncpy(secondcolor, model + mid, modelLength - mid);
+	secondcolor[modelLength - mid] = '\0';
 
 	HUEtoRGB(topcolor, top.r, top.g, top.b);
 	HUEtoRGB(bottomcolor, bottom.r, bottom.g, bottom.b);
 
-	int Len = DrawHudStringLen(firstcolor.c_str());
+	int width = GetHudStringWidthWithColorTags(firstcolor);
 
-	DrawHudString( x, y, firstcolor.c_str(), top.r, top.g, top.b );
-	DrawHudString( x + Len, y, secondcolor.c_str(), bottom.r, bottom.g, bottom.b );
+	DrawHudString(x, y, firstcolor, top.r, top.g, top.b);
+	DrawHudString(x + width, y, secondcolor, bottom.r, bottom.g, bottom.b);
 }
 
 int CHud::DrawHudText(int x, int y, const char* szString, int r, int g, int b)
@@ -564,8 +567,7 @@ int CHud::DrawHudText(int x, int y, const char* szString, int r, int g, int b)
 	if ( !szString )
 		return 1;
 
-	gEngfuncs.pfnDrawSetTextColor( r / 255.0, g / 255.0, b / 255.0 );
-	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) szString );
+	return DrawConsoleStringWithColorTags( x, y, (char*) szString, true, r, g, b );
 }
 
 int CHud::DrawHudTextCentered(int x, int y, const char* szString, int r, int g, int b)
@@ -573,12 +575,12 @@ int CHud::DrawHudTextCentered(int x, int y, const char* szString, int r, int g, 
 	if (!szString)
 		return 1;
 
-	int Len = DrawHudStringLen(szString);
+	int width, height;
+	GetConsoleStringSizeWithColorTags((char*)szString, width, height);
 
-	gEngfuncs.pfnDrawSetTextColor(r / 255.0, g / 255.0, b / 255.0);
-	gEngfuncs.pfnDrawConsoleString(x - Len / 2, y, (char*)szString);
+	int center = x - width / 2;
 
-	return x + Len / 2;
+	return DrawConsoleStringWithColorTags(center, y, (char*)szString, true, r, g, b);
 }
 
 int CHud::DrawHudStringCentered(int x, int y, const char* string, int r, int g, int b)
