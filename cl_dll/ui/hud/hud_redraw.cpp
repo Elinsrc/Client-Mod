@@ -496,39 +496,44 @@ void CHud::DrawDarkRectangle( int x, int y, int wide, int tall )
 
 void CHud::HUEtoRGB(float hue, int &R, int &G, int &B)
 {
-	hue = (hue < 0) ? 0 : (hue > 255) ? 255 : hue;
-	float h = hue / 255.0f;
-	float r, g, b;
+    hue = fmax(0, fmin(255, hue));
+    float h = hue / 255.0f;
+    float r, g, b;
 
-	if (h < 1.0f/6.0f) {
-		r = 1.0f;
-		g = h * 6.0f;
-		b = 0.0f;
-	} else if (h < 2.0f/6.0f) {
-		r = 1.0f - (h - 1.0f/6.0f) * 6.0f;
-		g = 1.0f;
-		b = 0.0f;
-	} else if (h < 3.0f/6.0f) {
-		r = 0.0f;
-		g = 1.0f;
-		b = (h - 2.0f/6.0f) * 6.0f;
-	} else if (h < 4.0f/6.0f) {
-		r = 0.0f;
-		g = 1.0f - (h - 3.0f/6.0f) * 6.0f;
-		b = 1.0f;
-	} else if (h < 5.0f/6.0f) {
-		r = (h - 4.0f/6.0f) * 6.0f;
-		g = 0.0f;
-		b = 1.0f;
-	} else {
-		r = 1.0f;
-		g = 0.0f;
-		b = 1.0f - (h - 5.0f/6.0f) * 6.0f;
-	}
+    if (h < 1.0f/6.0f) {
+        r = 1.0f;
+        g = h * 6.0f;
+        b = 0.0f;
+    }
+    else if (h < 2.0f/6.0f) {
+        r = 1.0f - (h - 1.0f/6.0f) * 6.0f;
+        g = 1.0f;
+        b = 0.0f;
+    }
+    else if (h < 3.0f/6.0f) {
+        r = 0.0f;
+        g = 1.0f;
+        b = (h - 2.0f/6.0f) * 6.0f;
+    }
+    else if (h < 4.0f/6.0f) {
+        r = 0.0f;
+        g = 1.0f - (h - 3.0f/6.0f) * 6.0f;
+        b = 1.0f;
+    }
+    else if (h < 5.0f/6.0f) {
+        r = (h - 4.0f/6.0f) * 6.0f;
+        g = 0.0f;
+        b = 1.0f;
+    }
+    else {
+        r = 1.0f;
+        g = 0.0f;
+        b = 1.0f - (h - 5.0f/6.0f) * 6.0f;
+    }
 
-	R = static_cast<int>(r * 255);
-	G = static_cast<int>(g * 255);
-	B = static_cast<int>(b * 255);
+    R = static_cast<int>(r * 255);
+    G = static_cast<int>(g * 255);
+    B = static_cast<int>(b * 255);
 }
 
 struct RGBColor {

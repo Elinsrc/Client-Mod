@@ -20,7 +20,7 @@ public:
     virtual const char *GetRenderFxName(int renderFx);
     virtual void formatTime(float totalSeconds, char* output);
     virtual void Box( int x, int y, int w, int h, int linewidth, int r, int g, int b, int a );
-	virtual void BoxOutline(float x, float y, float w, float h, float linewidth, int r, int g, int b, int a);
+    virtual void BoxOutline(float x, float y, float w, float h, float linewidth, int r, int g, int b, int a);
     virtual void BoxCorner(int x, int y, int w, int h, int linewidth, int r, int g, int b, int a);
     virtual void BoxCornerOutline(int x, int y, int w, int h, int linewidth, int r, int g, int b, int a);
     virtual bool CalcScreen(float *Origin, float *VecScreen);
