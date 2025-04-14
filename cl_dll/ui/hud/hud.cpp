@@ -504,7 +504,7 @@ void CHud::Init( void )
 	m_pSpriteList = NULL;
 
 	// OpenAG
-	m_pCvarColor = CVAR_CREATE( "hud_color", "", FCVAR_ARCHIVE );
+	m_pCvarColor = CVAR_CREATE( "hud_color", "255 160 0", FCVAR_ARCHIVE );
 	CVAR_CREATE( "hud_weapon", "0", FCVAR_ARCHIVE );
 	m_pCvarAutostop = CVAR_CREATE("cl_autostop", "0", FCVAR_ARCHIVE);
 	m_pCvarDrawDeathNoticesAlways = CVAR_CREATE( "cl_draw_deathnotices_always", "0", FCVAR_ARCHIVE );
