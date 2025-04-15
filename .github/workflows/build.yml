@@ -65,13 +65,13 @@ jobs:
     - name: Build on Linux
       if: startsWith(matrix.os, 'ubuntu')
       run: |
-        cmake -B build -S . -DBUILD_DISCORD_RPC=ON -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist"
+        cmake -B build -S . -DUSE_DISCORD_RPC=ON -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist"
         cmake --build build --target all
         cmake --build build --target install
     - name: Build on Linux with vgui
       if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.cc, 'gcc')
       run: |
-        cmake -B build-vgui -S . -DUSE_VGUI=ON -DBUILD_DISCORD_RPC=ON -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist-vgui"
+        cmake -B build-vgui -S . -DUSE_VGUI=ON -DUSE_DISCORD_RPC=ON -DCMAKE_EXE_LINKER_FLAGS="-Wl,--no-undefined" -DCMAKE_INSTALL_PREFIX="$PWD/dist-vgui"
         cp vgui_support/vgui-dev/lib/vgui.so build-vgui/cl_dll
         cmake --build build-vgui --target all
         cmake --build build-vgui --target install
@@ -81,12 +81,12 @@ jobs:
     - name: Build on Windows
       if: startsWith(matrix.os, 'windows')
       run: |
-        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DBUILD_DISCORD_RPC=ON -DCMAKE_INSTALL_PREFIX="dist"
+        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DUSE_DISCORD_RPC=ON -DCMAKE_INSTALL_PREFIX="dist"
         msbuild -verbosity:normal /property:Configuration=Release build/INSTALL.vcxproj
     - name: Build on Windows with vgui
       if: startsWith(matrix.os, 'windows')
       run: |
-        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DUSE_VGUI=ON -DBUILD_DISCORD_RPC=ON -DCMAKE_INSTALL_PREFIX="dist-vgui"
+        cmake -G "Visual Studio 16 2019" -A Win32 -B build -DUSE_VGUI=ON -DUSE_DISCORD_RPC=ON -DCMAKE_INSTALL_PREFIX="dist-vgui"
         msbuild -verbosity:normal /property:Configuration=Release build/INSTALL.vcxproj
     - name: Extract branch name
       shell: bash
