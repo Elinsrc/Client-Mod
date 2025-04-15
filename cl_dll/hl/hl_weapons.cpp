@@ -52,6 +52,8 @@ int g_irunninggausspred = 0;
 
 vec3_t previousorigin;
 
+bool bIsReloading = FALSE;
+
 // HLDM Weapon placeholder entities.
 CGlock g_Glock;
 CCrowbar g_Crowbar;
@@ -162,6 +164,7 @@ BOOL CBasePlayerWeapon::DefaultReload( int iClipSize, int iAnim, float fDelay, i
 	SendWeaponAnim( iAnim, UseDecrement(), body );
 
 	m_fInReload = TRUE;
+	bIsReloading = m_fInReload;
 
 	m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 3.0f;
 	return TRUE;
@@ -261,6 +264,7 @@ Put away weapon
 void CBasePlayerWeapon::Holster( int skiplocal /* = 0 */ )
 { 
 	m_fInReload = FALSE; // cancel any reload in progress.
+	bIsReloading = m_fInReload;
 	g_irunninggausspred = false;
 	m_pPlayer->pev->viewmodel = 0; 
 }
@@ -340,6 +344,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 		m_iClip += 10;
 #endif
 		m_fInReload = FALSE;
+		bIsReloading = m_fInReload;
 	}
 
 	if( ( m_pPlayer->pev->button & IN_ATTACK2 ) && ( m_flNextSecondaryAttack <= 0.0f ) )

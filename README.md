@@ -9,6 +9,8 @@
 | +ducktap                    |                     | -   | -   | Performs a duck tap automatically as soon as you touch the ground (presses +duck for 1 frame). Taken from OpenAG  |
 | hud_color                   | "255 160 0"         | -   | -   | Sets HUD color, values must be enclosed in quotation marks. Taken from OpenAG                                     |
 | hud_weapon                  | 0                   | 0   | 1   | Draw current weapon in HUD. Taken from OpenAG                                                                     |
+| vis_reload                  | 1                   | 0   | 1   | If the current weapon is displayed on the HUD, it will be colored while reloading                                 |
+| vis_reload_color            | "250 250 250"       | -   | -   | The color the HUD will be painted when reloading                                                                  |
 | cl_logchat                  | 0                   | 0   | 2   | Value 1 logs only messages from players. Value 2 logs system messages and players                                 |
 | cl_chatsound                | 1                   | 0   | 2   | Value 1 plays system and player chat notification sound, Value 2 logs only from players                           |
 | cl_chatsound_path           | "misc/talk.wav"     | -   | -   | Path to chat notification playing sound                                                                           |

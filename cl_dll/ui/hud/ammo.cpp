@@ -31,6 +31,11 @@
 #include "vgui_TeamFortressViewport.h"
 #endif
 
+cvar_t *vis_reload;
+cvar_t *vis_reload_color;
+
+extern bool bIsReloading;
+
 WEAPON *gpActiveSel;	// NULL means off, 1 means just the menu bar, otherwise
 						// this points to the active weapon menu item
 WEAPON *gpLastSel;		// Last weapon menu selection 
@@ -287,6 +292,9 @@ int CHudAmmo::Init( void )
 
 	CVAR_CREATE( "hud_drawhistory_time", HISTORY_DRAW_TIME, 0 );
 	CVAR_CREATE( "hud_fastswitch", "0", FCVAR_ARCHIVE );		// controls whether or not weapons can be selected in one keypress
+
+	vis_reload = CVAR_CREATE("vis_reload", "1", FCVAR_ARCHIVE);
+	vis_reload_color = CVAR_CREATE("vis_reload_color", "250 250 250", FCVAR_ARCHIVE);
 
 	m_iFlags |= HUD_ACTIVE; //!!!
 
@@ -634,6 +642,8 @@ int CHudAmmo::MsgFunc_CurWeapon( const char *pszName, int iSize, void *pbuf )
 
 	m_fFade = 200.0f; //!!!
 	m_iFlags |= HUD_ACTIVE;
+
+	bIsReloading = FALSE;
 	
 	return 1;
 }
@@ -877,6 +887,48 @@ int CHudAmmo::Draw( float flTime )
 	// Does this weapon have a clip?
 	y = ScreenHeight - gHUD.m_iFontHeight - gHUD.m_iFontHeight / 2;
 
+	if ( CVAR_GET_FLOAT("hud_weapon") )
+	{
+		int r, g, b;
+
+		if (gWR.HasAmmo(m_pWeapon))
+		{
+			if (bIsReloading && vis_reload->value)
+			{
+				const char *vis_color = vis_reload_color->string;
+				if (sscanf( vis_color, "%d %d %d", &r, &g, &b) == 3)
+				{
+					r = Q_max(r, 0);
+					g = Q_max(g, 0);
+					b = Q_max(b, 0);
+
+					r = Q_min(r, 255);
+					g = Q_min(g, 255);
+					b = Q_min(b, 255);
+				}
+				else
+				{
+					r = 255;
+					g = 255;
+					b = 255;
+				}
+			}
+			else
+				UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
+
+			ScaleColors(r, g, b, 192);
+		}
+		else
+		{
+			UnpackRGB(r, g, b, RGB_REDISH);
+			ScaleColors(r, g, b, 128);
+		}
+
+		SPR_Set(m_pWeapon->hInactive, r, g, b);
+		int offset = (m_pWeapon->rcInactive.bottom - m_pWeapon->rcInactive.top) / 8;
+		SPR_DrawAdditive(0, ScreenWidth / 1.73, y - offset, &m_pWeapon->rcInactive);
+	}
+
 	// Does weapon have any ammo at all?
 	if( m_pWeapon->iAmmoType > 0 )
 	{
@@ -919,23 +971,6 @@ int CHudAmmo::Draw( float flTime )
 		int iOffset = ( m_pWeapon->rcAmmo.bottom - m_pWeapon->rcAmmo.top ) / 8;
 		SPR_Set( m_pWeapon->hAmmo, r, g, b );
 		SPR_DrawAdditive( 0, x, y - iOffset, &m_pWeapon->rcAmmo );
-	}
-
-	if ( CVAR_GET_FLOAT("hud_weapon") )
-	{
-	  if ( gWR.HasAmmo(m_pWeapon) )
-	  {
-	    ScaleColors(r, g, b, 192);
-	  }
-	  else
-	  {
-	    UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
-	    ScaleColors(r, g, b, 128);
-	  }
-	  SPR_Set(m_pWeapon->hInactive, r, g, b);
-	  x = (ScreenWidth / 1.73);
-	  int iOffset = (m_pWeapon->rcInactive.bottom - m_pWeapon->rcInactive.top)/8;
-	  SPR_DrawAdditive(0, x, y - iOffset , &m_pWeapon->rcInactive);
 	}
 
 	// Does weapon have seconday ammo?
