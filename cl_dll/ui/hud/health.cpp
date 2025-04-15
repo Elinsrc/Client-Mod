@@ -35,6 +35,8 @@ cvar_t *vis_health60;
 cvar_t *vis_health40;
 cvar_t *vis_health20;
 
+cvar_t *hud_health_divider;
+
 DECLARE_MESSAGE( m_Health, Health )
 DECLARE_MESSAGE( m_Health, Damage )
 
@@ -78,6 +80,8 @@ int CHudHealth::Init( void )
 	vis_health60 = CVAR_CREATE("vis_health60", "250 250 0", FCVAR_ARCHIVE);
 	vis_health40 = CVAR_CREATE("vis_health40", "250 100 0", FCVAR_ARCHIVE);
 	vis_health20 = CVAR_CREATE("vis_health20", "250 0 0", FCVAR_ARCHIVE);
+
+	hud_health_divider = CVAR_CREATE("hud_health_divider", "1", FCVAR_ARCHIVE);
 
 	gHUD.AddHudElem( this );
 	return 1;
@@ -327,7 +331,9 @@ int CHudHealth::Draw( float flTime )
 		int iHeight = gHUD.m_iFontHeight;
 		int iWidth = HealthWidth / 10;
 		UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
-		FillRGBA( x, y, iWidth, iHeight, r, g, b, a );
+
+		if (hud_health_divider->value)
+			FillRGBA( x, y, iWidth, iHeight, r, g, b, a );
 	}
 
 	DrawDamage( flTime );

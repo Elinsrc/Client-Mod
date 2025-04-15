@@ -68,6 +68,7 @@
 | cl_viewmodel_ofs_up         | 0                   | -   | -   | Offsets the gun viewmodel upwards. Taken from OpenAG                                                              |
 | cl_debug                    | 0                   | 0   | 3   | Show client info                                                                                                  |
 | cl_debug_showfps            | 1                   | 0   | 1   | Show current fps and framerate                                                                                    |
+| hud_health_divider          | 1                   | 0   | 1   | Show separator bar after health                                                                                   |
 
 ## Building
 Clone the source code:
