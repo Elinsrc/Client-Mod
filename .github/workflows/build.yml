@@ -94,7 +94,7 @@ jobs:
       id: extract_branch
     - name: Extract gamedir
       shell: bash
-      run: echo "gamedir=$(grep build/CMakeCache.txt -Ee 'GAMEDIR:STRING=[a-z]+' | cut -d '=' -f 2)" >> $GITHUB_OUTPUT
+      run: echo "gamedir=output" >> $GITHUB_OUTPUT
       id: extract_gamedir
     - name: Upload linux artifact
       if: startsWith(matrix.os, 'ubuntu') && matrix.cc == 'gcc'
