@@ -35,7 +35,7 @@ extern int red_flag_player_index;
 #include "vgui_TeamFortressViewport.h"
 #endif
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 #include "discord_integration.h"
 #endif
 
@@ -509,7 +509,7 @@ int CHudScoreboard::MsgFunc_ScoreInfo( const char *pszName, int iSize, void *pbu
 		gViewPort->UpdateOnPlayerInfo();
 #endif
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 		discord_integration::on_player_count_update();
 #endif
 	}

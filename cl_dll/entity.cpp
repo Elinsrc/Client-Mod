@@ -24,7 +24,7 @@
 #include "voice_status.h"
 #endif
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 #include "discord_integration.h"
 #endif
 
@@ -167,7 +167,7 @@ void DLLEXPORT HUD_ProcessPlayerState( struct entity_state_s *dst, const struct 
 		g_iPlayerClass = dst->playerclass;
 		g_iTeamNumber = dst->team;
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 		if (src->iuser1 != 0)
 			discord_integration::set_spectating(true);
 		else if (g_iUser1 != 0)

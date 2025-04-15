@@ -36,7 +36,7 @@
 #endif
 #endif
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 #include "discord_integration.h"
 #endif
 
@@ -170,7 +170,7 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	ClientCmd( "echo \"GitHub page: https://github.com/Elinsrc/Client-Mod/\"" );
 	ClientCmd( "exec customconfig.cfg" );
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 	discord_integration::initialize( );
 #endif
 
@@ -338,7 +338,7 @@ int DLLEXPORT HUD_UpdateClientData( client_data_t *pcldata, float flTime )
 {
 	IN_Commands();
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 	discord_integration::on_update_client_data( );
 #endif
 	return gHUD.UpdateClientData( pcldata, flTime );
@@ -367,7 +367,7 @@ Called by engine every frame that client .dll is loaded
 
 void DLLEXPORT HUD_Frame( double time )
 {
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 	discord_integration::on_frame( );
 #endif
 

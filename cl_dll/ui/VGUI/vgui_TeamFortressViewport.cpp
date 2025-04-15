@@ -57,7 +57,7 @@
 #include "shake.h"
 #include "screenfade.h"
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 #include "discord_integration.h"
 #endif
 
@@ -2070,7 +2070,7 @@ int TeamFortressViewport::MsgFunc_ScoreInfo( const char *pszName, int iSize, voi
 
 		UpdateOnPlayerInfo();
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 		discord_integration::on_player_count_update();
 #endif
 	}

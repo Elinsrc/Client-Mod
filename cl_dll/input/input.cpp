@@ -32,7 +32,7 @@ extern "C"
 #include "vgui_TeamFortressViewport.h"
 #endif
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 #include "discord_integration.h"
 #endif
 
@@ -1283,7 +1283,7 @@ void DLLEXPORT HUD_Shutdown( void )
 {
 	ShutdownInput();
 
-#if BUILD_DISCORD_RPC
+#if USE_DISCORD_RPC
 	discord_integration::shutdown();
 #endif
 }

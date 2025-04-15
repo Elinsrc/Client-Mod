@@ -44,14 +44,9 @@ project (CLIENT-MOD)
 # USER DEFINES \
 ################\
 option(USE_VGUI "Enable VGUI1." OFF)
-option(USE_VGUI2 "Enable VGUI2. UNDONE" OFF)
 option(USE_NOVGUI_MOTD "Prefer non-VGUI MOTD when USE_VGUI is enabled" OFF)
 option(USE_NOVGUI_SCOREBOARD "Prefer non-VGUI Scoreboard when USE_VGUI is enabled" OFF)
-option(USE_VOICEMGR "Enable VOICE MANAGER." OFF)
-option(BUILD_CLIENT "Build client dll" ON)
-option(BUILD_SERVER "Build server dll" OFF)
-
-option(BUILD_DISCORD_RPC "Build Discord_rpc" OFF)
+option(USE_DISCORD_RPC "Enable Discord_rpc" OFF)
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 4 OR
 	((WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -164,21 +159,9 @@ if(HAVE_TGMATH_H)
 	endif()
 endif()
 
-if(BUILD_CLIENT)
-	message(STATUS "Building client enabled")
-	add_subdirectory(cl_dll)
-endif()
+add_subdirectory(cl_dll)
 
-if(BUILD_SERVER)
-	message(STATUS "Building server enabled")
-	add_subdirectory(dlls)
-endif()
-
-if(NOT BUILD_SERVER AND NOT BUILD_CLIENT)
-	message(FATAL_ERROR "Nothing to build")
-endif()
-
-if(BUILD_DISCORD_RPC)
+if(USE_DISCORD_RPC)
 	message(STATUS "Building discord_rpc enabled")
 	set(BUILD_EXAMPLES OFF CACHE BOOL "build discord-rpc examples" FORCE)
 	set(CLANG_FORMAT_SUFFIX "-dummy")

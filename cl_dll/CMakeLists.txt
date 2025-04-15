@@ -54,8 +54,8 @@ if (USE_VGUI)
 	endif()
 endif()
 
-if(BUILD_DISCORD_RPC)
-	add_definitions(-DBUILD_DISCORD_RPC)
+if(USE_DISCORD_RPC)
+	add_definitions(-DUSE_DISCORD_RPC)
 endif()
 
 set (CLDLL_SOURCES
@@ -177,14 +177,14 @@ else()
 		ui/hud/scoreboard.cpp)
 endif()
 
-if (BUILD_DISCORD_RPC)
+if (USE_DISCORD_RPC)
 	list(APPEND CLDLL_SOURCES
 		discord-rpc/discord_integration.cpp)
 endif()
 
 include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
 
-if (BUILD_DISCORD_RPC)
+if (USE_DISCORD_RPC)
 	include_directories(${CMAKE_SOURCE_DIR}/3rdparty/discord-rpc/include discord-rpc)
 endif()
 
@@ -230,7 +230,7 @@ endif()
 set_target_properties (${CLDLL_LIBRARY} PROPERTIES
 	POSITION_INDEPENDENT_CODE 1)
 
-if(BUILD_DISCORD_RPC)
+if(USE_DISCORD_RPC)
 	target_link_libraries(client discord-rpc)
 endif()
 
