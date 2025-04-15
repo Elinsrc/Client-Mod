@@ -59,20 +59,20 @@ if(USE_DISCORD_RPC)
 endif()
 
 set (CLDLL_SOURCES
-	${CMAKE_SOURCE_DIR}/dlls/crossbow.cpp
-	${CMAKE_SOURCE_DIR}/dlls/crowbar.cpp
-	${CMAKE_SOURCE_DIR}/dlls/egon.cpp
-	${CMAKE_SOURCE_DIR}/dlls/gauss.cpp
-	${CMAKE_SOURCE_DIR}/dlls/handgrenade.cpp
-	${CMAKE_SOURCE_DIR}/dlls/hornetgun.cpp
-	${CMAKE_SOURCE_DIR}/dlls/mp5.cpp
-	${CMAKE_SOURCE_DIR}/dlls/python.cpp
-	${CMAKE_SOURCE_DIR}/dlls/rpg.cpp
-	${CMAKE_SOURCE_DIR}/dlls/satchel.cpp
-	${CMAKE_SOURCE_DIR}/dlls/shotgun.cpp
-	${CMAKE_SOURCE_DIR}/dlls/squeakgrenade.cpp
-	${CMAKE_SOURCE_DIR}/dlls/tripmine.cpp
-	${CMAKE_SOURCE_DIR}/dlls/glock.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/crossbow.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/crowbar.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/egon.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/gauss.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/handgrenade.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/hornetgun.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/mp5.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/python.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/rpg.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/satchel.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/shotgun.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/squeakgrenade.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/tripmine.cpp
+	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/glock.cpp
 	events/ev_hldm.cpp
 	events/ev_common.cpp
 	events/events.cpp
