@@ -12,8 +12,6 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#if !OEM_BUILD
-
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -38,246 +36,6 @@ enum rpg_e
 };
 
 LINK_ENTITY_TO_CLASS( weapon_rpg, CRpg )
-
-#if !CLIENT_DLL
-
-LINK_ENTITY_TO_CLASS( laser_spot, CLaserSpot )
-
-//=========================================================
-//=========================================================
-CLaserSpot *CLaserSpot::CreateSpot( void )
-{
-	CLaserSpot *pSpot = GetClassPtr( (CLaserSpot *)NULL );
-	pSpot->Spawn();
-
-	pSpot->pev->classname = MAKE_STRING( "laser_spot" );
-
-	return pSpot;
-}
-
-//=========================================================
-//=========================================================
-void CLaserSpot::Spawn( void )
-{
-	Precache();
-	pev->movetype = MOVETYPE_NONE;
-	pev->solid = SOLID_NOT;
-
-	pev->rendermode = kRenderGlow;
-	pev->renderfx = kRenderFxNoDissipation;
-	pev->renderamt = 255;
-
-	SET_MODEL( ENT( pev ), "sprites/laserdot.spr" );
-	UTIL_SetOrigin( pev, pev->origin );
-}
-
-//=========================================================
-// Suspend- make the laser sight invisible. 
-//=========================================================
-void CLaserSpot::Suspend( float flSuspendTime )
-{
-	pev->effects |= EF_NODRAW;
-
-	SetThink( &CLaserSpot::Revive );
-	pev->nextthink = gpGlobals->time + flSuspendTime;
-}
-
-//=========================================================
-// Revive - bring a suspended laser sight back.
-//=========================================================
-void CLaserSpot::Revive( void )
-{
-	pev->effects &= ~EF_NODRAW;
-
-	SetThink( NULL );
-}
-
-void CLaserSpot::Precache( void )
-{
-	PRECACHE_MODEL( "sprites/laserdot.spr" );
-}
-
-LINK_ENTITY_TO_CLASS( rpg_rocket, CRpgRocket )
-
-//=========================================================
-//=========================================================
-CRpgRocket *CRpgRocket::CreateRpgRocket( Vector vecOrigin, Vector vecAngles, CBaseEntity *pOwner, CRpg *pLauncher )
-{
-	CRpgRocket *pRocket = GetClassPtr( (CRpgRocket *)NULL );
-
-	UTIL_SetOrigin( pRocket->pev, vecOrigin );
-	pRocket->pev->angles = vecAngles;
-	pRocket->Spawn();
-	pRocket->SetTouch( &CRpgRocket::RocketTouch );
-	pRocket->m_hLauncher = pLauncher;// remember what RPG fired me. 
-	pLauncher->m_cActiveRockets++;// register this missile as active for the launcher
-	pRocket->pev->owner = pOwner->edict();
-
-	return pRocket;
-}
-
-//=========================================================
-//=========================================================
-void CRpgRocket::Spawn( void )
-{
-	Precache();
-	// motor
-	pev->movetype = MOVETYPE_BOUNCE;
-	pev->solid = SOLID_BBOX;
-
-	SET_MODEL( ENT( pev ), "models/rpgrocket.mdl" );
-	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
-	UTIL_SetOrigin( pev, pev->origin );
-
-	pev->classname = MAKE_STRING( "rpg_rocket" );
-
-	SetThink( &CRpgRocket::IgniteThink );
-	SetTouch( &CGrenade::ExplodeTouch );
-
-	pev->angles.x -= 30.0f;
-	UTIL_MakeVectors( pev->angles );
-	pev->angles.x = -( pev->angles.x + 30.0f );
-
-	pev->velocity = gpGlobals->v_forward * 250.0f;
-	pev->gravity = 0.5f;
-
-	pev->nextthink = gpGlobals->time + 0.4f;
-
-	pev->dmg = gSkillData.plrDmgRPG;
-}
-
-//=========================================================
-//=========================================================
-void CRpgRocket::RocketTouch( CBaseEntity *pOther )
-{
-	if( CRpg* pLauncher = (CRpg*)( (CBaseEntity*)( m_hLauncher ) ) )
-	{
-		// my launcher is still around, tell it I'm dead.
-		pLauncher->m_cActiveRockets--;
-	}
-
-	STOP_SOUND( edict(), CHAN_VOICE, "weapons/rocket1.wav" );
-	ExplodeTouch( pOther );
-}
-
-//=========================================================
-//=========================================================
-void CRpgRocket::Precache( void )
-{
-	PRECACHE_MODEL( "models/rpgrocket.mdl" );
-	m_iTrail = PRECACHE_MODEL( "sprites/smoke.spr" );
-	PRECACHE_SOUND( "weapons/rocket1.wav" );
-}
-
-void CRpgRocket::IgniteThink( void )
-{
-	// pev->movetype = MOVETYPE_TOSS;
-
-	pev->movetype = MOVETYPE_FLY;
-	pev->effects |= EF_LIGHT;
-
-	// make rocket sound
-	EMIT_SOUND( ENT( pev ), CHAN_VOICE, "weapons/rocket1.wav", 1, 0.5f );
-
-	// rocket trail
-	MESSAGE_BEGIN( MSG_BROADCAST, SVC_TEMPENTITY );
-		WRITE_BYTE( TE_BEAMFOLLOW );
-		WRITE_SHORT( entindex() );	// entity
-		WRITE_SHORT( m_iTrail );	// model
-		WRITE_BYTE( 40 ); // life
-		WRITE_BYTE( 5 );  // width
-		WRITE_BYTE( 224 );   // r, g, b
-		WRITE_BYTE( 224 );   // r, g, b
-		WRITE_BYTE( 255 );   // r, g, b
-		WRITE_BYTE( 255 );	// brightness
-	MESSAGE_END();  // move PHS/PVS data sending into here (SEND_ALL, SEND_PVS, SEND_PHS)
-
-	m_flIgniteTime = gpGlobals->time;
-
-	// set to follow laser spot
-	SetThink( &CRpgRocket::FollowThink );
-	pev->nextthink = gpGlobals->time + 0.1f;
-}
-
-void CRpgRocket::FollowThink( void )
-{
-	CBaseEntity *pOther = NULL;
-	Vector vecTarget;
-	Vector vecDir;
-	float flDist, flMax, flDot;
-	TraceResult tr;
-
-	UTIL_MakeAimVectors( pev->angles );
-
-	vecTarget = gpGlobals->v_forward;
-	flMax = 4096;
-	
-	// Examine all entities within a reasonable radius
-	while( ( pOther = UTIL_FindEntityByClassname( pOther, "laser_spot" ) ) != NULL )
-	{
-		UTIL_TraceLine( pev->origin, pOther->pev->origin, dont_ignore_monsters, ENT( pev ), &tr );
-		// ALERT( at_console, "%f\n", tr.flFraction );
-		if( tr.flFraction >= 0.9f )
-		{
-			vecDir = pOther->pev->origin - pev->origin;
-			flDist = vecDir.Length();
-			vecDir = vecDir.Normalize();
-			flDot = DotProduct( gpGlobals->v_forward, vecDir );
-			if( ( flDot > 0 ) && ( flDist * ( 1 - flDot ) < flMax ) )
-			{
-				flMax = flDist * ( 1 - flDot );
-				vecTarget = vecDir;
-			}
-		}
-	}
-
-	pev->angles = UTIL_VecToAngles( vecTarget );
-
-	// this acceleration and turning math is totally wrong, but it seems to respond well so don't change it.
-	float flSpeed = pev->velocity.Length();
-	if( gpGlobals->time - m_flIgniteTime < 1.0f )
-	{
-		pev->velocity = pev->velocity * 0.2f + vecTarget * ( flSpeed * 0.8f + 400.0f );
-		if( pev->waterlevel == 3 )
-		{
-			// go slow underwater
-			if( pev->velocity.Length() > 300.0f )
-			{
-				pev->velocity = pev->velocity.Normalize() * 300.0f;
-			}
-			UTIL_BubbleTrail( pev->origin - pev->velocity * 0.1f, pev->origin, 4 );
-		} 
-		else 
-		{
-			if( pev->velocity.Length() > 2000.0f )
-			{
-				pev->velocity = pev->velocity.Normalize() * 2000.0f;
-			}
-		}
-	}
-	else
-	{
-		if( pev->effects & EF_LIGHT )
-		{
-			pev->effects = 0;
-			STOP_SOUND( ENT( pev ), CHAN_VOICE, "weapons/rocket1.wav" );
-		}
-		pev->velocity = pev->velocity * 0.2f + vecTarget * flSpeed * 0.798f;
-		if( pev->waterlevel == 0 && pev->velocity.Length() < 1500.0f )
-		{
-			if( CRpg *pLauncher = (CRpg*)( (CBaseEntity*)( m_hLauncher ) ) )
-			{
-				// my launcher is still around, tell it I'm dead.
-				pLauncher->m_cActiveRockets--;
-			}
-			Detonate();
-		}
-	}
-	// ALERT( at_console, "%.0f\n", flSpeed );
-
-	pev->nextthink = gpGlobals->time + 0.1f;
-}
-#endif
 
 void CRpg::Reload( void )
 {
@@ -306,14 +64,6 @@ void CRpg::Reload( void )
 		return;
 	}
 
-#if !CLIENT_DLL
-	if( m_pSpot && m_fSpotActive )
-	{
-		m_pSpot->Suspend( 2.1f );
-		m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 2.1f;
-	}
-#endif
-
 	if( m_iClip == 0 )
 		iResult = DefaultReload( RPG_MAX_CLIP, RPG_RELOAD, 2 );
 
@@ -329,11 +79,7 @@ void CRpg::Spawn()
 	SET_MODEL( ENT( pev ), "models/w_rpg.mdl" );
 	m_fSpotActive = 1;
 
-#if CLIENT_DLL
 	if( bIsMultiplayer() )
-#else
-	if( g_pGameRules->IsMultiplayer() )
-#endif
 	{
 		// more default ammo in multiplay. 
 		m_iDefaultAmmo = RPG_DEFAULT_GIVE * 2;
@@ -420,14 +166,6 @@ void CRpg::Holster( int skiplocal /* = 0 */ )
 	m_pPlayer->m_flNextAttack = UTIL_WeaponTimeBase() + 0.5f;
 
 	SendWeaponAnim( RPG_HOLSTER1 );
-
-#if !CLIENT_DLL
-	if( m_pSpot )
-	{
-		m_pSpot->Killed( NULL, GIB_NEVER );
-		m_pSpot = NULL;
-	}
-#endif
 }
 
 void CRpg::PrimaryAttack()
@@ -437,28 +175,13 @@ void CRpg::PrimaryAttack()
 		m_pPlayer->m_iWeaponVolume = LOUD_GUN_VOLUME;
 		m_pPlayer->m_iWeaponFlash = BRIGHT_GUN_FLASH;
 
-#if !CLIENT_DLL
-		// player "shoot" animation
-		m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
-
-		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-		Vector vecSrc = m_pPlayer->GetGunPosition() + gpGlobals->v_forward * 16.0f + gpGlobals->v_right * 8.0f + gpGlobals->v_up * -8.0f;
-
-		CRpgRocket *pRocket = CRpgRocket::CreateRpgRocket( vecSrc, m_pPlayer->pev->v_angle, m_pPlayer, this );
-
-		UTIL_MakeVectors( m_pPlayer->pev->v_angle );// RpgRocket::Create stomps on globals, so remake.
-		pRocket->pev->velocity = pRocket->pev->velocity + gpGlobals->v_forward * DotProduct( m_pPlayer->pev->velocity, gpGlobals->v_forward );
-#endif
-
 		// firing RPG no longer turns on the designator. ALT fire is a toggle switch for the LTD.
 		// Ken signed up for this as a global change (sjb)
 
 		int flags;
-#if CLIENT_WEAPONS
-	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
+
+		flags = FEV_NOTHOST;
+
 		PLAYBACK_EVENT( flags, m_pPlayer->edict(), m_usRpg );
 
 		m_iClip--; 
@@ -479,14 +202,6 @@ void CRpg::PrimaryAttack()
 void CRpg::SecondaryAttack()
 {
 	m_fSpotActive = !m_fSpotActive;
-
-#if !CLIENT_DLL
-	if( !m_fSpotActive && m_pSpot )
-	{
-		m_pSpot->Killed( NULL, GIB_NORMAL );
-		m_pSpot = NULL;
-	}
-#endif
 	m_flNextSecondaryAttack = UTIL_WeaponTimeBase() + 0.2f;
 }
 
@@ -518,11 +233,8 @@ void CRpg::WeaponIdle( void )
 				iAnim = RPG_FIDGET_UL;
 			else
 				iAnim = RPG_FIDGET;
-#if WEAPONS_ANIMATION_TIMES_FIX
-			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 6.1f;
-#else
+
 			m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 3.0f;
-#endif
 		}
 
 		SendWeaponAnim( iAnim );
@@ -535,27 +247,6 @@ void CRpg::WeaponIdle( void )
 
 void CRpg::UpdateSpot( void )
 {
-#if !CLIENT_DLL
-	if( m_fSpotActive )
-	{
-		if (m_pPlayer->pev->viewmodel == 0)
-			return;
-
-		if( !m_pSpot )
-		{
-			m_pSpot = CLaserSpot::CreateSpot();
-		}
-
-		UTIL_MakeVectors( m_pPlayer->pev->v_angle );
-		Vector vecSrc = m_pPlayer->GetGunPosition();
-		Vector vecAiming = gpGlobals->v_forward;
-
-		TraceResult tr;
-		UTIL_TraceLine( vecSrc, vecSrc + vecAiming * 8192.0f, dont_ignore_monsters, ENT( m_pPlayer->pev ), &tr );
-
-		UTIL_SetOrigin( m_pSpot->pev, tr.vecEndPos );
-	}
-#endif
 }
 
 class CRpgAmmo : public CBasePlayerAmmo
@@ -574,11 +265,8 @@ class CRpgAmmo : public CBasePlayerAmmo
 	BOOL AddAmmo( CBaseEntity *pOther ) 
 	{ 
 		int iGive;
-#if CLIENT_DLL
-	if( bIsMultiplayer() )
-#else
-	if( g_pGameRules->IsMultiplayer() )
-#endif
+
+		if( bIsMultiplayer() )
 		{
 			// hand out more ammo per rocket in multiplayer.
 			iGive = AMMO_RPGCLIP_GIVE * 2;
@@ -598,4 +286,3 @@ class CRpgAmmo : public CBasePlayerAmmo
 };
 
 LINK_ENTITY_TO_CLASS( ammo_rpgclip, CRpgAmmo )
-#endif

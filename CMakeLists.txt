@@ -64,33 +64,6 @@ endif()
 # MAIN BUILD CODE \
 ###################\
 
-file(STRINGS "mod_options.txt" MOD_OPTIONS_STRINGS REGEX "^([A-Za-z0-9_]+)=([A-Za-z0-9_]+)\ \#\ (.*)$")
-foreach(LINE IN LISTS MOD_OPTIONS_STRINGS)
-	# file() itself doesn't populate CMAKE_MATCH_<n>, so
-	# reparse the string
-
-	if(${LINE} MATCHES "^([A-Za-z0-9_]+)=([A-Za-z0-9_]+)\ \#\ (.*)$")
-		# detect boolean options
-		if(${CMAKE_MATCH_2} STREQUAL "ON" OR ${CMAKE_MATCH_2} STREQUAL "OFF")
-			option(${CMAKE_MATCH_1} "${CMAKE_MATCH_3}" ${CMAKE_MATCH_2})
-
-			# let's check it here as well
-			if(${CMAKE_MATCH_1})
-				message(STATUS ${CMAKE_MATCH_3} " is enabled")
-				add_definitions(-D${CMAKE_MATCH_1})
-			else()
-				message(STATUS ${CMAKE_MATCH_3} " is disabled")
-			endif()
-		else()
-			set(${CMAKE_MATCH_1} "${CMAKE_MATCH_2}" CACHE STRING "${CMAKE_MATCH_3}")
-		endif()
-	endif()
-endforeach()
-
-if(HLDEMO_BUILD AND OEM_BUILD)
-	message(FATAL_ERROR "Don't mix Demo and OEM builds!")
-endif()
-
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT 64BIT)
 	if(MSVC)
 		error("UNDONE: set 32 build flags")

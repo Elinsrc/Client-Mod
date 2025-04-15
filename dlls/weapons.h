@@ -448,10 +448,8 @@ public:
 	int m_cAmmoTypes;// how many ammo types packed into this box (if packed by a level designer)
 };
 
-#if CLIENT_DLL
 bool bIsMultiplayer ( void );
 void LoadVModel ( const char *szViewModel, CBasePlayer *m_pPlayer );
-#endif
 
 class CGlock : public CBasePlayerWeapon
 {
@@ -470,12 +468,8 @@ public:
 	void WeaponIdle( void );
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:
@@ -507,12 +501,8 @@ public:
 	TraceResult m_trHit;
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 private:
 	unsigned short m_usCrowbar;
@@ -538,11 +528,7 @@ public:
 
 	virtual BOOL UseDecrement( void )
 	{
-#if CLIENT_WEAPONS
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:
@@ -568,12 +554,8 @@ public:
 	int m_iShell;
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:
@@ -602,12 +584,8 @@ public:
 	int m_fInZoom; // don't save this
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:
@@ -618,11 +596,6 @@ private:
 class CShotgun : public CBasePlayerWeapon
 {
 public:
-#if !CLIENT_DLL
-	int		Save( CSave &save );
-	int		Restore( CRestore &restore );
-	static	TYPEDESCRIPTION m_SaveData[];
-#endif
 	void Spawn( void );
 	void Precache( void );
 	int iItemSlot( ) { return 3; }
@@ -641,11 +614,7 @@ public:
 
 	virtual BOOL UseDecrement( void )
 	{
-#if CLIENT_WEAPONS
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:
@@ -670,11 +639,6 @@ public:
 class CRpg : public CBasePlayerWeapon
 {
 public:
-#if !CLIENT_DLL
-	int		Save( CSave &save );
-	int		Restore( CRestore &restore );
-	static	TYPEDESCRIPTION m_SaveData[];
-#endif
 	void Spawn( void );
 	void Precache( void );
 	void Reload( void );
@@ -698,12 +662,8 @@ public:
 	int m_cActiveRockets;// how many missiles in flight from this launcher right now?
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:
@@ -731,11 +691,6 @@ public:
 class CGauss : public CBasePlayerWeapon
 {
 public:
-#if !CLIENT_DLL
-	int		Save( CSave &save );
-	int		Restore( CRestore &restore );
-	static	TYPEDESCRIPTION m_SaveData[];
-#endif
 	void Spawn( void );
 	void Precache( void );
 	int iItemSlot( void ) { return 4; }
@@ -762,12 +717,8 @@ public:
 	BOOL m_fPrimaryFire;
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:
@@ -778,11 +729,6 @@ private:
 class CEgon : public CBasePlayerWeapon
 {
 public:
-#if !CLIENT_DLL
-	int		Save( CSave &save );
-	int		Restore( CRestore &restore );
-	static	TYPEDESCRIPTION m_SaveData[];
-#endif
 	void Spawn( void );
 	void Precache( void );
 	int iItemSlot( void ) { return 4; }
@@ -821,19 +767,12 @@ public:
 
 	virtual BOOL UseDecrement( void )
 	{
-#if CLIENT_WEAPONS
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 	unsigned short m_usEgonStop;
 
 private:
-#if !CLIENT_DLL
-	float				m_shootTime;
-#endif
 	EGON_FIREMODE		m_fireMode;
 	float				m_shakeTime;
 	BOOL				m_deployed;
@@ -844,11 +783,6 @@ private:
 class CHgun : public CBasePlayerWeapon
 {
 public:
-#if !CLIENT_DLL
-	int		Save( CSave &save );
-	int		Restore( CRestore &restore );
-	static	TYPEDESCRIPTION m_SaveData[];
-#endif
 	void Spawn( void );
 	void Precache( void );
 	int iItemSlot( void ) { return 4; }
@@ -869,12 +803,8 @@ public:
 	int m_iFirePhase;
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 private:
 	unsigned short m_usHornetFire;
@@ -895,23 +825,14 @@ public:
 	void WeaponIdle( void );
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 };
 
 class CSatchel : public CBasePlayerWeapon
 {
 public:
-#if !CLIENT_DLL
-	int		Save( CSave &save );
-	int		Restore( CRestore &restore );
-	static	TYPEDESCRIPTION m_SaveData[];
-#endif
 	void Spawn( void );
 	void Precache( void );
 	int iItemSlot( void ) { return 5; }
@@ -929,12 +850,8 @@ public:
 	void Throw( void );
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 };
 
@@ -958,12 +875,8 @@ public:
 	void WeaponIdle( void );
 
 	virtual BOOL UseDecrement( void )
-	{ 
-#if CLIENT_WEAPONS
+	{
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:
@@ -987,11 +900,7 @@ public:
 
 	virtual BOOL UseDecrement( void )
 	{
-#if CLIENT_WEAPONS
 		return TRUE;
-#else
-		return FALSE;
-#endif
 	}
 
 private:

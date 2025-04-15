@@ -150,11 +150,8 @@ void CMP5::PrimaryAttack()
 	Vector vecSrc = m_pPlayer->GetGunPosition();
 	Vector vecAiming = m_pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );
 	Vector vecDir;
-#if CLIENT_DLL
+
 	if( bIsMultiplayer() )
-#else
-	if( g_pGameRules->IsMultiplayer() )
-#endif
 	{
 		// optimized multiplayer. Widened to make it easier to hit a moving player
 		vecDir = m_pPlayer->FireBulletsPlayer( 1, vecSrc, vecAiming, VECTOR_CONE_6DEGREES, 8192, BULLET_PLAYER_MP5, 2, 0, m_pPlayer->pev, m_pPlayer->random_seed );
@@ -166,11 +163,9 @@ void CMP5::PrimaryAttack()
 	}
 
 	int flags;
-#if CLIENT_WEAPONS
+
 	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
+
 	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usMP5, 0.0f, g_vecZero, g_vecZero, vecDir.x, vecDir.y, 0, 0, 0, 0 );
 
 	if( !m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )
@@ -220,11 +215,9 @@ void CMP5::SecondaryAttack( void )
 					gpGlobals->v_forward * 800.0f );
 
 	int flags;
-#if CLIENT_WEAPONS
+
 	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
+
 	PLAYBACK_EVENT( flags, m_pPlayer->edict(), m_usMP52 );
 
 	m_flNextPrimaryAttack = GetNextAttackDelay( 1.0f );

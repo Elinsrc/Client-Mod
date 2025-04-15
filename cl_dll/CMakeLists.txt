@@ -25,8 +25,6 @@ project (CLDLL)
 
 set (CLDLL_LIBRARY client)
 
-add_definitions(-DCLIENT_DLL)
-
 if(NOT MSVC)
 	add_compile_options(-fno-exceptions) # GCC/Clang flag
 	add_compile_options(-Wno-write-strings) # GCC/Clang flag
@@ -240,9 +238,3 @@ if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Android")
 		OUTPUT_NAME ${CLDLL_NAME}
 		PREFIX "")
 endif()
-
-install( TARGETS ${CLDLL_LIBRARY}
-	DESTINATION "${GAMEDIR}/${CLIENT_INSTALL_DIR}/"
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
-	    GROUP_READ GROUP_EXECUTE
-		WORLD_READ WORLD_EXECUTE )

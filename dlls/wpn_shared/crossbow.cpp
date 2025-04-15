@@ -12,8 +12,6 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#if !OEM_BUILD && !HLDEMO_BUILD
-
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -22,224 +20,6 @@
 #include "nodes.h"
 #include "player.h"
 #include "gamerules.h"
-
-#if !CLIENT_DLL
-#define BOLT_AIR_VELOCITY	2000
-#define BOLT_WATER_VELOCITY	1000
-
-extern BOOL g_fIsXash3D;
-
-// UNDONE: Save/restore this?  Don't forget to set classname and LINK_ENTITY_TO_CLASS()
-// 
-// OVERLOADS SOME ENTVARS:
-//
-// speed - the ideal magnitude of my velocity
-class CCrossbowBolt : public CBaseEntity
-{
-	void Spawn( void );
-	void Precache( void );
-	int Classify( void );
-	void EXPORT BubbleThink( void );
-	void EXPORT BoltTouch( CBaseEntity *pOther );
-	void EXPORT ExplodeThink( void );
-
-	int m_iTrail;
-
-public:
-	static CCrossbowBolt *BoltCreate( void );
-};
-
-LINK_ENTITY_TO_CLASS( crossbow_bolt, CCrossbowBolt )
-
-CCrossbowBolt *CCrossbowBolt::BoltCreate( void )
-{
-	// Create a new entity with CCrossbowBolt private data
-	CCrossbowBolt *pBolt = GetClassPtr( (CCrossbowBolt *)NULL );
-	pBolt->pev->classname = MAKE_STRING( "crossbow_bolt" );	// g-cont. enable save\restore
-	pBolt->Spawn();
-
-	return pBolt;
-}
-
-void CCrossbowBolt::Spawn()
-{
-	Precache();
-	pev->movetype = MOVETYPE_FLY;
-	pev->solid = SOLID_BBOX;
-
-	pev->gravity = 0.5f;
-
-	SET_MODEL( ENT( pev ), "models/crossbow_bolt.mdl" );
-
-	UTIL_SetOrigin( pev, pev->origin );
-	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
-
-	SetTouch( &CCrossbowBolt::BoltTouch );
-	SetThink( &CCrossbowBolt::BubbleThink );
-	pev->nextthink = gpGlobals->time + 0.2f;
-}
-
-void CCrossbowBolt::Precache()
-{
-	PRECACHE_MODEL( "models/crossbow_bolt.mdl" );
-	PRECACHE_SOUND( "weapons/xbow_hitbod1.wav" );
-	PRECACHE_SOUND( "weapons/xbow_hitbod2.wav" );
-	PRECACHE_SOUND( "weapons/xbow_fly1.wav" );
-	PRECACHE_SOUND( "weapons/xbow_hit1.wav" );
-	PRECACHE_SOUND( "fvox/beep.wav" );
-	m_iTrail = PRECACHE_MODEL( "sprites/streak.spr" );
-}
-
-int CCrossbowBolt::Classify( void )
-{
-	return CLASS_NONE;
-}
-
-void CCrossbowBolt::BoltTouch( CBaseEntity *pOther )
-{
-	SetTouch( NULL );
-	SetThink( NULL );
-
-	if( pOther->pev->takedamage )
-	{
-		TraceResult tr = UTIL_GetGlobalTrace();
-		entvars_t *pevOwner;
-
-		pevOwner = VARS( pev->owner );
-
-		// UNDONE: this needs to call TraceAttack instead
-		ClearMultiDamage();
-
-		if( pOther->IsPlayer() )
-		{
-			pOther->TraceAttack( pevOwner, gSkillData.plrDmgCrossbowClient, pev->velocity.Normalize(), &tr, DMG_NEVERGIB ); 
-		}
-		else
-		{
-			pOther->TraceAttack( pevOwner, gSkillData.plrDmgCrossbowMonster, pev->velocity.Normalize(), &tr, DMG_BULLET | DMG_NEVERGIB ); 
-		}
-
-		ApplyMultiDamage( pev, pevOwner );
-
-		pev->velocity = Vector( 0, 0, 0 );
-		// play body "thwack" sound
-		switch( RANDOM_LONG( 0, 1 ) )
-		{
-		case 0:
-			EMIT_SOUND( ENT( pev ), CHAN_BODY, "weapons/xbow_hitbod1.wav", 1, ATTN_NORM );
-			break;
-		case 1:
-			EMIT_SOUND( ENT( pev ), CHAN_BODY, "weapons/xbow_hitbod2.wav", 1, ATTN_NORM );
-			break;
-		}
-
-		if( !g_pGameRules->IsMultiplayer() )
-		{
-			Killed( pev, GIB_NEVER );
-		}
-	}
-	else
-	{
-		EMIT_SOUND_DYN( ENT( pev ), CHAN_BODY, "weapons/xbow_hit1.wav", RANDOM_FLOAT( 0.95f, 1.0f ), ATTN_NORM, 0, 98 + RANDOM_LONG( 0, 7 ) );
-
-		SetThink( &CBaseEntity::SUB_Remove );
-		pev->nextthink = gpGlobals->time;// this will get changed below if the bolt is allowed to stick in what it hit.
-
-		if( FClassnameIs( pOther->pev, "worldspawn" ) )
-		{
-			// if what we hit is static architecture, can stay around for a while.
-			Vector vecDir = pev->velocity.Normalize();
-			UTIL_SetOrigin( pev, pev->origin - vecDir * 12.0f );
-			pev->angles = UTIL_VecToAngles( vecDir );
-			pev->solid = SOLID_NOT;
-			pev->movetype = MOVETYPE_FLY;
-			pev->velocity = Vector( 0, 0, 0 );
-			pev->avelocity.z = 0;
-			pev->angles.z = RANDOM_LONG( 0, 360 );
-			pev->nextthink = gpGlobals->time + 10.0f;
-		}
-		else if( pOther->pev->movetype == MOVETYPE_PUSH || pOther->pev->movetype == MOVETYPE_PUSHSTEP )
-		{
-			Vector vecDir = pev->velocity.Normalize();
-			UTIL_SetOrigin( pev, pev->origin - vecDir * 12.0f );
-			pev->angles = UTIL_VecToAngles( vecDir );
-			pev->solid = SOLID_NOT;
-			pev->velocity = Vector( 0, 0, 0 );
-			pev->avelocity.z = 0;
-			pev->angles.z = RANDOM_LONG( 0, 360 );
-			pev->nextthink = gpGlobals->time + 10.0f;			
-
-			if( g_fIsXash3D )
-			{
-				// g-cont. Setup movewith feature
-				pev->movetype = MOVETYPE_COMPOUND;	// set movewith type
-				pev->aiment = ENT( pOther->pev );	// set parent
-			}
-		}
-
-		if( UTIL_PointContents( pev->origin ) != CONTENTS_WATER )
-		{
-			UTIL_Sparks( pev->origin );
-		}
-	}
-
-	if( g_pGameRules->IsMultiplayer() )
-	{
-		SetThink( &CCrossbowBolt::ExplodeThink );
-		pev->nextthink = gpGlobals->time + 0.1f;
-	}
-}
-
-void CCrossbowBolt::BubbleThink( void )
-{
-	pev->nextthink = gpGlobals->time + 0.1f;
-
-	if( pev->waterlevel == 0 )
-		return;
-
-	UTIL_BubbleTrail( pev->origin - pev->velocity * 0.1f, pev->origin, 1 );
-}
-
-void CCrossbowBolt::ExplodeThink( void )
-{
-	int iContents = UTIL_PointContents( pev->origin );
-	int iScale;
-
-	pev->dmg = 40;
-	iScale = 10;
-
-	MESSAGE_BEGIN( MSG_PVS, SVC_TEMPENTITY, pev->origin );
-		WRITE_BYTE( TE_EXPLOSION );
-		WRITE_COORD( pev->origin.x );
-		WRITE_COORD( pev->origin.y );
-		WRITE_COORD( pev->origin.z );
-		if( iContents != CONTENTS_WATER )
-		{
-			WRITE_SHORT( g_sModelIndexFireball );
-		}
-		else
-		{
-			WRITE_SHORT( g_sModelIndexWExplosion );
-		}
-		WRITE_BYTE( iScale ); // scale * 10
-		WRITE_BYTE( 15 ); // framerate
-		WRITE_BYTE( TE_EXPLFLAG_NONE );
-	MESSAGE_END();
-
-	entvars_t *pevOwner;
-
-	if( pev->owner )
-		pevOwner = VARS( pev->owner );
-	else
-		pevOwner = NULL;
-
-	pev->owner = NULL; // can't traceline attack owner if this is set
-
-	::RadiusDamage( pev->origin, pev, pevOwner, pev->dmg, 128, CLASS_NONE, DMG_BLAST | DMG_ALWAYSGIB );
-
-	UTIL_Remove( this );
-}
-#endif
 
 enum crossbow_e
 {
@@ -338,11 +118,7 @@ void CCrossbow::Holster( int skiplocal /* = 0 */ )
 
 void CCrossbow::PrimaryAttack( void )
 {
-#if CLIENT_DLL
 	if( m_fInZoom && bIsMultiplayer() )
-#else
-	if( m_fInZoom && g_pGameRules->IsMultiplayer() )
-#endif
 	{
 		FireSniperBolt();
 		return;
@@ -368,11 +144,8 @@ void CCrossbow::FireSniperBolt()
 	m_iClip--;
 
 	int flags;
-#if CLIENT_WEAPONS
+
 	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
 
 	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usCrossbow2, 0.0f, g_vecZero, g_vecZero, 0, 0, m_iClip, 0, 0, 0 );
 
@@ -385,15 +158,6 @@ void CCrossbow::FireSniperBolt()
 	Vector vecDir = gpGlobals->v_forward;
 
 	UTIL_TraceLine( vecSrc, vecSrc + vecDir * 8192, dont_ignore_monsters, m_pPlayer->edict(), &tr );
-
-#if !CLIENT_DLL
-	if( tr.pHit->v.takedamage )
-	{
-		ClearMultiDamage();
-		CBaseEntity::Instance( tr.pHit )->TraceAttack( m_pPlayer->pev, 120, vecDir, &tr, DMG_BULLET | DMG_NEVERGIB ); 
-		ApplyMultiDamage( pev, m_pPlayer->pev );
-	}
-#endif
 }
 
 void CCrossbow::FireBolt()
@@ -411,11 +175,8 @@ void CCrossbow::FireBolt()
 	m_iClip--;
 
 	int flags;
-#if CLIENT_WEAPONS
+
 	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
 
 	PLAYBACK_EVENT_FULL( flags, m_pPlayer->edict(), m_usCrossbow, 0.0f, g_vecZero, g_vecZero, 0, 0, m_iClip, 0, 0, 0 );
 
@@ -426,28 +187,6 @@ void CCrossbow::FireBolt()
 	UTIL_MakeVectors( anglesAim );
 
 	anglesAim.x	= -anglesAim.x;
-
-#if !CLIENT_DLL
-	Vector vecSrc	= m_pPlayer->GetGunPosition() - gpGlobals->v_up * 2.0f;
-	Vector vecDir	= gpGlobals->v_forward;
-
-	CCrossbowBolt *pBolt = CCrossbowBolt::BoltCreate();
-	pBolt->pev->origin = vecSrc;
-	pBolt->pev->angles = anglesAim;
-	pBolt->pev->owner = m_pPlayer->edict();
-
-	if( m_pPlayer->pev->waterlevel == 3 )
-	{
-		pBolt->pev->velocity = vecDir * BOLT_WATER_VELOCITY;
-		pBolt->pev->speed = BOLT_WATER_VELOCITY;
-	}
-	else
-	{
-		pBolt->pev->velocity = vecDir * BOLT_AIR_VELOCITY;
-		pBolt->pev->speed = BOLT_AIR_VELOCITY;
-	}
-	pBolt->pev->avelocity.z = 10.0f;
-#endif
 
 	if( !m_iClip && m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] <= 0 )
 		// HEV suit - indicate out of ammo condition
@@ -559,4 +298,3 @@ class CCrossbowAmmo : public CBasePlayerAmmo
 };
 
 LINK_ENTITY_TO_CLASS( ammo_crossbow, CCrossbowAmmo )
-#endif

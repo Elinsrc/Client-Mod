@@ -12,8 +12,6 @@
 *   without written permission from Valve LLC.
 *
 ****/
-#if !OEM_BUILD && !HLDEMO_BUILD
-
 #include "extdll.h"
 #include "util.h"
 #include "cbase.h"
@@ -193,11 +191,7 @@ int CSatchel::AddDuplicate( CBasePlayerItem *pOriginal )
 {
 	CSatchel *pSatchel;
 
-#if CLIENT_DLL
 	if( bIsMultiplayer() )
-#else
-	if( g_pGameRules->IsMultiplayer() )
-#endif
 	{
 		pSatchel = (CSatchel *)pOriginal;
 
@@ -300,12 +294,6 @@ BOOL CSatchel::Deploy()
 	else
 		result = DefaultDeploy( "models/v_satchel.mdl", "models/p_satchel.mdl", SATCHEL_DRAW, "trip" );
 	
-#if WEAPONS_ANIMATION_TIMES_FIX
-	if ( result )
-	{
-		m_flTimeWeaponIdle = UTIL_WeaponTimeBase() + 2.0f;
-	}
-#endif
 	return result;
 }
 
@@ -382,20 +370,7 @@ void CSatchel::Throw( void )
 {
 	if( m_pPlayer->m_rgAmmo[m_iPrimaryAmmoType] )
 	{
-#if !CLIENT_DLL
-		Vector vecSrc = m_pPlayer->pev->origin;
-
-		Vector vecThrow = gpGlobals->v_forward * 274 + m_pPlayer->pev->velocity;
-
-		CBaseEntity *pSatchel = Create( "monster_satchel", vecSrc, Vector( 0, 0, 0 ), m_pPlayer->edict() );
-		pSatchel->pev->velocity = vecThrow;
-		pSatchel->pev->avelocity.y = 400;
-
-		m_pPlayer->pev->viewmodel = MAKE_STRING( "models/v_satchel_radio.mdl" );
-		m_pPlayer->pev->weaponmodel = MAKE_STRING( "models/p_satchel_radio.mdl" );
-#else
 		LoadVModel( "models/v_satchel_radio.mdl", m_pPlayer );
-#endif
 
 		SendWeaponAnim( SATCHEL_RADIO_DRAW );
 
@@ -436,12 +411,8 @@ void CSatchel::WeaponIdle( void )
 			return;
 		}
 
-#if !CLIENT_DLL
-		m_pPlayer->pev->viewmodel = MAKE_STRING( "models/v_satchel.mdl" );
-		m_pPlayer->pev->weaponmodel = MAKE_STRING( "models/p_satchel.mdl" );
-#else
 		LoadVModel( "models/v_satchel.mdl", m_pPlayer );
-#endif
+
 		SendWeaponAnim( SATCHEL_DRAW );
 
 		// use tripmine animations
@@ -483,4 +454,3 @@ void DeactivateSatchels( CBasePlayer *pOwner )
 		pFind = FIND_ENTITY_BY_CLASSNAME( pFind, "monster_satchel" );
 	}
 }
-#endif

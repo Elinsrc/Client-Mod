@@ -137,11 +137,9 @@ void CShotgun::PrimaryAttack()
 	m_iClip--;
 
 	int flags;
-#if CLIENT_WEAPONS
+
 	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
+
 	m_pPlayer->pev->effects = (int)( m_pPlayer->pev->effects ) | EF_MUZZLEFLASH;
 
 	// player "shoot" animation
@@ -152,11 +150,7 @@ void CShotgun::PrimaryAttack()
 
 	Vector vecDir;
 
-#if CLIENT_DLL
 	if( bIsMultiplayer() )
-#else
-	if( g_pGameRules->IsMultiplayer() )
-#endif
 	{
 		vecDir = m_pPlayer->FireBulletsPlayer( 4, vecSrc, vecAiming, VECTOR_CONE_DM_SHOTGUN, 2048, BULLET_PLAYER_BUCKSHOT, 0, 0, m_pPlayer->pev, m_pPlayer->random_seed );
 	}
@@ -207,11 +201,9 @@ void CShotgun::SecondaryAttack( void )
 	m_iClip -= 2;
 
 	int flags;
-#if CLIENT_WEAPONS
+
 	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
+
 	m_pPlayer->pev->effects = (int)( m_pPlayer->pev->effects ) | EF_MUZZLEFLASH;
 
 	// player "shoot" animation
@@ -222,11 +214,7 @@ void CShotgun::SecondaryAttack( void )
 
 	Vector vecDir;
 
-#if CLIENT_DLL
 	if( bIsMultiplayer() )
-#else
-	if( g_pGameRules->IsMultiplayer() )
-#endif
 	{
 		// tuned for deathmatch
 		vecDir = m_pPlayer->FireBulletsPlayer( 8, vecSrc, vecAiming, VECTOR_CONE_DM_DOUBLESHOTGUN, 2048, BULLET_PLAYER_BUCKSHOT, 0, 0, m_pPlayer->pev, m_pPlayer->random_seed );

@@ -132,11 +132,8 @@ void CGlock::GlockFire( float flSpread, float flCycleTime, BOOL fUseAutoAim )
 	m_pPlayer->pev->effects = (int)( m_pPlayer->pev->effects ) | EF_MUZZLEFLASH;
 
 	int flags;
-#if CLIENT_WEAPONS
+
 	flags = FEV_NOTHOST;
-#else
-	flags = 0;
-#endif
 	// player "shoot" animation
 	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
