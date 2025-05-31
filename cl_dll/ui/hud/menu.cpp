@@ -146,6 +146,11 @@ int CHudMenu::Draw( float flTime )
 		return 1;
 #endif
 
+	SCREENINFO screenInfo;
+
+	screenInfo.iSize = sizeof( SCREENINFO );
+	gEngfuncs.pfnGetScreenInfo( &screenInfo );
+
 	// draw the menu, along the left-hand side of the screen
 
 	// count the number of newlines
@@ -156,6 +161,8 @@ int CHudMenu::Draw( float flTime )
 		if ( g_szMenuString[i] == '\n' )
 			nlc++;
 	}
+
+	int nFontHeight = Q_max(12, screenInfo.iCharHeight);
 
 	// center it
 	int y = (ScreenHeight/2) - ((nlc/2)*12) - 40; // make sure it is above the say text
@@ -178,7 +185,7 @@ int CHudMenu::Draw( float flTime )
 		{
 			menu_ralign	 = FALSE;
 			menu_x		 = 20;
-			y			+= (12);
+			y			+= nFontHeight;
 
 			sptr++;
 		}
