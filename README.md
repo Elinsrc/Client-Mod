@@ -69,6 +69,7 @@
 | cl_debug                    | 0                   | 0   | 3   | Show client info                                                                                                  |
 | cl_debug_showfps            | 1                   | 0   | 1   | Show current fps and framerate                                                                                    |
 | hud_health_divider          | 1                   | 0   | 1   | Show separator bar after health                                                                                   |
+| hud_allow_hd                | 0                   | 0   | 1   | Draw HL25 style HUD and disable hud_deathnotice_bg                                                                |
 
 ## Building
 Clone the source code:

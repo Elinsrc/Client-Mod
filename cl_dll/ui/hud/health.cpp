@@ -324,7 +324,7 @@ int CHudHealth::Draw( float flTime )
 
 		x = CrossWidth + HealthWidth / 2;
 
-		x = gHUD.DrawHudNumber( x, y, DHN_3DIGITS | DHN_DRAWZERO, m_iHealth, r, g, b );
+		x = gHUD.DrawHudNumber( x, y + gHUD.m_iHudNumbersYOffset, DHN_3DIGITS | DHN_DRAWZERO, m_iHealth, r, g, b );
 
 		x += HealthWidth / 2;
 
@@ -333,7 +333,7 @@ int CHudHealth::Draw( float flTime )
 		UnpackRGB( r, g, b, gHUD.m_iDefaultHUDColor );
 
 		if (hud_health_divider->value)
-			FillRGBA( x, y, iWidth, iHeight, r, g, b, a );
+			FillRGBA( x, y + gHUD.m_iHudNumbersYOffset, iWidth, iHeight, r, g, b, a );
 	}
 
 	DrawDamage( flTime );

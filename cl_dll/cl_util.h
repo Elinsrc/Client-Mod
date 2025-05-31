@@ -148,6 +148,27 @@ inline void PlaySound( int iSound, float vol ) { gEngfuncs.pfnPlaySoundByIndex( 
 #define Q_min(a, b)  (((a) < (b)) ? (a) : (b))
 #define fabs(x)	   ((x) > 0 ? (x) : 0 - (x))
 
+inline int GetSpriteRes( int width, int height )
+{
+	int i;
+
+	if( width < 640 )
+		i = 320;
+	else if( width < 1280 || !gHUD.m_pAllowHD->value )
+		i = 640;
+	else
+	{
+		if( height <= 720 )
+			i = 640;
+		else if( width <= 2560 || height <= 1600 )
+			i = 1280;
+		else
+			i = 2560;
+	}
+
+	return Q_min( i, gHUD.m_iMaxRes );
+}
+
 // OpenAG
 template<typename T, size_t N>
 char (&ArraySizeHelper(T (&)[N]))[N];

@@ -29,6 +29,7 @@
 #include "wrect.h"
 #include "cl_dll.h"
 #include "ammo.h"
+#include "cvardef.h"
 
 #define DHN_DRAWZERO 1
 #define DHN_2DIGITS  2
@@ -588,11 +589,14 @@ public:
 	int		m_iFOV;
 	int		m_Teamplay;
 	int		m_iRes;
+	int		m_iMaxRes;
+	int		m_iHudNumbersYOffset;
 	cvar_t  *m_pCvarStealMouse;
 	cvar_t	*m_pCvarDraw;
 	cvar_t	*m_pCvarDrawDeathNoticesAlways;
 	cvar_t	*m_pCvarDrawMessagesAlways;
 	cvar_t	*m_pCvarAutostop;
+	cvar_t  *m_pAllowHD;
 
 	// OpenAg
 	cvar_t* m_pCvarColor;
@@ -656,7 +660,14 @@ public:
 	{
 		return m_iGameType;
 	}
-	
+
+	inline bool IsHL25( void )
+	{
+		// a1ba: only HL25 have higher resolution HUD spritesheetsAdd commentMore actions
+		// and only accept HUD style changes if user has allowed HD sprites
+		return m_iMaxRes > 640 && m_pAllowHD->value;
+	}
+
 	int GetSpriteIndex( const char *SpriteName );	// gets a sprite index, for use in the m_rghSprites[] array
 
 	CHudAmmo		m_Ammo;
