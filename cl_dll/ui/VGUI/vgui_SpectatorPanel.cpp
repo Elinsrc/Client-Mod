@@ -104,7 +104,7 @@ void SpectatorPanel::Initialize()
 	m_TopBorder = new CTransparentPanel( 64, 0, 0, ScreenWidth, YRES_HD( PANEL_HEIGHT ) );
 	m_TopBorder->setParent( this );
 
-	m_BottomBorder = new CTransparentPanel( 64, 0, ScreenHeight - YRES_HD 32 ), ScreenWidth, YRES_HD( PANEL_HEIGHT ) );
+	m_BottomBorder = new CTransparentPanel( 64, 0, ScreenHeight - YRES_HD( PANEL_HEIGHT ), ScreenWidth, YRES_HD( PANEL_HEIGHT ) );
 	m_BottomBorder->setParent( this );
 
 	setPaintBackgroundEnabled( false );
