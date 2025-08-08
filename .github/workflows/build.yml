@@ -210,15 +210,13 @@ jobs:
         - name: Create archives
           run: |
             cd artifacts/
-            zip -j Client-Mod-android.zip Client-Mod-*-android/Client-Mod-android.apk
-            find Client-Mod-*-linux -type f | zip -j Client-Mod-linux.zip -@
-            find Client-Mod-*-linux-vgui -type f | zip -j Client-Mod-linux-vgui.zip -@
-            find Client-Mod-*-linux-x64 -type f | zip -j Client-Mod-linux-x64.zip -@
-            find Client-Mod-*-windows -type f | zip -j Client-Mod-windows.zip -@
-            find Client-Mod-*-windows-vgui -type f | zip -j Client-Mod-windows-vgui.zip -@
-            find Client-Mod-*-windows-x64 -type f | zip -j Client-Mod-windows-x64.zip -@
-            ls -R .
-            cd ../
+            zip -j Client-Mod-android.zip Client-Mod-*-android/*
+            zip -j Client-Mod-inux.zip Client-Mod-*-linux/*/*
+            zip -j Client-Mod-inux-vgui.zip Client-Mod-*-linux-vgui/*/*
+            zip -j Client-Mod-linux-x64.zip Client-Mod-*-linux-x64/*/*
+            zip -j Client-Mod-windows.zip Client-Mod-*-windows/*/*
+            zip -j Client-Mod-windows-vgui.zip Client-Mod-*-windows-vgui/*/*
+            zip -j Client-Mod-windows-x64.zip Client-Mod-*-windows-x64/*/*
 
         - name: Upload new release
           uses: svenstaro/upload-release-action@v2
