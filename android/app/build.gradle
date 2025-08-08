@@ -10,7 +10,7 @@ android {
     compileSdk 36
 
     defaultConfig {
-        applicationId 'su.xash.clientmod''
+        applicationId 'su.xash.clientmod'
         versionName '1.5'
         versionCode getBuildNum()
         minSdkVersion 21
