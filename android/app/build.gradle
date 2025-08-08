@@ -5,33 +5,40 @@ import java.time.temporal.ChronoUnit
 apply plugin: 'com.android.application'
 
 android {
-    ndkVersion '26.1.10909125'
     namespace 'su.xash.clientmod'
-
-    packagingOptions {
-        jniLibs {
-            useLegacyPackaging true
-        }
-    }
+    ndkVersion "28.2.13676358"
+    compileSdk 36
 
     defaultConfig {
-        applicationId 'su.xash'
-        applicationIdSuffix 'clientmod'
+        applicationId 'su.xash.clientmod''
         versionName '1.5'
-        minSdkVersion 19
-        targetSdk 34
-        compileSdk 34
+        versionCode getBuildNum()
+        minSdkVersion 21
+        targetSdk 36
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
 
     externalNativeBuild {
         cmake {
             version '3.22.1'
+            path file('../../CMakeLists.txt')
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+    lint {
+        abortOnError false
+    }
+
+    packaging {
+        jniLibs {
+            keepDebugSymbols.add("**/*.so")
+            useLegacyPackaging true
+        }
     }
 
     buildTypes {
@@ -41,24 +48,27 @@ android {
             debuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+
         release {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
-    }
 
-    externalNativeBuild {
-        cmake {
-            path file('../../CMakeLists.txt')
+        register("ci") {
+            initWith(getByName("release"))
+
+            externalNativeBuild.cmake {
+                arguments "-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+            }
         }
     }
+}
 
-    lint {
-        abortOnError false
-    }
-
-    androidResources {
-        noCompress += ''
-    }
+static def getBuildNum() {
+    LocalDateTime now = LocalDateTime.now()
+    LocalDateTime releaseDate = LocalDateTime.of(2015, Month.OCTOBER, 29, 0, 0, 0)
+    int qBuildNum = releaseDate.until(now, ChronoUnit.DAYS)
+    int minuteOfDay = now.getHour() * 60 + now.getMinute()
+    return qBuildNum * 10000 + minuteOfDay
 }
