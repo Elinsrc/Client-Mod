@@ -30,12 +30,20 @@ set(CLIENT_INSTALL_DIR "cl_dlls" CACHE STRING "Where to put client dlls")
 
 if(NOT MSVC)
 	add_compile_options(-fno-exceptions) # GCC/Clang flag
-	add_compile_options(-Wno-write-strings) # GCC/Clang flag
+	add_compile_options(-fno-rtti) # GCC/Clang flag
 	add_compile_options(-fvisibility=hidden) # GCC/Clang flag
 	add_definitions(-D_LINUX -DLINUX) # It seems enough for all non-Win32 systems
 	add_definitions(-Dstricmp=strcasecmp -Dstrnicmp=strncasecmp)
 	if(NOT MINGW)
 		add_definitions(-D_snprintf=snprintf -D_vsnprintf=vsnprintf)
+	endif()
+	if(CMAKE_BUILD_TYPE MATCHES "Release"
+		OR (CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo"
+		AND CMAKE_SYSTEM_NAME STREQUAL "Android"))
+		add_compile_options(-fno-unwind-tables -fno-asynchronous-unwind-tables) # GCC/Clang flag
+		add_compile_options(-fomit-frame-pointer) # GCC/Clang flag
+		add_compile_options(-ftree-vectorize) # GCC/Clang flag
+		add_compile_options(-funsafe-math-optimizations) # GCC/Clang flag
 	endif()
 else()
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE)
@@ -228,22 +236,30 @@ if(WIN32)
 	endif()
 endif()
 
+if(USE_DISCORD_RPC)
+	target_link_libraries({CLDLL_LIBRARY} discord-rpc)
+endif()
+
 set_target_properties (${CLDLL_LIBRARY} PROPERTIES
 	POSITION_INDEPENDENT_CODE 1)
 
-if(USE_DISCORD_RPC)
-	target_link_libraries(client discord-rpc)
+set_target_postfix(${CLDLL_LIBRARY})
+
+set_property(TARGET ${CLDLL_LIBRARY} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+if(HAVE_LTO)
+	set_property(TARGET ${CLDLL_LIBRARY} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
-if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Android")
-	set(CLDLL_NAME "client")
-	set_target_properties(${CLDLL_LIBRARY} PROPERTIES
-		OUTPUT_NAME ${CLDLL_NAME}
-		PREFIX "")
-endif()
-
-install( TARGETS ${CLDLL_LIBRARY}
-	DESTINATION "${GAMEDIR}/${CLIENT_INSTALL_DIR}/"
+install(TARGETS ${CLDLL_LIBRARY}
+	RUNTIME DESTINATION "${GAMEDIR}/${CLIENT_INSTALL_DIR}/"
+	LIBRARY DESTINATION "${GAMEDIR}/${CLIENT_INSTALL_DIR}/"
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
 		GROUP_READ GROUP_EXECUTE
-			WORLD_READ WORLD_EXECUTE )
+		WORLD_READ WORLD_EXECUTE)
+
+if(CMAKE_BUILD_TYPE MATCHES "Release" AND NOT WIN32)
+	add_custom_command(TARGET ${CLDLL_LIBRARY}
+			POST_BUILD DEPENDS ${CLDLL_LIBRARY}
+			COMMAND ${CMAKE_STRIP} -s $<TARGET_FILE:${CLDLL_LIBRARY}>)
+endif()

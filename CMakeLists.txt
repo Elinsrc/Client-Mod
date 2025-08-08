@@ -35,8 +35,10 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 include(CheckIncludeFile)
+include(CheckFunctionExists)
 include(CheckCSourceCompiles)
 include(VSForceXPToolchain) # Force XP toolchain for Visual Studio
+include(CheckIPOSupported)
 
 project (CLIENT-MOD)
 
@@ -48,15 +50,38 @@ option(USE_NOVGUI_MOTD "Prefer non-VGUI MOTD when USE_VGUI is enabled" OFF)
 option(USE_NOVGUI_SCOREBOARD "Prefer non-VGUI Scoreboard when USE_VGUI is enabled" OFF)
 option(USE_DISCORD_RPC "Enable Discord_rpc" OFF)
 
-if (CMAKE_SIZEOF_VOID_P EQUAL 4 OR
+if(CMAKE_SIZEOF_VOID_P EQUAL 4 OR
 	((WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 	AND (CMAKE_SYSTEM_PROCESSOR STREQUAL "x64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "X64"
 	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"
-	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "amd64")))
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "X86_64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "amd64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "EM64T")))
 	option(64BIT "Disable auto -m32 appending to compiler flags" OFF)
-	option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" ON)
 else()
 	option(64BIT "Disable auto -m32 appending to compiler flags" ON)
+endif()
+
+# It seems CMAKE_SYSTEM_PROCESSOR parameter completely useless for APPLE platform,
+# so may need to set options here manually.
+if((WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+	AND (((CMAKE_SYSTEM_PROCESSOR STREQUAL "x64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "X64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "X86_64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "amd64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "AMD64"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "EM64T") AND NOT 64BIT)
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "x86"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "X86"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "i386"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "i486"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "i586"
+	OR CMAKE_SYSTEM_PROCESSOR STREQUAL "i686"))
+	option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" ON)
+else()
 	option(GOLDSOURCE_SUPPORT "Build goldsource compatible client library" OFF)
 endif()
 
@@ -64,9 +89,12 @@ endif()
 # MAIN BUILD CODE \
 ###################\
 
+CHECK_FUNCTION_EXISTS(strlcpy HAVE_STRLCPY)
+CHECK_FUNCTION_EXISTS(strlcat HAVE_STRLCAT)
+
 if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND NOT 64BIT)
 	if(MSVC)
-		error("UNDONE: set 32 build flags")
+		message(FATAL_ERROR "Add \"-D64BIT=ON\" to build 64-bit version of SDK or add \"-A Win32\" if you want to build a 32-bit version")
 	else()
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -m32")
@@ -77,6 +105,17 @@ endif()
 
 if(64BIT AND CMAKE_SIZEOF_VOID_P EQUAL 4)
 	message(FATAL_ERROR "You enabled XASH_64BIT, but compiler can't create 64 bit code!")
+endif()
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Android")
+	find_program(TERMUX_INFO termux-info)
+	if(NOT TERMUX_INFO)
+		# no-op
+	else()
+		# set through flags because otherwise macro won't be seen in tests
+		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__TERMUX__=1")
+		set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -D__TERMUX__=1")
+	endif()
 endif()
 
 # Xash3D FWGS Library Naming Scheme compliance
@@ -117,6 +156,15 @@ endif()
 
 if(VITA)
 	add_compile_options(-fno-use-cxa-atexit)
+endif()
+
+if(LTO)
+	check_ipo_supported(RESULT HAVE_LTO OUTPUT LTO_ERROR)
+	if(HAVE_LTO)
+		message(STATUS "IPO / LTO enabled")
+	else()
+		message(STATUS "IPO / LTO not supported: ${LTO_ERROR}")
+	endif()
 endif()
 
 check_include_file("tgmath.h" HAVE_TGMATH_H)
