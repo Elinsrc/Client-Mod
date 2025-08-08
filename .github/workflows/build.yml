@@ -207,24 +207,18 @@ jobs:
               echo "Listing all artifacts in artifacts/:"
               ls -R artifacts/
 
-        - name: Install 7zip
-          run: |
-              sudo apt-get update
-              sudo apt-get install -y p7zip-full
-
         - name: Create archives
           run: |
-              mkdir release-files
-              [ -d artifacts/*windows* ] && 7z a release-files/Client-Mod-windows.7z artifacts/*windows*/dist/* || true
-              [ -d artifacts/*windows-vgui* ] && 7z a release-files/Client-Mod-windows-vgui.7z artifacts/*windows-vgui*/dist-vgui/* || true
-              [ -d artifacts/*windows-x64* ] && 7z a release-files/Client-Mod-windows-x64.7z artifacts/*windows-x64*/dist64/* || true
-              [ -d artifacts/*linux* ] && tar czf release-files/Client-Mod-linux.tar.gz -C artifacts/ $(ls artifacts | grep linux) || true
-              [ -d artifacts/*linux-vgui* ] && tar czf release-files/Client-Mod-linux-vgui.tar.gz -C artifacts/ $(ls artifacts | grep linux-vgui) || true
-              [ -d artifacts/*linux-x64* ] && tar czf release-files/Client-Mod-linux-x64.tar.gz -C artifacts/ $(ls artifacts | grep linux-x64) || true
-              [ -f artifacts/*android*/*.apk ] && cp artifacts/*android*/*.apk release-files/ || true
-
-        - name: List release files
-          run: ls -lh release-files
+            cd artifacts/
+            zip -j Client-Mod-android.zip Client-Mod-*-android/Client-Mod-android.apk
+            find Client-Mod-*-linux -type f | zip -j Client-Mod-linux.zip -@
+            find Client-Mod-*-linux-vgui -type f | zip -j Client-Mod-linux-vgui.zip -@
+            find Client-Mod-*-linux-x64 -type f | zip -j Client-Mod-linux-x64.zip -@
+            find Client-Mod-*-windows -type f | zip -j Client-Mod-windows.zip -@
+            find Client-Mod-*-windows-vgui -type f | zip -j Client-Mod-windows-vgui.zip -@
+            find Client-Mod-*-windows-x64 -type f | zip -j Client-Mod-windows-x64.zip -@
+            ls -R .
+            cd ../
 
         - name: Upload new release
           uses: svenstaro/upload-release-action@v2
@@ -232,7 +226,7 @@ jobs:
               repo_name: Elinsrc/Client-Mod
               repo_token: ${{ secrets.GITHUB_TOKEN }}
               file_glob: true
-              file: release-files/*
+              file: artifacts/*.zip
               tag: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
               overwrite: true
               prerelease: true
