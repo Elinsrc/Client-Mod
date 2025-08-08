@@ -237,7 +237,7 @@ if(WIN32)
 endif()
 
 if(USE_DISCORD_RPC)
-	target_link_libraries({CLDLL_LIBRARY} discord-rpc)
+	target_link_libraries(${CLDLL_LIBRARY} discord-rpc)
 endif()
 
 set_target_properties (${CLDLL_LIBRARY} PROPERTIES
