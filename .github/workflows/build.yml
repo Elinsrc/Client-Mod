@@ -5,32 +5,41 @@ on: [push, pull_request]
 jobs:
   android:
     name: Android
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           submodules: recursive
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'temurin'
           cache: gradle
+
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+
       - name: Build Android
         run: ./gradlew assembleDebug
         working-directory: android
+
+      - name: Extract branch name
+        shell: bash
+        id: extract_branch
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | tr '/' '_')" >> $GITHUB_OUTPUT
+
+      - name: Rename APK
+        run: mv android/app/build/outputs/apk/debug/app-debug.apk android/app/build/outputs/apk/debug/Client-Mod-android.apk
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Client-Mod-android
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: Client-Mod-${{ steps.extract_branch.outputs.branch }}-android
+          path: android/app/build/outputs/apk/debug/Client-Mod-android.apk
 
   build:
     runs-on: ${{ matrix.os }}
@@ -179,33 +188,53 @@ jobs:
     needs: [android, build]
     if: ${{ github.event_name == 'push' }}
     steps:
-      - name: Fetch artifacts
+        - name: Fetch artifacts
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
+            path: artifacts
 
-      - name: Remove old release
+        - name: Remove old release
         uses: ClementTsang/delete-tag-and-release@v0.3.1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
-          delete_release: true
-          repo: ${{ env.GITHUB_REPOSITORY }}
+            tag_name: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
+            delete_release: true
+            repo: ${{ env.GITHUB_REPOSITORY }}
 
-      - name: List downloaded artifacts
+        - name: List downloaded artifacts
         run: |
-          echo "Listing all artifacts in artifacts/:"
-          ls -R artifacts/
+            echo "Listing all artifacts in artifacts/:"
+            ls -R artifacts/
 
-      - name: Upload new release
+        - name: Install 7zip
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y p7zip-full
+
+        - name: Create archives
+        run: |
+            mkdir release-files
+            [ -d artifacts/*windows* ] && 7z a release-files/Client-Mod-windows.7z artifacts/*windows*/dist/* || true
+            [ -d artifacts/*windows-vgui* ] && 7z a release-files/Client-Mod-windows-vgui.7z artifacts/*windows-vgui*/dist-vgui/* || true
+            [ -d artifacts/*windows-x64* ] && 7z a release-files/Client-Mod-windows-x64.7z artifacts/*windows-x64*/dist64/* || true
+            [ -d artifacts/*linux* ] && tar czf release-files/Client-Mod-linux.tar.gz -C artifacts/ $(ls artifacts | grep linux) || true
+            [ -d artifacts/*linux-vgui* ] && tar czf release-files/Client-Mod-linux-vgui.tar.gz -C artifacts/ $(ls artifacts | grep linux-vgui) || true
+            [ -d artifacts/*linux-x64* ] && tar czf release-files/Client-Mod-linux-x64.tar.gz -C artifacts/ $(ls artifacts | grep linux-x64) || true
+            [ -f artifacts/*android*/*.apk ] && cp artifacts/*android*/*.apk release-files/ || true
+
+        - name: List release files
+        run: ls -lh release-files
+
+        - name: Upload new release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_name: Elinsrc/Client-Mod
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file_glob: true
-          file: artifacts/**/*
-          tag: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
-          overwrite: true
-          prerelease: true
-          release_name: ${{ github.ref_name == 'master' && 'Client-Mod continuous Build' || format('Client-Mod continuous {0} Build', github.ref_name) }}
+            repo_name: Elinsrc/Client-Mod
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            file_glob: true
+            file: release-files/*
+            tag: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
+            overwrite: true
+            prerelease: true
+            release_name: ${{ github.ref_name == 'master' && 'Client-Mod continuous Build' || format('Client-Mod continuous {0} Build', github.ref_name) }}
+
