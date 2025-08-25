@@ -218,12 +218,12 @@ jobs:
             cd artifacts/
             mkdir files
             mv Client-Mod-*-android/* files/
-            zip -r artifacts/files/Client-Mod-linux.zip -C Client-Mod-*-linux .
-            zip -r artifacts/files/Client-Mod-linux-vgui.zip -C Client-Mod-*-linux-vgui .
-            zip -r artifacts/files/Client-Mod-linux-x64.zip -C Client-Mod-*-linux-x64 .
-            zip -r artifacts/files/Client-Mod-windows.zip -C Client-Mod-*-windows .
-            zip -r artifacts/files/Client-Mod-windows-vgui.zip -C Client-Mod-*-windows-vgui .
-            zip -r artifacts/files/Client-Mod-windows-x64.zip -C Client-Mod-*-windows-x64 .
+            zip -j files/Client-Mod-linux.zip Client-Mod-*-linux/*/*
+            zip -j files/Client-Mod-linux-vgui.zip Client-Mod-*-linux-vgui/*/*
+            zip -j files/Client-Mod-linux-x64.zip Client-Mod-*-linux-x64/*/*
+            zip -j files/Client-Mod-windows.zip Client-Mod-*-windows/*/*
+            zip -j files/Client-Mod-windows-vgui.zip Client-Mod-*-windows-vgui/*/*
+            zip -j files/Client-Mod-windows-x64.zip Client-Mod-*-windows-x64/*/*
             ls -R .
             cd ../
             
