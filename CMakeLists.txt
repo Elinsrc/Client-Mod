@@ -49,6 +49,7 @@ option(USE_VGUI "Enable VGUI1." OFF)
 option(USE_NOVGUI_MOTD "Prefer non-VGUI MOTD when USE_VGUI is enabled" OFF)
 option(USE_NOVGUI_SCOREBOARD "Prefer non-VGUI Scoreboard when USE_VGUI is enabled" OFF)
 option(USE_DISCORD_RPC "Enable Discord_rpc" OFF)
+option(BUILD_SERVER "Build server dll" ON)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4 OR
 	((WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
@@ -187,4 +188,10 @@ if(USE_DISCORD_RPC)
 	set(BUILD_EXAMPLES OFF CACHE BOOL "build discord-rpc examples" FORCE)
 	set(CLANG_FORMAT_SUFFIX "-dummy")
 	add_subdirectory(external/discord-rpc)
+endif()
+
+if(BUILD_SERVER)
+	message(STATUS "Building server enabled")
+	set(BUILD_CLIENT OFF CACHE BOOL "Disable building client from HLSDK")
+	add_subdirectory(external/hlsdk-portable)
 endif()
