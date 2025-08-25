@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           submodules: recursive
@@ -60,7 +60,7 @@ jobs:
       CXX: ${{ matrix.cxx }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
 
@@ -188,6 +188,12 @@ jobs:
     needs: [android, build]
     if: ${{ github.event_name == 'push' }}
     steps:
+        - name: Checkout
+          uses: actions/checkout@v5
+          with:
+              fetch-depth: 0
+              submodules: recursive
+              
         - name: Fetch artifacts
           uses: actions/download-artifact@v4
           with:
@@ -210,21 +216,24 @@ jobs:
         - name: Create archives
           run: |
             cd artifacts/
-            zip -j Client-Mod-android.zip Client-Mod-*-android/*
-            zip -j Client-Mod-inux.zip Client-Mod-*-linux/*/*
-            zip -j Client-Mod-inux-vgui.zip Client-Mod-*-linux-vgui/*/*
-            zip -j Client-Mod-linux-x64.zip Client-Mod-*-linux-x64/*/*
-            zip -j Client-Mod-windows.zip Client-Mod-*-windows/*/*
-            zip -j Client-Mod-windows-vgui.zip Client-Mod-*-windows-vgui/*/*
-            zip -j Client-Mod-windows-x64.zip Client-Mod-*-windows-x64/*/*
-
+            mkdir files
+            mv Client-Mod-*-android/* files/
+            zip -r files/Client-Mod-inux.zip Client-Mod-*-linux/*
+            zip -r files/Client-Mod-inux-vgui.zip Client-Mod-*-linux-vgui/*
+            zip -r files/Client-Mod-linux-x64.zip Client-Mod-*-linux-x64/*
+            zip -r files/Client-Mod-windows.zip Client-Mod-*-windows/*
+            zip -r files/Client-Mod-windows-vgui.zip Client-Mod-*-windows-vgui/*
+            zip -r files/Client-Mod-windows-x64.zip Client-Mod-*-windows-x64/*
+            ls -R .
+            cd ../
+            
         - name: Upload new release
           uses: svenstaro/upload-release-action@v2
           with:
               repo_name: Elinsrc/Client-Mod
               repo_token: ${{ secrets.GITHUB_TOKEN }}
               file_glob: true
-              file: artifacts/*.zip
+              file: artifacts/files/*
               tag: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
               overwrite: true
               prerelease: true
