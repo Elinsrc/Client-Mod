@@ -97,6 +97,7 @@ set (CLDLL_SOURCES
 	rendering/GameStudioModelRenderer.cpp
 	rendering/StudioModelRenderer.cpp
 	rendering/tri.cpp
+	utils/custom_utils.cpp
 	ui/voice_banmgr.cpp
 	ui/hud/ammo.cpp
 	ui/hud/ammo_secondary.cpp
@@ -191,7 +192,7 @@ if (USE_DISCORD_RPC)
 		discord-rpc/discord_integration.cpp)
 endif()
 
-include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
+include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ utils/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
 
 if (USE_DISCORD_RPC)
 	include_directories(${CMAKE_SOURCE_DIR}/external/discord-rpc/include discord-rpc)

@@ -1,32 +1,21 @@
 #include <cmath>
-#include <string>
 #include <cstring>
 #include <cstdio>
-#include <algorithm>
 
 #include "hud.h"
 #include "cl_util.h"
 #include "cl_entity.h"
-#include "parsemsg.h"
 #include "hud_debug.h"
 #include "pm_defs.h"
 #include "event_api.h"
-#include "triangleapi.h"
 
-#ifdef _WIN32
-#define HSPRITE DeletedWinapi_HSPRITE // prevent windows.h from defining it
-#include <windows.h>
-#undef HSPRITE
-typedef int HSPRITE;
-#else
-#include <time.h>
-#endif
 
 // https://github.com/SNMetamorph/goldsrc-monitor
 extern "C"
 {
     extern playermove_t *pmove;
 }
+
 
 int CHudDebug::Init()
 {
@@ -39,120 +28,12 @@ int CHudDebug::Init()
     return 0;
 }
 
+
 int CHudDebug::VidInit()
 {
     return 1;
 }
 
-static float GetCurrentSysTime()
-{
-#ifdef _WIN32
-    static LARGE_INTEGER perfFreq;
-    static LARGE_INTEGER clockStart;
-    LARGE_INTEGER currentTime;
-    LONGLONG timeDiff;
-
-    if (!perfFreq.QuadPart)
-    {
-        QueryPerformanceFrequency(&perfFreq);
-        QueryPerformanceCounter(&clockStart);
-    }
-
-    QueryPerformanceCounter(&currentTime);
-    timeDiff = currentTime.QuadPart - clockStart.QuadPart;
-    return static_cast<float>(timeDiff) / static_cast<float>(perfFreq.QuadPart);
-#else
-    struct timespec now;
-    clock_gettime(CLOCK_MONOTONIC, &now);
-    return now.tv_sec + now.tv_nsec / 1000000000.0;
-#endif
-}
-
-float CHudDebug::GetFrametime()
-{
-    float calc;
-    double newtime = GetCurrentSysTime();
-    static double nexttime = 0, lasttime = 0;
-    static double framerate = 0;
-    static int framecount = 0;
-
-    if( newtime >= nexttime )
-    {
-        framerate = framecount / (newtime - lasttime);
-        lasttime = newtime;
-        nexttime = Q_max( nexttime + 1.0, lasttime - 1.0 );
-        framecount = 0;
-    }
-
-    calc = framerate;
-    framecount++;
-
-    return calc;
-}
-
-const char *CHudDebug::GetMovetypeName(int moveType)
-{
-    switch (moveType)
-    {
-        case MOVETYPE_BOUNCE:           return "Bounce";
-        case MOVETYPE_BOUNCEMISSILE:    return "Bounce-missile";
-        case MOVETYPE_FLY:              return "Fly";
-        case MOVETYPE_FLYMISSILE:       return "Fly-missile";
-        case MOVETYPE_FOLLOW:           return "Follow";
-        case MOVETYPE_NOCLIP:           return "Noclip";
-        case MOVETYPE_NONE:             return "None";
-        case MOVETYPE_PUSH:             return "Push";
-        case MOVETYPE_PUSHSTEP:         return "Push-step";
-        case MOVETYPE_STEP:             return "Step";
-        case MOVETYPE_TOSS:             return "Toss";
-        case MOVETYPE_WALK:             return "Walk";
-        default:                        return "Unknown";
-    }
-}
-
-const char *CHudDebug::GetRenderModeName(int renderMode)
-{
-    switch (renderMode)
-    {
-        case kRenderNormal:         return "Normal";
-        case kRenderTransColor:     return "Trans. color";
-        case kRenderTransTexture:   return "Trans. texture";
-        case kRenderGlow:           return "Glow";
-        case kRenderTransAlpha:     return "Trans. alpha";
-        case kRenderTransAdd:       return "Trans. additive";
-        default:                    return "Unknown";
-    }
-}
-
-const char *CHudDebug::GetRenderFxName(int renderFx)
-{
-    switch (renderFx)
-    {
-        case kRenderFxNone:             return "None";
-        case kRenderFxPulseSlow:        return "Pulse (slow)";
-        case kRenderFxPulseFast:        return "Pulse (fast)";
-        case kRenderFxPulseSlowWide:    return "Pulse (slow wide)";
-        case kRenderFxPulseFastWide:    return "Pulse (fast wide)";
-        case kRenderFxFadeSlow:         return "Fade (slow)";
-        case kRenderFxFadeFast:         return "Fade (fast)";
-        case kRenderFxSolidSlow:        return "Solid (slow)";
-        case kRenderFxSolidFast:        return "Solid (fast)";
-        case kRenderFxStrobeSlow:       return "Strobe (slow)";
-        case kRenderFxStrobeFast:       return "Strobe (fast)";
-        case kRenderFxStrobeFaster:     return "Strobe (faster)";
-        case kRenderFxFlickerSlow:      return "Flicker (slow)";
-        case kRenderFxFlickerFast:      return "Flicker (fast)";
-        case kRenderFxNoDissipation:    return "No dissipation";
-        case kRenderFxDistort:          return "Distort";
-        case kRenderFxHologram:         return "Hologram";
-        case kRenderFxDeadPlayer:       return "Dead player";
-        case kRenderFxExplode:          return "Explode";
-        case kRenderFxGlowShell:        return "Glow shell";
-        case kRenderFxClampMinScale:    return "Clamp min. scale";
-        case kRenderFxLightMultiplier:  return "Light multiplier";
-        default:                        return "Unknown";
-    }
-}
 
 static const unsigned char colors[4][3] = {
     {255, 0, 0},
@@ -160,6 +41,7 @@ static const unsigned char colors[4][3] = {
     {0, 255, 0},
     {255, 255, 255}
 };
+
 
 const unsigned char* getColorForFPS(int fps)
 {
@@ -171,33 +53,6 @@ const unsigned char* getColorForFPS(int fps)
         return colors[0];
 }
 
-void CHudDebug::formatTime(float totalSeconds, char* output)
-{
-    int seconds = static_cast<int>(totalSeconds);
-    int days = seconds / (24 * 3600);
-    seconds %= (24 * 3600);
-    int hours = seconds / 3600;
-    seconds %= 3600;
-    int minutes = seconds / 60;
-    seconds %= 60;
-
-    char buffer[256] = "";
-    if (days > 0)
-    {
-        sprintf(buffer + strlen(buffer), "%dd ", days);
-    }
-    if (hours > 0)
-    {
-        sprintf(buffer + strlen(buffer), "%dh ", hours);
-    }
-    if (minutes > 0)
-    {
-        sprintf(buffer + strlen(buffer), "%dm ", minutes);
-    }
-    sprintf(buffer + strlen(buffer), "%ds", seconds);
-
-    sprintf(output, "Map Time: %s", buffer);
-}
 
 extern struct RGBColor {
     int r;
@@ -205,56 +60,6 @@ extern struct RGBColor {
     int b;
 } top, bottom;
 
-void CHudDebug::Box(int x, int y, int w, int h, int linewidth, int r, int g, int b, int a)
-{
-    FillRGBABlend(x, y, w, linewidth, r, g, b, a);
-    FillRGBABlend(x + w - linewidth, y + linewidth, linewidth, h - linewidth, r, g, b, a);
-    FillRGBABlend(x, y + linewidth, linewidth, h - linewidth, r, g, b, a);
-    FillRGBABlend(x + linewidth, y + h - linewidth, w - linewidth * 2, linewidth, r, g, b, a);
-}
-
-void CHudDebug::BoxOutline(float x, float y, float w, float h, float linewidth, int r, int g, int b, int a)
-{
-    Box(x, y, w, h, linewidth, r, g, b, a);
-    Box(x - 1, y - 1, w + 2, h + 2, 1, 0, 0, 0, a);
-    Box(x + linewidth, y + linewidth, w - linewidth * 2, h - linewidth * 2, 1, 0, 0, 0, a);
-}
-
-void CHudDebug::BoxCorner(int x, int y, int w, int h, int linewidth, int r, int g, int b, int a)
-{
-    FillRGBABlend(x, y, w / 4, linewidth, r, g, b, a);
-    FillRGBABlend(x + w - w / 4, y, w / 4, linewidth, r, g, b, a);
-    FillRGBABlend(x, y + linewidth, linewidth, h / 4 - linewidth, r, g, b, a);
-    FillRGBABlend(x, y + h - h / 4, linewidth, h / 4, r, g, b, a);
-    FillRGBABlend(x + w - linewidth, y + linewidth, linewidth, h / 4 - linewidth, r, g, b, a);
-    FillRGBABlend(x + w - linewidth, y + h - h / 4, linewidth, h / 4, r, g, b, a);
-    FillRGBABlend(x + linewidth, y + h - linewidth, w / 4 - linewidth, linewidth, r, g, b, a);
-    FillRGBABlend(x + w - w / 4, y + h - linewidth, w / 4 - linewidth, linewidth, r, g, b, a);
-}
-
-void CHudDebug::BoxCornerOutline(int x, int y, int w, int h, int linewidth, int r, int g, int b, int a)
-{
-    BoxCorner(x - 1, y + 1, w, h, linewidth, 0, 0, 0, a);
-    BoxCorner(x - 1, y - 1, w, h, linewidth, 0, 0, 0, a);
-    BoxCorner(x + 1, y + 1, w, h, linewidth, 0, 0, 0, a);
-    BoxCorner(x + 1, y - 1, w, h, linewidth, 0, 0, 0, a);
-
-    BoxCorner(x, y, w, h, linewidth, r, g, b, a);
-}
-
-bool CHudDebug::CalcScreen(float *Origin, float *VecScreen) {
-    int iResult = gEngfuncs.pTriAPI->WorldToScreen(Origin, VecScreen);
-
-    if (VecScreen[0] < 1 && VecScreen[1] < 1 && VecScreen[0] > -1 && VecScreen[1] > -1 && !iResult)
-    {
-        VecScreen[0] = VecScreen[0] * (ScreenWidth / 2) + (ScreenWidth / 2);
-        VecScreen[1] = -VecScreen[1] * (ScreenHeight / 2) + (ScreenHeight / 2);
-
-        return true;
-    }
-
-    return false;
-}
 
 void CHudDebug::ClientModelName(cl_entity_s *entity, int x, int y, int r, int g, int b)
 {
@@ -296,6 +101,7 @@ void CHudDebug::ClientModelName(cl_entity_s *entity, int x, int y, int r, int g,
     }
 }
 
+
 void CHudDebug::CurrentClientInfo(int r, int g, int b)
 {
     char str[256];
@@ -313,7 +119,7 @@ void CHudDebug::CurrentClientInfo(int r, int g, int b)
     sprintf(str, "Angles: (%.2f, %.2f, %.2f)", localPlayer->angles.x, localPlayer->angles.y, localPlayer->angles.z);
     gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 15, str, r, g, b);
 
-    sprintf(str, "Movetype: %s", GetMovetypeName(localPlayer->curstate.movetype));
+    sprintf(str, "Movetype: %s", m_CustomUtils.GetMovetypeName(localPlayer->curstate.movetype));
     gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 16, str, r, g, b);
 
     vec3_t viewOffset;
@@ -354,10 +160,10 @@ void CHudDebug::CurrentClientInfo(int r, int g, int b)
     sprintf(str, "Skin Number: %d", localPlayer->curstate.skin);
     gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 29, str, r, g, b);
 
-    sprintf(str, "RenderMode: %s", GetRenderModeName(localPlayer->curstate.rendermode));
+    sprintf(str, "RenderMode: %s", m_CustomUtils.GetRenderModeName(localPlayer->curstate.rendermode));
     gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 31, str, r, g, b);
 
-    sprintf(str, "RenderFx: %s", GetRenderFxName(localPlayer->curstate.renderfx));
+    sprintf(str, "RenderFx: %s", m_CustomUtils.GetRenderFxName(localPlayer->curstate.renderfx));
     gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 32, str, r, g, b);
 
     sprintf(str, "Render Amount: %d", localPlayer->curstate.renderamt);
@@ -367,61 +173,6 @@ void CHudDebug::CurrentClientInfo(int r, int g, int b)
     gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 34, str, r, g, b);
 }
 
-bool CHudDebug::CheckForClient(cl_entity_s *pEnt) {
-    return pEnt && pEnt->model && pEnt->model->name && pEnt->player;
-}
-
-vec3_t CHudDebug::GetEntityVelocityApprox(cl_entity_t *entity, int approxStep)
-{
-    if (entity)
-    {
-        const int currIndex = entity->current_position;
-        position_history_t &currState = entity->ph[currIndex & HISTORY_MASK];
-        position_history_t &prevState = entity->ph[(currIndex - approxStep) & HISTORY_MASK];
-        float timeDelta = currState.animtime - prevState.animtime;
-
-        if (fabs(timeDelta) > 0.0f) {
-            vec3_t originDelta = currState.origin - prevState.origin;
-            return originDelta / timeDelta;
-        }
-    }
-    return vec3_t(0, 0, 0);
-}
-
-void CHudDebug::TraceLine(vec3_t &origin, vec3_t &dir, float lineLen, pmtrace_t *traceData)
-{
-    vec3_t lineStart;
-    vec3_t lineEnd;
-    cl_entity_t *localPlayer;
-
-    lineStart   = origin;
-    lineEnd     = lineStart + (dir * lineLen);
-    localPlayer = gEngfuncs.GetLocalPlayer();
-
-    gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction(false, true);
-    gEngfuncs.pEventAPI->EV_PushPMStates();
-    gEngfuncs.pEventAPI->EV_SetSolidPlayers(localPlayer->index - 1);
-    gEngfuncs.pEventAPI->EV_SetTraceHull(2);
-    gEngfuncs.pEventAPI->EV_PlayerTrace(
-        lineStart, lineEnd, PM_NORMAL,
-        -1, traceData
-    );
-    gEngfuncs.pEventAPI->EV_PopPMStates();
-}
-
-int CHudDebug::TraceEntity(vec3_t origin, vec3_t dir, float distance, vec3_t &intersect)
-{
-    pmtrace_t traceData;
-
-    TraceLine(origin, dir, distance, &traceData);
-    intersect = origin + dir * distance * traceData.fraction;
-    if (traceData.fraction < 1.f)
-    {
-        if (traceData.ent > 0)
-            return gEngfuncs.pEventAPI->EV_IndexFromTrace(&traceData);
-    }
-    return 0;
-}
 
 void CHudDebug::AllClientsInfo(int r, int g, int b, int ClientIndex )
 {
@@ -438,8 +189,8 @@ void CHudDebug::AllClientsInfo(int r, int g, int b, int ClientIndex )
 
     float ScreenTop[3], ScreenBot[3];
 
-    bool m_bScreenTop = CalcScreen(Top, ScreenTop);
-    bool m_bScreenBot = CalcScreen(Bot, ScreenBot);
+    bool m_bScreenTop = m_CustomUtils.CalcScreen(Top, ScreenTop);
+    bool m_bScreenBot = m_CustomUtils.CalcScreen(Bot, ScreenBot);
 
     if (m_bScreenTop && m_bScreenBot)
     {
@@ -455,7 +206,7 @@ void CHudDebug::AllClientsInfo(int r, int g, int b, int ClientIndex )
 
         ClientModelName(pClient, x, y + 20, r, g, b);
 
-        sprintf(str, "Velocity: %.2f u/s", GetEntityVelocityApprox(pClient, 22).Length2D());
+        sprintf(str, "Velocity: %.2f u/s", m_CustomUtils.GetEntityVelocityApprox(pClient, 22).Length2D());
         gHUD.DrawHudText(x, y + 60, str, r, g, b);
 
         sprintf(str, "Origin: (%.2f, %.2f, %.2f)", pClient->origin.x, pClient->origin.y, pClient->origin.z);
@@ -464,7 +215,7 @@ void CHudDebug::AllClientsInfo(int r, int g, int b, int ClientIndex )
         sprintf(str, "Angles: (%.2f, %.2f, %.2f)", pClient->angles.x, pClient->angles.y, pClient->angles.z);
         gHUD.DrawHudText(x, y + 100, str, r, g, b);
 
-        sprintf(str, "Movetype: %s", GetMovetypeName(pClient->curstate.movetype));
+        sprintf(str, "Movetype: %s", m_CustomUtils.GetMovetypeName(pClient->curstate.movetype));
         gHUD.DrawHudText(x, y + 120, str, r, g, b);
 
         Vector vDiff = localPlayer->origin - pClient->origin;
@@ -483,10 +234,10 @@ void CHudDebug::AllClientsInfo(int r, int g, int b, int ClientIndex )
         sprintf(str, "Skin Number: %d", pClient->curstate.skin);
         gHUD.DrawHudText(x, y + 240, str, r, g, b);
 
-        sprintf(str, "Render Mode: %s", GetRenderModeName(pClient->curstate.rendermode));
+        sprintf(str, "Render Mode: %s", m_CustomUtils.GetRenderModeName(pClient->curstate.rendermode));
         gHUD.DrawHudText(x, y + 280, str, r, g, b);
 
-        sprintf(str, "Render Fx: %s", GetRenderFxName(pClient->curstate.renderfx));
+        sprintf(str, "Render Fx: %s", m_CustomUtils.GetRenderFxName(pClient->curstate.renderfx));
         gHUD.DrawHudText(x, y + 300, str, r, g, b);
 
         sprintf(str, "Render Amount: %d", pClient->curstate.renderamt);
@@ -494,9 +245,10 @@ void CHudDebug::AllClientsInfo(int r, int g, int b, int ClientIndex )
 
         sprintf(str, "Render Color: %d %d %d", pClient->curstate.rendercolor.r, pClient->curstate.rendercolor.g, pClient->curstate.rendercolor.b);
         gHUD.DrawHudText(x, y + 340, str, r, g, b);
-        BoxCornerOutline(ScreenTop[0] - (Height * 0.25f), ScreenTop[1], Height / 2, Height, 1, 0, 255, 0, 255);
+        m_CustomUtils.DrawBoxCornerOutline(ScreenTop[0] - (Height * 0.25f), ScreenTop[1], Height / 2, Height, 1, 0, 255, 0, 255);
     }
 }
+
 
 int CHudDebug::Draw(float flTime)
 {
@@ -506,7 +258,7 @@ int CHudDebug::Draw(float flTime)
 
     int DebugMode = cl_debug->value;
 
-    float fps = GetFrametime();
+    float fps = m_CustomUtils.GetFrameTime();
 
     const unsigned char* color = getColorForFPS(static_cast<int>(fps));
     int r = color[0];
@@ -543,11 +295,11 @@ int CHudDebug::Draw(float flTime)
         if( g_iUser1 )
             ClientIndex = g_iUser2;
         else
-            ClientIndex = TraceEntity(viewOrigin, viewDir, lineLen, intersectPoint);
+            ClientIndex = m_CustomUtils.TraceEntity(viewOrigin, viewDir, lineLen, intersectPoint);
 
         cl_entity_t *pClient = gEngfuncs.GetEntityByIndex(ClientIndex);
 
-        if (!CheckForClient(pClient))
+        if (!m_CustomUtils.CheckForPlayer(pClient))
             ClientIndex = 0;
     }
 
@@ -561,7 +313,7 @@ int CHudDebug::Draw(float flTime)
         gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 4, str, r, g, b);
 
         float clientTime = gEngfuncs.GetClientTime();
-        formatTime(clientTime, str);
+        sprintf(str, "Map Time: %s", m_CustomUtils.FormatTime(clientTime));
         gHUD.DrawHudText(xpos, gHUD.m_scrinfo.iCharHeight * 5, str, r, g, b);
 
         sprintf(str, "Name: %s", g_PlayerInfoList[localPlayer->index].name);
