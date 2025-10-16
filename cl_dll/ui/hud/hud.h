@@ -117,7 +117,7 @@ struct HUDLIST
 #include "hud_suddendeath.h"
 #include "hud_timeout.h"
 #include "hud_vote.h"
-#include "hud_splash.h"
+// #include "hud_splash.h"
 #include "hud_longjump.h"
 //
 //-----------------------------------------------------
@@ -703,7 +703,7 @@ public:
 	CHudSuddenDeath		m_SuddenDeath;
 	CHudTimeout		m_Timeout;
 	CHudVote		m_Vote;
-	CHudSplash		m_Splash;
+	// CHudSplash		m_Splash;
 	CHudLongjump	m_Longjump;
 #if !USE_VGUI || USE_NOVGUI_SCOREBOARD
 	CHudScoreboard	m_Scoreboard;

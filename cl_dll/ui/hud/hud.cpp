@@ -567,7 +567,7 @@ void CHud::Init( void )
 	m_SuddenDeath.Init();
 	m_Timeout.Init();
 	m_Vote.Init();
-	m_Splash.Init();
+	// m_Splash.Init();
 	m_Longjump.Init();
 #if USE_VGUI
 	GetClientVoiceMgr()->Init(&g_VoiceStatusHelper, (vgui::Panel**)&gViewPort);
@@ -789,7 +789,7 @@ void CHud::VidInit( void )
 	m_SuddenDeath.VidInit();
 	m_Timeout.VidInit();
 	m_Vote.VidInit();
-	m_Splash.VidInit();
+	// m_Splash.VidInit();
 	m_Longjump.VidInit();
 	GetClientVoiceMgr()->VidInit();
 #if !USE_VGUI || USE_NOVGUI_MOTD
