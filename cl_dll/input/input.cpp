@@ -36,6 +36,10 @@ extern "C"
 #include "discord_integration.h"
 #endif
 
+#if USE_IMGUI
+#include "imgui_manager.h"
+#endif
+
 extern "C" 
 {
 	struct kbutton_s DLLEXPORT *KB_Find( const char *name );
@@ -468,6 +472,10 @@ Return 1 to allow engine to process the key, otherwise, act on it as needed
 */
 int DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBinding )
 {
+#if USE_IMGUI
+	return g_ImGuiManager.KeyInput(down != 0, keynum, pszCurrentBinding) ? 1 : 0;
+#endif
+
 #if USE_VGUI
 	if (gViewPort)
 		return gViewPort->KeyInput(down, keynum, pszCurrentBinding);

@@ -67,6 +67,10 @@ if(USE_DISCORD_RPC)
 	add_definitions(-DUSE_DISCORD_RPC)
 endif()
 
+if(USE_IMGUI)
+	add_definitions(-DUSE_IMGUI)
+endif()
+
 set (CLDLL_SOURCES
 	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/crossbow.cpp
 	${CMAKE_SOURCE_DIR}/dlls/wpn_shared/crowbar.cpp
@@ -192,6 +196,20 @@ if (USE_DISCORD_RPC)
 		discord-rpc/discord_integration.cpp)
 endif()
 
+if (USE_IMGUI)
+	list(APPEND CLDLL_SOURCES
+		ui/IMGUI/imgui_opengl2_backend.cpp
+		ui/IMGUI/imgui_manager.cpp
+		ui/IMGUI/imgui_window_system.cpp
+		ui/IMGUI/ui_main.cpp
+		ui/IMGUI/ui_demo_window.cpp
+		${CMAKE_SOURCE_DIR}/external/imgui/imgui.cpp
+		${CMAKE_SOURCE_DIR}/external/imgui/imgui_demo.cpp
+		${CMAKE_SOURCE_DIR}/external/imgui/imgui_draw.cpp
+		${CMAKE_SOURCE_DIR}/external/imgui/imgui_tables.cpp
+		${CMAKE_SOURCE_DIR}/external/imgui/imgui_widgets.cpp)
+endif()
+
 include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ utils/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
 
 if (USE_DISCORD_RPC)
@@ -209,6 +227,10 @@ endif()
 if(USE_VOICEMGR)
 	#	ui/VGUI/utils/voice_banmgr.cpp
 	#	ui/VGUI/utils/voice_status.cpp)
+endif()
+
+if (USE_IMGUI)
+	include_directories(${CMAKE_SOURCE_DIR}/external/imgui ui/IMGUI)
 endif()
 
 add_library (${CLDLL_LIBRARY} SHARED ${CLDLL_SOURCES})

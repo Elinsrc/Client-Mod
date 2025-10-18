@@ -41,6 +41,10 @@
 #include "discord_integration.h"
 #endif
 
+#if USE_IMGUI
+#include "imgui_manager.h"
+#endif
+
 extern "C"
 {
 #include "pm_shared.h"
@@ -193,6 +197,10 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 
 	EV_HookEvents();
 
+#if USE_IMGUI
+	g_ImGuiManager.Initialize();
+#endif
+
 	return 1;
 }
 
@@ -291,6 +299,10 @@ int DLLEXPORT HUD_VidInit( void )
 #elif USE_VGUI
 	VGui_Startup();
 #endif
+
+#if USE_IMGUI
+	g_ImGuiManager.VidInitialize();
+#endif
 	return 1;
 }
 
@@ -325,6 +337,10 @@ redraw the HUD.
 int DLLEXPORT HUD_Redraw( float time, int intermission )
 {
 	gHUD.Redraw( time, intermission );
+
+#if USE_IMGUI
+	g_ImGuiManager.NewFrame();
+#endif
 
 	return 1;
 }
