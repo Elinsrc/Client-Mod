@@ -50,7 +50,7 @@ option(USE_NOVGUI_MOTD "Prefer non-VGUI MOTD when USE_VGUI is enabled" OFF)
 option(USE_NOVGUI_SCOREBOARD "Prefer non-VGUI Scoreboard when USE_VGUI is enabled" OFF)
 option(USE_DISCORD_RPC "Enable Discord_rpc" OFF)
 option(BUILD_SERVER "Build server dll" ON)
-option(USE_IMGUI "Enable IMGUI" OFF)
+option(USE_IMGUI "Enable IMGUI" ON)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 4 OR
 	((WIN32 OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")

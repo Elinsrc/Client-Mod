@@ -1,29 +1,15 @@
-#include "hud.h"
-#include "cl_util.h"
 #include "imgui.h"
-#include "imgui_opengl2_backend.h"
+#include "imgui_backend.h"
+#include "build_info.h"
 #include <stdint.h>
 
-// Include OpenGL header (without an OpenGL loader) requires a bit of fiddling
-#if defined(_WIN32) && !defined(APIENTRY)
-#define APIENTRY __stdcall                  // It is customary to use APIENTRY for OpenGL function pointer declarations on all platforms.  Additionally, the Windows OpenGL header needs APIENTRY.
-#endif
-#if defined(_WIN32) && !defined(WINGDIAPI)
-#define WINGDIAPI __declspec(dllimport)     // Some Windows OpenGL headers need this
-#endif
-#if defined(__APPLE__)
-#include <OpenGL/gl.h>
-#else
+#if defined(__ANDROID__)
+#include "gl_export.h"
+#elif defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
 #include <GL/gl.h>
-#endif
-
-// [Debugging]
-//#define IMGUI_IMPL_OPENGL_DEBUG
-#ifdef IMGUI_IMPL_OPENGL_DEBUG
-#include <stdio.h>
-#define GL_CALL(_CALL)      do { _CALL; GLenum gl_err = glGetError(); if (gl_err != 0) fprintf(stderr, "GL error 0x%x returned from '%s'.\n", gl_err, #_CALL); } while (0)  // Call with error check
-#else
-#define GL_CALL(_CALL)      _CALL   // Call without error check
+#elif defined(__linux__)
+#include <GL/gl.h>
 #endif
 
 // OpenGL data
@@ -39,7 +25,7 @@ static ImGui_ImplOpenGL2_Data* ImGui_ImplOpenGL2_GetBackendData()
     return ImGui::GetCurrentContext() ? (ImGui_ImplOpenGL2_Data*)ImGui::GetIO().BackendRendererUserData : nullptr;
 }
 
-bool CImGuiOpenGL2Backend::Init()
+bool CImGuiBackend::Init()
 {
     ImGuiIO& io = ImGui::GetIO();
     IMGUI_CHECKVERSION();
@@ -49,12 +35,15 @@ bool CImGuiOpenGL2Backend::Init()
     ImGui_ImplOpenGL2_Data* bd = IM_NEW(ImGui_ImplOpenGL2_Data)();
     io.BackendRendererUserData = (void*)bd;
     io.BackendRendererName = "imgui_impl_opengl2";
+    io.BackendPlatformName = BuildInfo::GetPlatform();
     io.BackendFlags |= ImGuiBackendFlags_RendererHasTextures;       // We can honor ImGuiPlatformIO::Textures[] requests during render.
+
+    ui_imgui_scale = CVAR_CREATE("ui_imgui_scale", "1", FCVAR_ARCHIVE);
 
     return true;
 }
 
-void CImGuiOpenGL2Backend::Shutdown()
+void CImGuiBackend::Shutdown()
 {
     ImGui_ImplOpenGL2_Data* bd = ImGui_ImplOpenGL2_GetBackendData();
     IM_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
@@ -70,14 +59,21 @@ void CImGuiOpenGL2Backend::Shutdown()
     IM_DELETE(bd);
 }
 
-void CImGuiOpenGL2Backend::NewFrame()
+void CImGuiBackend::NewFrame()
 {
+    ImGuiIO &io = ImGui::GetIO();
     ImGui_ImplOpenGL2_Data* bd = ImGui_ImplOpenGL2_GetBackendData();
     IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call ImGui_ImplOpenGL2_Init()?");
     IM_UNUSED(bd);
 
-    ImGuiIO &io = ImGui::GetIO();
+    float ui_scale = ui_imgui_scale->value;
+    if (!isfinite(ui_scale) || ui_scale < 1.0f)
+        ui_scale = 1.0f;
+
+    io.FontGlobalScale = ui_scale;
+
     io.DisplaySize = ImVec2((float)ScreenWidth, (float)ScreenHeight);
+    io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
 }
 
 static void ImGui_ImplOpenGL2_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height)
@@ -114,7 +110,7 @@ static void ImGui_ImplOpenGL2_SetupRenderState(ImDrawData* draw_data, int fb_wid
 
     // Setup viewport, orthographic projection matrix
     // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
-    GL_CALL(glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height));
+    glViewport(0, 0, (GLsizei)fb_width, (GLsizei)fb_height);
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -127,7 +123,7 @@ static void ImGui_ImplOpenGL2_SetupRenderState(ImDrawData* draw_data, int fb_wid
 // OpenGL2 Render function.
 // Note that this implementation is little overcomplicated because we are saving/setting up/restoring every OpenGL state explicitly.
 // This is in order to be able to run within an OpenGL engine that doesn't do so.
-void CImGuiOpenGL2Backend::RenderDrawData(ImDrawData* draw_data)
+void CImGuiBackend::RenderDrawData(ImDrawData* draw_data)
 {
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
     int fb_width = (int)(draw_data->DisplaySize.x * draw_data->FramebufferScale.x);
@@ -144,7 +140,7 @@ void CImGuiOpenGL2Backend::RenderDrawData(ImDrawData* draw_data)
 
     // Backup GL state
     GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
-    GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
+    // GLint last_polygon_mode[2]; glGetIntegerv(GL_POLYGON_MODE, last_polygon_mode);
     GLint last_viewport[4]; glGetIntegerv(GL_VIEWPORT, last_viewport);
     GLint last_scissor_box[4]; glGetIntegerv(GL_SCISSOR_BOX, last_scissor_box);
     GLint last_shade_model; glGetIntegerv(GL_SHADE_MODEL, &last_shade_model);
@@ -207,7 +203,7 @@ void CImGuiOpenGL2Backend::RenderDrawData(ImDrawData* draw_data)
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glPopAttrib();
-    glPolygonMode(GL_FRONT, (GLenum)last_polygon_mode[0]); glPolygonMode(GL_BACK, (GLenum)last_polygon_mode[1]);
+    // glPolygonMode(GL_FRONT, (GLenum)last_polygon_mode[0]); glPolygonMode(GL_BACK, (GLenum)last_polygon_mode[1]);
     glViewport(last_viewport[0], last_viewport[1], (GLsizei)last_viewport[2], (GLsizei)last_viewport[3]);
     glScissor(last_scissor_box[0], last_scissor_box[1], (GLsizei)last_scissor_box[2], (GLsizei)last_scissor_box[3]);
     glShadeModel(last_shade_model);
@@ -228,39 +224,39 @@ void ImGui_ImplOpenGL2_UpdateTexture(ImTextureData* tex)
         // Upload texture to graphics system
         // (Bilinear sampling is required by default. Set 'io.Fonts->Flags |= ImFontAtlasFlags_NoBakedLines' or 'style.AntiAliasedLinesUseTex = false' to allow point/nearest sampling)
         GLint last_texture;
-        GL_CALL(glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture));
-        GL_CALL(glGenTextures(1, &gl_texture_id));
-        GL_CALL(glBindTexture(GL_TEXTURE_2D, gl_texture_id));
-        GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-        GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-        GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP));
-        GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP));
-        GL_CALL(glPixelStorei(GL_UNPACK_ROW_LENGTH, 0));
-        GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-        GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->Width, tex->Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
+        glGenTextures(1, &gl_texture_id);
+        glBindTexture(GL_TEXTURE_2D, gl_texture_id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tex->Width, tex->Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
         // Store identifiers
         tex->SetTexID((ImTextureID)(intptr_t)gl_texture_id);
         tex->SetStatus(ImTextureStatus_OK);
 
         // Restore state
-        GL_CALL(glBindTexture(GL_TEXTURE_2D, last_texture));
+        glBindTexture(GL_TEXTURE_2D, last_texture);
     }
     else if (tex->Status == ImTextureStatus_WantUpdates)
     {
         // Update selected blocks. We only ever write to textures regions which have never been used before!
         // This backend choose to use tex->Updates[] but you can use tex->UpdateRect to upload a single region.
         GLint last_texture;
-        GL_CALL(glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture));
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
 
         GLuint gl_tex_id = (GLuint)(intptr_t)tex->TexID;
-        GL_CALL(glBindTexture(GL_TEXTURE_2D, gl_tex_id));
-        GL_CALL(glPixelStorei(GL_UNPACK_ROW_LENGTH, tex->Width));
-        GL_CALL(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+        glBindTexture(GL_TEXTURE_2D, gl_tex_id);
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, tex->Width);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         for (ImTextureRect& r : tex->Updates)
-            GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, r.x, r.y, r.w, r.h, GL_RGBA, GL_UNSIGNED_BYTE, tex->GetPixelsAt(r.x, r.y)));
-        GL_CALL(glPixelStorei(GL_UNPACK_ROW_LENGTH, 0));
-        GL_CALL(glBindTexture(GL_TEXTURE_2D, last_texture)); // Restore state
+            glTexSubImage2D(GL_TEXTURE_2D, 0, r.x, r.y, r.w, r.h, GL_RGBA, GL_UNSIGNED_BYTE, tex->GetPixelsAt(r.x, r.y));
+        glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+        glBindTexture(GL_TEXTURE_2D, last_texture); // Restore state
         tex->SetStatus(ImTextureStatus_OK);
     }
     else if (tex->Status == ImTextureStatus_WantDestroy)
@@ -288,5 +284,3 @@ void ImGui_ImplOpenGL2_DestroyDeviceObjects()
             ImGui_ImplOpenGL2_UpdateTexture(tex);
         }
 }
-
-

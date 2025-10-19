@@ -36,8 +36,11 @@ extern "C"
 #include "discord_integration.h"
 #endif
 
-#if USE_IMGUI
+#if defined(USE_IMGUI)
 #include "imgui_manager.h"
+#if defined(__ANDROID__)
+#include "gl_export.h"
+#endif
 #endif
 
 extern "C" 
@@ -1293,5 +1296,9 @@ void DLLEXPORT HUD_Shutdown( void )
 
 #if USE_DISCORD_RPC
 	discord_integration::shutdown();
+#endif
+
+#if defined(__ANDROID__)
+	GL_Shutdown();
 #endif
 }

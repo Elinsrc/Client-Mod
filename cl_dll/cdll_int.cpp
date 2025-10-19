@@ -41,8 +41,13 @@
 #include "discord_integration.h"
 #endif
 
-#if USE_IMGUI
+#if defined(USE_IMGUI)
 #include "imgui_manager.h"
+#if defined(__ANDROID__)
+#include "gl_export.h"
+#include "render_api.h"
+render_api_t gRenderAPI;
+#endif
 #endif
 
 extern "C"
@@ -87,6 +92,9 @@ void	DLLEXPORT HUD_Frame( double time );
 void	DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking);
 void	DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf );
 int		DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs );
+#if defined(USE_IMGUI) && defined(__ANDROID__)
+int 	DLLEXPORT HUD_GetRenderInterface( int version, render_api_t *renderfuncs, render_interface_t *callback );
+#endif
 }
 
 /*
@@ -196,10 +204,6 @@ int DLLEXPORT Initialize( cl_enginefunc_t *pEnginefuncs, int iVersion )
 	}
 
 	EV_HookEvents();
-
-#if USE_IMGUI
-	g_ImGuiManager.Initialize();
-#endif
 
 	return 1;
 }
@@ -323,6 +327,15 @@ void DLLEXPORT HUD_Init( void )
 #if USE_VGUI
 	Scheme_Init();
 #endif
+
+#if defined(USE_IMGUI)
+#if defined(__ANDROID__)
+	GL_Init();
+#else
+	g_ImGuiManager.Initialize();
+#endif
+#endif
+
 }
 
 /*
@@ -460,3 +473,27 @@ bool IsXashFWGS()
 {
 	return gMobileEngfuncs != NULL;
 }
+
+/*
+==========================
+HUD_GetRenderInterface
+
+Called when Xash3D sends render api to us
+==========================
+*/
+#if defined(USE_IMGUI) && defined(__ANDROID__)
+int DLLEXPORT HUD_GetRenderInterface( int version, render_api_t *renderfuncs, render_interface_t *callback )
+{
+	if( version != CL_RENDER_INTERFACE_VERSION )
+	{
+		return false;
+	}
+
+	gRenderAPI = *renderfuncs;
+
+	// we didn't send callbacks to engine, because we don't use it
+	// *callback = renderInterface;
+
+	return true;
+}
+#endif

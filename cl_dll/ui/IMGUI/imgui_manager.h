@@ -3,11 +3,11 @@
 #include "cursor_type.h"
 #include <map>
 #include <memory>
-#include "imgui_opengl2_backend.h"
+#include "imgui_backend.h"
 
 class CImGuiManager
 {
-    CImGuiOpenGL2Backend m_pBackend;
+    CImGuiBackend m_pBackend;
 public:
     static CImGuiManager &GetInstance();
 

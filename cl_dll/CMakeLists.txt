@@ -198,7 +198,7 @@ endif()
 
 if (USE_IMGUI)
 	list(APPEND CLDLL_SOURCES
-		ui/IMGUI/imgui_opengl2_backend.cpp
+		ui/IMGUI/imgui_backend.cpp
 		ui/IMGUI/imgui_manager.cpp
 		ui/IMGUI/imgui_window_system.cpp
 		ui/IMGUI/ui_main.cpp
@@ -208,6 +208,11 @@ if (USE_IMGUI)
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_draw.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_tables.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_widgets.cpp)
+endif()
+
+if (USE_IMGUI AND ANDROID)
+	list(APPEND CLDLL_SOURCES
+	rendering/gl_export.cpp)
 endif()
 
 include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ utils/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
