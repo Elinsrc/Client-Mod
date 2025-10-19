@@ -42,8 +42,8 @@ private:
     void SetupConfig();
     void SetupKeyboardMapping();
     void SetupCursorMapping();
-    static const char *GetClipboardText(void *userData);
-    static void SetClipboardText(void *userData, const char *text);
+    /*static const char *GetClipboardText(void *userData);
+    static void SetClipboardText(void *userData, const char *text);*/
 
     bool m_bWasCursorRequired = false;
     MouseButtonsState m_MouseButtonsState;

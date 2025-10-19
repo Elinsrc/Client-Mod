@@ -244,13 +244,13 @@ void CImGuiManager::SetupCursorMapping()
     m_CursorMapping.insert({ ImGuiMouseCursor_NotAllowed, dc_no });
 }
 
-const char *CImGuiManager::GetClipboardText(void *userData)
+/*const char *CImGuiManager::GetClipboardText(void *userData)
 {
 }
 
 void CImGuiManager::SetClipboardText(void *userData, const char *text)
 {
-}
+}*/
 
 void CImGuiManager::TextInputCallback(const char *text)
 {

@@ -5,8 +5,11 @@
 
 #if defined(__ANDROID__)
 #include "gl_export.h"
-#elif defined(_WIN32) || defined(_WIN64)
+#elif defined(_WIN32)
+#define HSPRITE DeletedWinapi_HSPRITE
 #include <windows.h>
+#undef HSPRITE
+typedef int HSPRITE;
 #include <GL/gl.h>
 #elif defined(__linux__)
 #include <GL/gl.h>
