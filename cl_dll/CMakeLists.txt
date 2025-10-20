@@ -203,6 +203,8 @@ if (USE_IMGUI)
 		ui/IMGUI/imgui_window_system.cpp
 		ui/IMGUI/ui_main.cpp
 		ui/IMGUI/ui_demo_window.cpp
+		ui/IMGUI/ui_scoreboard.cpp
+		ui/IMGUI/ui_utils.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_demo.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_draw.cpp

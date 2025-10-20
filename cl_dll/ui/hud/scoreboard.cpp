@@ -26,6 +26,12 @@
 #include <string.h>
 #include <stdio.h>
 
+#if USE_IMGUI
+#include "ui_scoreboard.h"
+CImGuiScoreboard m_iScoreboard;
+extern cvar_t *ui_imgui_scoreboard;
+#endif
+
 cvar_t *cl_scoreboard_bg;
 
 extern int blue_flag_player_index;
@@ -130,7 +136,21 @@ int CHudScoreboard::Draw( float fTime )
 	gHUD.m_iNoConsolePrint &= ~( 1 << 0 );
 
 	if( !m_iShowscoresHeld && gHUD.m_Health.m_iHealth > 0 && !gHUD.m_iIntermission )
+	{
+#if USE_IMGUI
+		if (ui_imgui_scoreboard->value)
+			m_iScoreboard.m_ShowWindow = false;
+#endif
 		return 1;
+	}
+
+#if USE_IMGUI
+	if (ui_imgui_scoreboard->value)
+	{
+		m_iScoreboard.m_ShowWindow = true;
+		return 1;
+	}
+#endif
 
 	gHUD.m_iNoConsolePrint |= 1 << 0;
 

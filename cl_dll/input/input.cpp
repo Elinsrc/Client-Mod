@@ -38,6 +38,9 @@ extern "C"
 
 #if defined(USE_IMGUI)
 #include "imgui_manager.h"
+#include "ui_scoreboard.h"
+CImGuiScoreboard m_iScoreboard;
+extern cvar_t *ui_imgui_scoreboard;
 #if defined(__ANDROID__)
 #include "gl_export.h"
 #endif
@@ -754,7 +757,14 @@ void IN_ScoreDown( void )
 #if USE_VGUI && !USE_NOVGUI_SCOREBOARD
 	if ( gViewPort )
 	{
+#if USE_IMGUI
+		if (ui_imgui_scoreboard->value)
+			m_iScoreboard.m_ShowWindow = true;
+		else
+			gViewPort->ShowScoreBoard();
+#else
 		gViewPort->ShowScoreBoard();
+#endif
 	}
 #else
 	gHUD.m_Scoreboard.UserCmd_ShowScores();
@@ -767,7 +777,14 @@ void IN_ScoreUp( void )
 #if USE_VGUI && !USE_NOVGUI_SCOREBOARD
 	if ( gViewPort )
 	{
+#if USE_IMGUI
+	if (ui_imgui_scoreboard->value)
+		m_iScoreboard.m_ShowWindow = false;
+	else
 		gViewPort->HideScoreBoard();
+#else
+	gViewPort->HideScoreBoard();
+#endif
 	}
 #else
 	gHUD.m_Scoreboard.UserCmd_HideScores();
