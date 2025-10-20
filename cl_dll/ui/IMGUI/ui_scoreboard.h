@@ -16,3 +16,5 @@ public:
     bool CursorRequired();
     bool HandleKey(bool keyDown, int keyNumber, const char *bindName);
 };
+
+extern CImGuiScoreboard m_iScoreboard;

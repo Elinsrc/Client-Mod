@@ -28,7 +28,6 @@
 
 #if USE_IMGUI
 #include "ui_scoreboard.h"
-CImGuiScoreboard m_iScoreboard;
 extern cvar_t *ui_imgui_scoreboard;
 #endif
 

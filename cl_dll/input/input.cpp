@@ -39,7 +39,6 @@ extern "C"
 #if defined(USE_IMGUI)
 #include "imgui_manager.h"
 #include "ui_scoreboard.h"
-CImGuiScoreboard m_iScoreboard;
 extern cvar_t *ui_imgui_scoreboard;
 #if defined(__ANDROID__)
 #include "gl_export.h"
