@@ -1,6 +1,6 @@
 # Client-Mod [![Build Status](https://github.com/Elinsrc/Client-Mod/actions/workflows/build.yml/badge.svg)](https://github.com/Elinsrc/Client-Mod/actions) <img align="right" src="https://raw.githubusercontent.com/Elinsrc/Client-Mod/refs/heads/master/android/app/src/main/res/drawable/ic_launcher.png" alt="Client-Mod" />
 
- - **Client-Mod** is a modification of the **Half-Life** client for **Xash3D FWGS** and **GoldSource**, based on [hlsdk-portable](https://github.com/FWGS/hlsdk-portable) and [PrimeXT-sdk](https://github.com/SNMetamorph/PrimeXT).
+ - **Client-Mod** is a modification of the **Half-Life** client for **Xash3D FWGS** and **GoldSource**, based on [hlsdk-portable](https://github.com/FWGS/hlsdk-portable) and [PrimeXT](https://github.com/SNMetamorph/PrimeXT).
 
 ## Configuration (CVars)
 | CVar                        | Default             | Min | Max | Description                                                                                                       |
@@ -100,4 +100,4 @@ cmake --build build --config Release
  - Thanks To [FWGS](https://github.com/FWGS) for [hlsdk-portable](https://github.com/FWGS/hlsdk-portable)
  - Thanks To [YaLTeR](https://github.com/YaLTeR) for [OpenAG](https://github.com/YaLTeR/OpenAG)
  - Thanks To [Velaron](https://github.com/Velaron) for [AndroidLauncher](https://github.com/Elinsrc/Client-Mod/tree/master/android)
- - Thanks To [SNMetamorph](https://github.com/SNMetamorph) for [BuildInfo](https://github.com/Elinsrc/Client-Mod/blob/master/public/build_info.h) ,[goldsrc-monitor](https://github.com/SNMetamorph/goldsrc-monitor) and [imgui_manager](https://github.com/SNMetamorph/PrimeXT/tree/master/client/ui)
+ - Thanks To [SNMetamorph](https://github.com/SNMetamorph) for [BuildInfo](https://github.com/Elinsrc/Client-Mod/blob/master/public/build_info.h), [goldsrc-monitor](https://github.com/SNMetamorph/goldsrc-monitor) and [imgui_manager](https://github.com/SNMetamorph/PrimeXT/tree/master/client/ui)
