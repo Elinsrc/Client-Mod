@@ -1,6 +1,6 @@
 # Client-Mod [![Build Status](https://github.com/Elinsrc/Client-Mod/actions/workflows/build.yml/badge.svg)](https://github.com/Elinsrc/Client-Mod/actions) <img align="right" src="https://raw.githubusercontent.com/Elinsrc/Client-Mod/refs/heads/master/android/app/src/main/res/drawable/ic_launcher.png" alt="Client-Mod" />
 
- - **Client-Mod** is a modification of the **Half-Life** client part for **Xash3D FWGS and GoldSource**.
+ - **Client-Mod** is a modification of the **Half-Life** client for **Xash3D FWGS** and **GoldSource**, based on [hlsdk-portable](https://github.com/FWGS/hlsdk-portable) and [PrimeXT-sdk](https://github.com/SNMetamorph/PrimeXT).
 
 ## Configuration (CVars)
 | CVar                        | Default             | Min | Max | Description                                                                                                       |
@@ -51,18 +51,19 @@
 | cl_killsound                | 1                   | -   | -   | Sound plays when you kill a player. Taken from OpenAG                                                             |
 | cl_killsound_path           | "buttons/bell1.wav" | -   | -   | Path to playing sound. Taken from OpenAG.                                                                         |
 | cl_cross                    | 0                   | 0   | 1   | Custom crosshair                                                                                                  |
-| cl_cross_color              | "255 255 255"       | -   | -   | Custom crosshair color                                                                                            |
+| cl_cross_color              | "0 255 0"           | -   | -   | Custom crosshair color                                                                                            |
 | cl_cross_alpha              | 255                 | -   | -   | Crosshair alpha                                                                                                   |
-| cl_cross_size               | 1                   | -   | -   | Crosshair size                                                                                                    |
-| cl_cross_gap                | 2                   | -   | -   | Crosshair distance from the middle                                                                                |
-| cl_cross_thickness          | 5                   | -   | -   | Thickness of crosshair                                                                                            |
+| cl_cross_size               | 10                  | -   | -   | Crosshair size                                                                                                    |
+| cl_cross_gap                | 3                   | -   | -   | Crosshair distance from the middle                                                                                |
+| cl_cross_thickness          | 2                   | -   | -   | Thickness of crosshair                                                                                            |
 | cl_cross_outline            | 1                   | 0   | 1   | Crosshair outline                                                                                                 |
 | cl_cross_top_line           | 1                   | 0   | 1   |                                                                                                                   |
 | cl_cross_bottom_line        | 1                   | 0   | 1   |                                                                                                                   |
 | cl_cross_left_line          | 1                   | 0   | 1   |                                                                                                                   |
 | cl_cross_right_line         | 1                   | 0   | 1   |                                                                                                                   |
 | cl_cross_dot_size           | 1                   | -   | -   | Value 0 disables the dot                                                                                          |
-| cl_cross_dot_color          | "255 255 255"       | -   | -   | Custom crosshair dot color                                                                                        |
+| cl_cross_dot_color          | "0 255 0"           | -   | -   | Custom crosshair dot color                                                                                        |
+| cl_cross_circle_radius      | 0                   | -   | -   | Controls the radius of the circle drawn for the crosshair (works only if built with ImGui)                        |
 | cl_viewmodel_ofs_right      | 0                   | -   | -   | Offsets the gun viewmodel to the right. Taken from OpenAG                                                         |
 | cl_viewmodel_ofs_forward    | 0                   | -   | -   | Offsets the gun viewmodel forward. Taken from OpenAG                                                              |
 | cl_viewmodel_ofs_up         | 0                   | -   | -   | Offsets the gun viewmodel upwards. Taken from OpenAG                                                              |
@@ -70,6 +71,9 @@
 | cl_debug_showfps            | 1                   | 0   | 1   | Show current fps and framerate                                                                                    |
 | hud_health_divider          | 1                   | 0   | 1   | Show separator bar after health                                                                                   |
 | hud_allow_hd                | 0                   | 0   | 1   | Draw HL25 style HUD and disable hud_deathnotice_bg                                                                |
+| ui_imgui_demo               | -                   | -   | -   | Shows the ImGui demo window                                                                                       |
+| ui_imgui_scoreboard         | 0                   | 0   | 1   | Switches the scoreboard to the one implemented using ImGui                                                        |
+| ui_imgui_scale              | 0                   | 1   | -   | Adjusts the scaling of the ImGui elements                                                                         |
 
 ## Building
 Clone the source code:
@@ -96,4 +100,4 @@ cmake --build build --config Release
  - Thanks To [FWGS](https://github.com/FWGS) for [hlsdk-portable](https://github.com/FWGS/hlsdk-portable)
  - Thanks To [YaLTeR](https://github.com/YaLTeR) for [OpenAG](https://github.com/YaLTeR/OpenAG)
  - Thanks To [Velaron](https://github.com/Velaron) for [AndroidLauncher](https://github.com/Elinsrc/Client-Mod/tree/master/android)
- - Thanks To [SNMetamorph](https://github.com/SNMetamorph) for [BuildInfo](https://github.com/Elinsrc/Client-Mod/blob/master/public/build_info.h) and [goldsrc-monitor](https://github.com/SNMetamorph/goldsrc-monitor)([used here](https://github.com/Elinsrc/Client-Mod/blob/master/cl_dll/ui/hud/hud_debug.cpp))
+ - Thanks To [SNMetamorph](https://github.com/SNMetamorph) for [BuildInfo](https://github.com/Elinsrc/Client-Mod/blob/master/public/build_info.h) ,[goldsrc-monitor](https://github.com/SNMetamorph/goldsrc-monitor) and [imgui_manager](https://github.com/SNMetamorph/PrimeXT/tree/master/client/ui)
