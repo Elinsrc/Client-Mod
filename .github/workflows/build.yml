@@ -188,54 +188,62 @@ jobs:
     needs: [android, build]
     if: ${{ github.event_name == 'push' }}
     steps:
-        - name: Checkout
-          uses: actions/checkout@v5
-          with:
-              fetch-depth: 0
-              submodules: recursive
-              
-        - name: Fetch artifacts
-          uses: actions/download-artifact@v4
-          with:
-              path: artifacts
-
-        - name: Remove old release
-          uses: ClementTsang/delete-tag-and-release@v0.3.1
-          env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          with:
-              tag_name: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
-              delete_release: true
-              repo: ${{ env.GITHUB_REPOSITORY }}
-
-        - name: List downloaded artifacts
-          run: |
-              echo "Listing all artifacts in artifacts/:"
-              ls -R artifacts/
-
-        - name: Create archives
-          run: |
-            cd artifacts/
-            mkdir files
-            mv Client-Mod-*-android/* files/
-            zip -j files/Client-Mod-linux.zip Client-Mod-*-linux/*/*
-            zip -j files/Client-Mod-linux-vgui.zip Client-Mod-*-linux-vgui/*/*
-            zip -j files/Client-Mod-linux-x64.zip Client-Mod-*-linux-x64/*/*
-            zip -j files/Client-Mod-windows.zip Client-Mod-*-windows/*/*
-            zip -j files/Client-Mod-windows-vgui.zip Client-Mod-*-windows-vgui/*/*
-            zip -j files/Client-Mod-windows-x64.zip Client-Mod-*-windows-x64/*/*
-            ls -R .
-            cd ../
-            
-        - name: Upload new release
-          uses: svenstaro/upload-release-action@v2
-          with:
-              repo_name: Elinsrc/Client-Mod
-              repo_token: ${{ secrets.GITHUB_TOKEN }}
-              file_glob: true
-              file: artifacts/files/*
-              tag: ${{ github.ref_name == 'master' && 'continuous' || format('continuous-{0}', github.ref_name) }}
-              overwrite: true
-              prerelease: true
-              release_name: ${{ github.ref_name == 'master' && 'Client-Mod continuous Build' || format('Client-Mod continuous {0} Build', github.ref_name) }}
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: recursive
   
+      - name: Fetch artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+  
+      - name: Set tag name
+        run: |
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            TAG_NAME="continuous"
+          else
+            TAG_NAME="continuous-${GITHUB_REF_NAME}"
+          fi
+          RELEASE_NAME="Client-Mod $TAG_NAME"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_ENV
+  
+      - name: Remove old release if exists
+        run: |
+          if gh release list --repo ${{ github.repository }} | grep -q -e "$TAG_NAME"; then
+            echo "Deleting existing release $TAG_NAME"
+            gh release delete "$TAG_NAME" --yes --cleanup-tag --repo ${{ github.repository }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+      - name: List downloaded artifacts
+        run: |
+          echo "Listing all artifacts in artifacts/:"
+          ls -R artifacts/
+  
+      - name: Create archives
+        run: |
+          cd artifacts/
+          mkdir files
+          mv Client-Mod-*-android/* files/
+          zip -j files/Client-Mod-linux.zip Client-Mod-*-linux/*/*
+          zip -j files/Client-Mod-linux-vgui.zip Client-Mod-*-linux-vgui/*/*
+          zip -j files/Client-Mod-linux-x64.zip Client-Mod-*-linux-x64/*/*
+          zip -j files/Client-Mod-windows.zip Client-Mod-*-windows/*/*
+          zip -j files/Client-Mod-windows-vgui.zip Client-Mod-*-windows-vgui/*/*
+          zip -j files/Client-Mod-windows-x64.zip Client-Mod-*-windows-x64/*/*
+          ls -R .
+          cd ../
+  
+      - name: Upload new release
+        run: |
+          gh release create "$TAG_NAME" \
+            --title "$RELEASE_NAME" \
+            --prerelease artifacts/files/* \
+            --repo ${{ github.repository }} \
+            --target ${{ github.sha }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

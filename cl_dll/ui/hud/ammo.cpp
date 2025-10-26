@@ -27,6 +27,11 @@
 #include <string.h>
 #include <stdio.h>
 
+#if USE_IMGUI
+#include "ui_crosshairs.h"
+extern cvar_t *cl_cross;
+#endif
+
 #include "ammohistory.h"
 #if USE_VGUI
 #include "vgui_TeamFortressViewport.h"
@@ -621,26 +626,42 @@ int CHudAmmo::MsgFunc_CurWeapon( const char *pszName, int iSize, void *pbuf )
 
 	m_pWeapon = pWeapon;
 
-	if( !( gHUD.m_iHideHUDDisplay & ( HIDEHUD_WEAPONS | HIDEHUD_ALL ) ) )
-	{
-		if( gHUD.m_iFOV >= 90 )
-		{
-			// normal crosshairs
-			if( fOnTarget && m_pWeapon->hAutoaim )
-				SetCrosshair( m_pWeapon->hAutoaim, m_pWeapon->rcAutoaim, 255, 255, 255 );
-			else
-				SetCrosshair( m_pWeapon->hCrosshair, m_pWeapon->rcCrosshair, 255, 255, 255 );
-		}
-		else
-		{
-			// zoomed crosshairs
-			if( fOnTarget && m_pWeapon->hZoomedAutoaim )
-				SetCrosshair( m_pWeapon->hZoomedAutoaim, m_pWeapon->rcZoomedAutoaim, 255, 255, 255 );
-			else
-				SetCrosshair( m_pWeapon->hZoomedCrosshair, m_pWeapon->rcZoomedCrosshair, 255, 255, 255 );
-		}
-	}
 
+#if USE_IMGUI
+	if (cl_cross->value)
+	{
+		g_ImGuiCrosshairs.m_ShowCrosshairs = true;
+		SetCrosshair( 0, nullrc, 0, 0, 0 );
+	}
+	else
+	{
+#endif
+		if( !( gHUD.m_iHideHUDDisplay & ( HIDEHUD_WEAPONS | HIDEHUD_ALL ) ) )
+		{
+#if USE_IMGUI
+			g_ImGuiCrosshairs.m_ShowCrosshairs = false;
+#endif
+			if( gHUD.m_iFOV >= 90 )
+			{
+				// normal crosshairs
+				if( fOnTarget && m_pWeapon->hAutoaim )
+					SetCrosshair( m_pWeapon->hAutoaim, m_pWeapon->rcAutoaim, 255, 255, 255 );
+				else
+					SetCrosshair( m_pWeapon->hCrosshair, m_pWeapon->rcCrosshair, 255, 255, 255 );
+			}
+			else
+			{
+				// zoomed crosshairs
+				if( fOnTarget && m_pWeapon->hZoomedAutoaim )
+					SetCrosshair( m_pWeapon->hZoomedAutoaim, m_pWeapon->rcZoomedAutoaim, 255, 255, 255 );
+				else
+					SetCrosshair( m_pWeapon->hZoomedCrosshair, m_pWeapon->rcZoomedCrosshair, 255, 255, 255 );
+			}
+		}
+
+#if USE_IMGUI
+	}
+#endif
 	m_fFade = 200.0f; //!!!
 	m_iFlags |= HUD_ACTIVE;
 

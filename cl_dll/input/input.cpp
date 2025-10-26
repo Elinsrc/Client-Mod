@@ -36,6 +36,15 @@ extern "C"
 #include "discord_integration.h"
 #endif
 
+#if defined(USE_IMGUI)
+#include "imgui_manager.h"
+#include "ui_scoreboard.h"
+extern cvar_t *ui_imgui_scoreboard;
+#if defined(__ANDROID__)
+#include "gl_export.h"
+#endif
+#endif
+
 extern "C" 
 {
 	struct kbutton_s DLLEXPORT *KB_Find( const char *name );
@@ -468,6 +477,10 @@ Return 1 to allow engine to process the key, otherwise, act on it as needed
 */
 int DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBinding )
 {
+#if USE_IMGUI
+	return g_ImGuiManager.KeyInput(down != 0, keynum, pszCurrentBinding) ? 1 : 0;
+#endif
+
 #if USE_VGUI
 	if (gViewPort)
 		return gViewPort->KeyInput(down, keynum, pszCurrentBinding);
@@ -743,7 +756,14 @@ void IN_ScoreDown( void )
 #if USE_VGUI && !USE_NOVGUI_SCOREBOARD
 	if ( gViewPort )
 	{
+#if USE_IMGUI
+		if (ui_imgui_scoreboard->value)
+			m_iScoreboard.m_ShowWindow = true;
+		else
+			gViewPort->ShowScoreBoard();
+#else
 		gViewPort->ShowScoreBoard();
+#endif
 	}
 #else
 	gHUD.m_Scoreboard.UserCmd_ShowScores();
@@ -756,7 +776,14 @@ void IN_ScoreUp( void )
 #if USE_VGUI && !USE_NOVGUI_SCOREBOARD
 	if ( gViewPort )
 	{
+#if USE_IMGUI
+	if (ui_imgui_scoreboard->value)
+		m_iScoreboard.m_ShowWindow = false;
+	else
 		gViewPort->HideScoreBoard();
+#else
+	gViewPort->HideScoreBoard();
+#endif
 	}
 #else
 	gHUD.m_Scoreboard.UserCmd_HideScores();
@@ -1285,5 +1312,9 @@ void DLLEXPORT HUD_Shutdown( void )
 
 #if USE_DISCORD_RPC
 	discord_integration::shutdown();
+#endif
+
+#if defined(__ANDROID__)
+	GL_Shutdown();
 #endif
 }
