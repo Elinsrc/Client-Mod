@@ -1,9 +1,6 @@
 #define EXTERN
 #include "gl_export.h"
-
-#if USE_IMGUI
 #include "imgui_manager.h"
-#endif
 
 extern render_api_t gRenderAPI;
 
@@ -230,9 +227,7 @@ bool GL_Init(void)
     gEngfuncs.Con_Printf("Loading OpenGL 2.0 functions...\n");
     GL_LoadFunctions(opengl_200funcs);
 
-#if USE_IMGUI
     g_ImGuiManager.Initialize();
-#endif
 
     return true;
 }

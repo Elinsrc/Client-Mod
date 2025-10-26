@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra("gamedir", "valve")
                 .putExtra("gamelibdir", getApplicationInfo().nativeLibraryDir)
-                .putExtra("argv", "-dev 2 -log")
+                .putExtra("argv", "-dev 2 -ref gl4es -log")
                 .putExtra("package", getPackageName()));
         finish();
     }

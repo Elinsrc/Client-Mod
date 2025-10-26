@@ -551,7 +551,9 @@ void CHud::Init( void )
 	m_StatusIcons.Init();
 	m_Speedometer.Init();
 	m_Jumpspeed.Init();
+#if !USE_IMGUI
 	m_Crosshairs.Init();
+#endif
 	m_Watermark.Init();
 	m_Debug.Init();
 	m_StrafeGuide.Init();
@@ -774,7 +776,9 @@ void CHud::VidInit( void )
 	m_StatusIcons.VidInit();
 	m_Speedometer.VidInit();
 	m_Jumpspeed.VidInit();
+#if !USE_IMGUI
 	m_Crosshairs.VidInit();
+#endif
 	m_Watermark.VidInit();
 	m_Debug.VidInit();
 	m_StrafeGuide.VidInit();

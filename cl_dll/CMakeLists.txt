@@ -116,7 +116,6 @@ set (CLDLL_SOURCES
 	ui/hud/hud_redraw.cpp
 	ui/hud/hud_spectator.cpp
 	ui/hud/hud_update.cpp
-	ui/hud/hud_crosshairs.cpp
 	ui/hud/hud_watermark.cpp
 	ui/hud/hud_debug.cpp
 	ui/hud/menu.cpp
@@ -204,12 +203,16 @@ if (USE_IMGUI)
 		ui/IMGUI/ui_main.cpp
 		ui/IMGUI/ui_demo_window.cpp
 		ui/IMGUI/ui_scoreboard.cpp
+		ui/IMGUI/ui_crosshairs.cpp
 		ui/IMGUI/ui_utils.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_demo.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_draw.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_tables.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_widgets.cpp)
+else()
+	list(APPEND CLDLL_SOURCES
+		ui/hud/hud_crosshairs.cpp)
 endif()
 
 if (USE_IMGUI AND ANDROID)
