@@ -64,6 +64,8 @@
 | cl_cross_dot_size           | 1                   | -   | -   | Value 0 disables the dot                                                                                          |
 | cl_cross_dot_color          | "0 255 0"           | -   | -   | Custom crosshair dot color                                                                                        |
 | cl_cross_circle_radius      | 0                   | -   | -   | Controls the radius of the circle drawn for the crosshair (works only if built with ImGui)                        |
+| cl_cross_circle_gap         | 3                   | -   | -   | Controls the gap between the crosshair center and the circle (works only if built with ImGui)                     |
+| cl_cross_circle_color       |"0 255 0"            | -   | -   | Sets the circle color (works only if built with ImGui)                                                            |
 | cl_viewmodel_ofs_right      | 0                   | -   | -   | Offsets the gun viewmodel to the right. Taken from OpenAG                                                         |
 | cl_viewmodel_ofs_forward    | 0                   | -   | -   | Offsets the gun viewmodel forward. Taken from OpenAG                                                              |
 | cl_viewmodel_ofs_up         | 0                   | -   | -   | Offsets the gun viewmodel upwards. Taken from OpenAG                                                              |

@@ -17,6 +17,8 @@ cvar_t* cl_cross_right_line;
 cvar_t* cl_cross_dot_size;
 cvar_t* cl_cross_dot_color;
 cvar_t* cl_cross_circle_radius;
+cvar_t* cl_cross_circle_gap;
+cvar_t* cl_cross_circle_color;
 
 bool CImGuiCrosshairs::m_ShowCrosshairs = false;
 
@@ -30,8 +32,10 @@ void CImGuiCrosshairs::Initialize()
 	cl_cross_gap =  CVAR_CREATE("cl_cross_gap", "3", FCVAR_ARCHIVE);
 	cl_cross_outline = CVAR_CREATE("cl_cross_outline", "0", FCVAR_ARCHIVE);
 	cl_cross_circle_radius = CVAR_CREATE("cl_cross_circle_radius", "0", FCVAR_ARCHIVE);
+    cl_cross_circle_gap =  CVAR_CREATE("cl_cross_circle_gap", "3", FCVAR_ARCHIVE);
+    cl_cross_circle_color = CVAR_CREATE("cl_cross_circle_color", "0 255 0", FCVAR_ARCHIVE);
 	cl_cross_dot_size = CVAR_CREATE("cl_cross_dot_size", "0", FCVAR_ARCHIVE);
-	cl_cross_dot_color = CVAR_CREATE("cl_cross_dot_color", "", FCVAR_ARCHIVE);
+	cl_cross_dot_color = CVAR_CREATE("cl_cross_dot_color", "0 255 0", FCVAR_ARCHIVE);
 	cl_cross_top_line = CVAR_CREATE("cl_cross_top_line", "1", FCVAR_ARCHIVE);
 	cl_cross_bottom_line = CVAR_CREATE("cl_cross_bottom_line", "1", FCVAR_ARCHIVE);
 	cl_cross_left_line = CVAR_CREATE("cl_cross_left_line", "1", FCVAR_ARCHIVE);
@@ -67,6 +71,10 @@ void CImGuiCrosshairs::Draw()
     sscanf(cl_cross_dot_color->string, "%d %d %d", &dot_r, &dot_g, &dot_b);
     ImU32 dotColor = IM_COL32(dot_r, dot_g, dot_b, (int)alpha);
 
+    int circle_r = r, circle_g = g, circle_b = b;
+    sscanf(cl_cross_circle_color->string, "%d %d %d", &circle_r, &circle_g, &circle_b);
+    ImU32 circleColor = IM_COL32(circle_r, circle_g, circle_b, (int)alpha);
+
     float xPos = ScreenWidth * 0.5f;
     float yPos = ScreenHeight * 0.5f;
 
@@ -75,6 +83,9 @@ void CImGuiCrosshairs::Draw()
     float gap    = cl_cross_gap->value;
     float outline = cl_cross_outline->value;
     float dotsize = cl_cross_dot_size->value;
+
+    float circlegap = cl_cross_circle_gap->value;
+    float radius = cl_cross_circle_radius->value;
 
     ImU32 black = IM_COL32(0, 0, 0, (int)alpha);
 
@@ -98,7 +109,10 @@ void CImGuiCrosshairs::Draw()
             drawRect(xPos + size - outline, yPos - gap/2 - outline, xPos + size + thickness + outline, yPos + gap/2 + outline, black);
 
         if (dotsize > 0.0f)
-            drawRect(xPos - dotsize/2 - outline, yPos - dotsize/2 - outline, xPos + dotsize/2 + outline, yPos + dotsize/2 + outline, black);
+            draw->AddCircleFilled(ImVec2(xPos, yPos), dotsize/2 + outline, black);
+
+        if (cl_cross_circle_radius->value > 0.0f)
+            draw->AddCircle(ImVec2(xPos, yPos), radius, black, 128, circlegap + outline);
     }
 
     if (cl_cross_top_line->value)
@@ -114,13 +128,10 @@ void CImGuiCrosshairs::Draw()
         drawRect(xPos + size, yPos - gap/2, xPos + size + thickness, yPos + gap/2, crossColor);
 
     if (dotsize > 0.0f)
-        drawRect(xPos - dotsize/2, yPos - dotsize/2, xPos + dotsize/2, yPos + dotsize/2, dotColor);
+        draw->AddCircleFilled(ImVec2(xPos, yPos), dotsize/2, dotColor);
 
     if (cl_cross_circle_radius->value > 0.0f)
-    {
-        float radius = cl_cross_circle_radius->value;
-        draw->AddCircle(ImVec2(xPos, yPos), radius, crossColor, 64, 1.0f);
-    }
+        draw->AddCircle(ImVec2(xPos, yPos), radius, circleColor, 128, circlegap);
 }
 
 bool CImGuiCrosshairs::Active()
