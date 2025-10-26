@@ -3,6 +3,7 @@
 #include "keydefs.h"
 #include "hud.h"
 #include "cl_util.h"
+#include "Roboto.h"
 
 CImGuiManager &g_ImGuiManager = CImGuiManager::GetInstance();
 
@@ -70,9 +71,8 @@ CImGuiManager::~CImGuiManager()
 void CImGuiManager::LoadFonts()
 {
     ImGuiIO &io = ImGui::GetIO();
-    io.Fonts->AddFontDefault();
+    io.FontDefault = io.Fonts->AddFontFromMemoryTTF(Roboto_ttf, Roboto_ttf_len, 16.0f);
 }
-
 void CImGuiManager::ApplyStyles()
 {
     ImGuiIO &io = ImGui::GetIO();
