@@ -9,6 +9,12 @@ android {
     ndkVersion "28.2.13676358"
     compileSdk 36
 
+    dependencies {
+        implementation 'com.google.android.material:material:1.13.0'
+
+    }
+
+
     defaultConfig {
         applicationId 'su.xash.clientmod'
         versionName '1.5'

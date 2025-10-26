@@ -6,12 +6,33 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        EditText argvInput = findViewById(R.id.argvInput);
+        Button runButton = findViewById(R.id.runButton);
+        Button infoButton = findViewById(R.id.infoButton);
+
+        runButton.setOnClickListener(v -> startGame(argvInput.getText().toString()));
+        infoButton.setOnClickListener(v -> {
+            String url = "https://github.com/Elinsrc/Client-Mod";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        });
+    }
+
+
+    private void startGame(String argv) {
         String pkg = "su.xash.engine.test";
 
         try {
@@ -21,18 +42,16 @@ public class MainActivity extends Activity {
                 pkg = "su.xash.engine";
                 getPackageManager().getPackageInfo(pkg, 0);
             } catch (PackageManager.NameNotFoundException ex) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous")).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                finish();
+                startActivity(new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/FWGS/xash3d-fwgs/releases/tag/continuous")));
                 return;
             }
         }
 
         startActivity(new Intent().setComponent(new ComponentName(pkg, "su.xash.engine.XashActivity"))
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra("gamedir", "valve")
                 .putExtra("gamelibdir", getApplicationInfo().nativeLibraryDir)
-                .putExtra("argv", "-dev 2 -ref gl4es -log")
+                .putExtra("argv", argv)
                 .putExtra("package", getPackageName()));
-        finish();
     }
 }

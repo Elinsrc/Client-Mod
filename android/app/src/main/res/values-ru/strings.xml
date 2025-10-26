@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Client-Mod</string>
+    <string name="launch">ЗАПУСТИТЬ</string>
+    <string name="launch_parameters">АРГУМЕНТЫ КОМАНДНОЙ СТРОКИ</string>
+    <string name="info">ИНФО</string>
+</resources>

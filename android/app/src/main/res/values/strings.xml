@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Client-Mod</string>
+    <string name="launch">LAUNCH</string>
+    <string name="launch_parameters">COMMAND-LINE ARGUMENTS</string>
+    <string name="info">INFO</string>
 </resources>
