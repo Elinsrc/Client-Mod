@@ -57,8 +57,7 @@ void CImGuiScoreboard::DrawScoreboard()
     ImGui::SetNextWindowPos(ImVec2(sb_x, sb_y));
     ImGui::SetNextWindowSize(ImVec2(sb_width, sb_height));
 
-    ImVec4 window_bg_color = ImVec4(0.02f, 0.02f, 0.02f, 0.7f);
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, window_bg_color);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.02f, 0.02f, 0.02f, 0.7f));
     ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_TableRowBg, ImVec4(0.05f, 0.05f, 0.05f, 0.5f));
     ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt, ImVec4(0.08f, 0.08f, 0.08f, 0.5f));

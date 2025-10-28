@@ -101,7 +101,9 @@ struct HUDLIST
 #include "hud_spectator.h"
 #include "hud_speedometer.h"
 #include "hud_jumpspeed.h"
-// #include "hud_crosshairs.h"
+#if !USE_IMGUI
+#include "hud_crosshairs.h"
+#endif
 #include "hud_watermark.h"
 #include "hud_debug.h"
 #include "hud_strafeguide.h"

@@ -36,11 +36,11 @@ extern "C"
 #include "discord_integration.h"
 #endif
 
-#if defined(USE_IMGUI)
+#if USE_IMGUI
 #include "imgui_manager.h"
 #include "ui_scoreboard.h"
 extern cvar_t *ui_imgui_scoreboard;
-#if defined(__ANDROID__)
+#if __ANDROID__
 #include "gl_export.h"
 #endif
 #endif
@@ -1314,7 +1314,8 @@ void DLLEXPORT HUD_Shutdown( void )
 	discord_integration::shutdown();
 #endif
 
-#if defined(__ANDROID__)
+#if USE_IMGUI && __ANDROID__
 	GL_Shutdown();
 #endif
+
 }
