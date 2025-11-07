@@ -88,7 +88,7 @@ void CImGuiManager::UpdateMouseState()
     ImGuiIO &io = ImGui::GetIO();
 
 #if __ANDROID__
-    io.MousePos = ImVec2(m_TouchX, m_TouchY);
+    io.AddMousePosEvent(m_TouchX, m_TouchY);
 
     if (m_TouchID == 0 || m_TouchID == 2)
         io.MouseDown[0] = true;
