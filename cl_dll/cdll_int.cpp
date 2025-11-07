@@ -43,12 +43,14 @@
 
 #if USE_IMGUI
 #include "imgui_manager.h"
+int g_ImGuiMouse = 0;
 #if __ANDROID__
 #include "gl_export.h"
 #include "render_api.h"
 render_api_t gRenderAPI;
 #endif
 #endif
+
 
 extern "C"
 {
@@ -94,6 +96,7 @@ void	DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf );
 int		DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs );
 #if USE_IMGUI && __ANDROID__
 int 	DLLEXPORT HUD_GetRenderInterface( int version, render_api_t *renderfuncs, render_interface_t *callback );
+int		DLLEXPORT IN_ClientTouchEvent ( int fingerID, float x, float y, float dx, float dy );
 #endif
 }
 
@@ -495,5 +498,11 @@ int DLLEXPORT HUD_GetRenderInterface( int version, render_api_t *renderfuncs, re
 	// *callback = renderInterface;
 
 	return true;
+}
+
+int DLLEXPORT IN_ClientTouchEvent(int fingerID, float x, float y, float dx, float dy)
+{
+	g_ImGuiManager.TouchEvent(fingerID, x, y, dx, dy);
+	return g_ImGuiManager.IsCursorRequired() ? 1 : 0;
 }
 #endif

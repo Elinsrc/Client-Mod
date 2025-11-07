@@ -5,6 +5,8 @@
 #include "cl_util.h"
 #include "Roboto.h"
 
+extern int g_ImGuiMouse;
+
 CImGuiManager &g_ImGuiManager = CImGuiManager::GetInstance();
 
 CImGuiManager &CImGuiManager::GetInstance()
@@ -46,6 +48,8 @@ void CImGuiManager::NewFrame()
     m_WindowSystem.NewFrame();
     ImGui::Render();
     m_pBackend.RenderDrawData(ImGui::GetDrawData());
+
+    g_ImGuiMouse = IsCursorRequired();
 }
 
 /*
@@ -81,16 +85,28 @@ void CImGuiManager::ApplyStyles()
 
 void CImGuiManager::UpdateMouseState()
 {
-    int mx, my;
     ImGuiIO &io = ImGui::GetIO();
+
+#if __ANDROID__
+    io.MousePos = ImVec2(m_TouchX, m_TouchY);
+
+    if (m_TouchID == 0 || m_TouchID == 2)
+        io.MouseDown[0] = true;
+    else if (m_TouchID == 1)
+        io.MouseDown[0] = false;
+#else
+    int mx, my;
     gEngfuncs.GetMousePosition(&mx, &my);
 
     io.MouseDown[0] = m_MouseButtonsState.left;
     io.MouseDown[1] = m_MouseButtonsState.right;
     io.MouseDown[2] = m_MouseButtonsState.middle;
     io.MousePos = ImVec2((float)mx, (float)my);
+#endif
+
     UpdateCursorState();
 }
+
 
 void CImGuiManager::UpdateCursorState()
 {
@@ -257,3 +273,19 @@ void CImGuiManager::TextInputCallback(const char *text)
     ImGuiIO &io = ImGui::GetIO();
     io.AddInputCharactersUTF8(text);
 }
+
+bool CImGuiManager::IsCursorRequired()
+{
+    return m_WindowSystem.CursorRequired();
+}
+
+#if __ANDROID__
+void CImGuiManager::TouchEvent(int fingerID, float x, float y, float dx, float dy)
+{
+    m_TouchID = fingerID;
+    m_TouchX = x * ScreenWidth;
+    m_TouchY = y * ScreenHeight;
+    m_TouchDX = dx;
+    m_TouchDY = dy;
+}
+#endif

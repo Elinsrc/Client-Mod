@@ -3,6 +3,10 @@
 #include "hud.h"
 #include "cl_util.h"
 
+#if USE_IMGUI
+extern int g_ImGuiMouse;
+#endif
+
 // shared between backends
 Vector dead_viewangles(0, 0, 0);
 cvar_t      *sensitivity;
@@ -23,6 +27,10 @@ extern "C"  void DLLEXPORT IN_ClientMoveEvent( float forwardmove, float sidemove
 
 extern "C" void DLLEXPORT IN_ClientLookEvent( float relyaw, float relpitch )
 {
+#if USE_IMGUI
+	if( g_ImGuiMouse )
+		return;
+#endif
 	currentInput->IN_ClientLookEvent(relyaw, relpitch);
 }
 

@@ -17,6 +17,16 @@ public:
     void NewFrame();
     bool KeyInput(bool keyDown, int keyNumber, const char *bindName);
     static void TextInputCallback(const char *text);
+    bool IsCursorRequired();
+
+#if __ANDROID__
+    void TouchEvent(int fingerID, float x, float y, float dx, float dy);
+    int m_TouchID = -1;
+    float m_TouchX = 0.0f;
+    float m_TouchY = 0.0f;
+    float m_TouchDX = 0.0f;
+    float m_TouchDY = 0.0f;
+#endif
 
 private:
     struct MouseButtonsState
