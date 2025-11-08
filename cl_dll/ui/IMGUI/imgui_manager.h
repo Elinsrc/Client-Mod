@@ -16,7 +16,6 @@ public:
     void Terminate();
     void NewFrame();
     bool KeyInput(bool keyDown, int keyNumber, const char *bindName);
-    static void TextInputCallback(const char *text);
     bool IsCursorRequired();
 
 #if __ANDROID__
@@ -45,20 +44,14 @@ private:
     void ApplyStyles();
     void UpdateMouseState();
     void UpdateCursorState();
-    void UpdateTextInputState();
-    void UpdateKeyModifiers();
     void HandleKeyInput(bool keyDown, int keyNumber);
     bool HandleMouseInput(bool keyDown, int keyNumber);
     void SetupConfig();
     void SetupKeyboardMapping();
-    void SetupCursorMapping();
-    /*static const char *GetClipboardText(void *userData);
-    static void SetClipboardText(void *userData, const char *text);*/
 
     bool m_bWasCursorRequired = false;
     MouseButtonsState m_MouseButtonsState;
     std::map<int, int> m_KeysMapping;
-    std::map<int, VGUI_DefaultCursor> m_CursorMapping;
     CImGuiWindowSystem m_WindowSystem;
 };
 extern CImGuiManager &g_ImGuiManager;

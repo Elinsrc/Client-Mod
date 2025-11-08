@@ -22,7 +22,6 @@ void CImGuiManager::Initialize()
     LoadFonts();
     ApplyStyles();
     SetupKeyboardMapping();
-    SetupCursorMapping();
     m_pBackend.Init();
     m_WindowSystem.Initialize();
 }
@@ -42,8 +41,6 @@ void CImGuiManager::NewFrame()
 {
     m_pBackend.NewFrame();
     UpdateMouseState();
-    UpdateKeyModifiers();
-    UpdateTextInputState();
     ImGui::NewFrame();
     m_WindowSystem.NewFrame();
     ImGui::Render();
@@ -122,14 +119,6 @@ void CImGuiManager::UpdateCursorState()
     m_bWasCursorRequired = cursorRequired;
 }
 
-void CImGuiManager::UpdateTextInputState()
-{
-}
-
-void CImGuiManager::UpdateKeyModifiers()
-{
-}
-
 void CImGuiManager::HandleKeyInput(bool keyDown, int keyNumber)
 {
     ImGuiIO &io = ImGui::GetIO();
@@ -170,8 +159,6 @@ void CImGuiManager::SetupConfig()
     io.IniFilename = NULL;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-    /*io.SetClipboardTextFn = CImGuiManager::SetClipboardText;
-    io.GetClipboardTextFn = CImGuiManager::GetClipboardText;*/
 }
 
 void CImGuiManager::SetupKeyboardMapping()
@@ -245,33 +232,6 @@ void CImGuiManager::SetupKeyboardMapping()
     for (int i = 0; i < 12; ++i) {
         m_KeysMapping.insert({ K_F1 + i, ImGuiKey_F1 + i });
     }
-}
-
-void CImGuiManager::SetupCursorMapping()
-{
-    m_CursorMapping.insert({ ImGuiMouseCursor_Arrow, dc_arrow });
-    m_CursorMapping.insert({ ImGuiMouseCursor_TextInput, dc_ibeam });
-    m_CursorMapping.insert({ ImGuiMouseCursor_ResizeAll,  dc_sizeall });
-    m_CursorMapping.insert({ ImGuiMouseCursor_ResizeNS, dc_sizens });
-    m_CursorMapping.insert({ ImGuiMouseCursor_ResizeEW, dc_sizewe });
-    m_CursorMapping.insert({ ImGuiMouseCursor_ResizeNESW, dc_sizenesw });
-    m_CursorMapping.insert({ ImGuiMouseCursor_ResizeNWSE, dc_sizenwse });
-    m_CursorMapping.insert({ ImGuiMouseCursor_Hand, dc_hand });
-    m_CursorMapping.insert({ ImGuiMouseCursor_NotAllowed, dc_no });
-}
-
-/*const char *CImGuiManager::GetClipboardText(void *userData)
-{
-}
-
-void CImGuiManager::SetClipboardText(void *userData, const char *text)
-{
-}*/
-
-void CImGuiManager::TextInputCallback(const char *text)
-{
-    ImGuiIO &io = ImGui::GetIO();
-    io.AddInputCharactersUTF8(text);
 }
 
 bool CImGuiManager::IsCursorRequired()
