@@ -204,6 +204,7 @@ if (USE_IMGUI)
 		ui/IMGUI/ui_demo_window.cpp
 		ui/IMGUI/ui_scoreboard.cpp
 		ui/IMGUI/ui_crosshairs.cpp
+		ui/IMGUI/ui_commands.cpp
 		ui/IMGUI/ui_utils.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_demo.cpp

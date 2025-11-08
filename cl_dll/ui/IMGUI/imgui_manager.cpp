@@ -24,6 +24,7 @@ void CImGuiManager::Initialize()
     SetupKeyboardMapping();
     m_pBackend.Init();
     m_WindowSystem.Initialize();
+    g_ImGuiCrosshairs.Init();
 }
 
 void CImGuiManager::VidInitialize()
@@ -43,10 +44,12 @@ void CImGuiManager::NewFrame()
     UpdateMouseState();
     ImGui::NewFrame();
     m_WindowSystem.NewFrame();
+    g_ImGuiCrosshairs.Draw();
     ImGui::Render();
     m_pBackend.RenderDrawData(ImGui::GetDrawData());
 
     g_ImGuiMouse = IsCursorRequired();
+
 }
 
 /*

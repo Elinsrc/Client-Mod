@@ -1,4 +1,5 @@
 #include "ui_utils.h"
+#include "hud.h"
 #include <string>
 #include <cmath>
 
@@ -112,4 +113,40 @@ void CImguiUtils::DrawModelName(float topcolor, float bottomcolor, const char* m
     pos.x += firstWidth;
 
     draw_list->AddText(ImGui::GetFont(), ImGui::GetFontSize(), pos, IM_COL32(bottom.r, bottom.g, bottom.b, 255), secondcolor.c_str());
+}
+
+float CImguiUtils::GetCvarFloat(const char* name)
+{
+    cvar_t* cvar = gEngfuncs.pfnGetCvarPointer(name);
+    return cvar->value;
+}
+
+void CImguiUtils::SetCvarFloat(const char* name, float value)
+{
+    char cmd[64];
+    snprintf(cmd, sizeof(cmd), "%s %f", name, value);
+    gEngfuncs.pfnClientCmd(cmd);
+}
+
+void CImguiUtils::GetCvarColor(const char* name, float outColor[3])
+{
+    const char* str = gEngfuncs.pfnGetCvarString(name);
+    int r, g, b;
+
+    sscanf(str, "%d %d %d", &r, &g, &b);
+
+    outColor[0] = r / 255.0f;
+    outColor[1] = g / 255.0f;
+    outColor[2] = b / 255.0f;
+}
+
+void CImguiUtils::SetCvarColor(const char* name, const float color[3])
+{
+    int r = (int)(color[0] * 255.0f + 0.5f);
+    int g = (int)(color[1] * 255.0f + 0.5f);
+    int b = (int)(color[2] * 255.0f + 0.5f);
+
+    char cmd[64];
+    snprintf(cmd, sizeof(cmd), "%s \"%d %d %d\"", name, r, g, b);
+    gEngfuncs.pfnClientCmd(cmd);
 }

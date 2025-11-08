@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include "imgui_backend.h"
+#include "ui_crosshairs.h"
 
 class CImGuiManager
 {
@@ -53,5 +54,6 @@ private:
     MouseButtonsState m_MouseButtonsState;
     std::map<int, int> m_KeysMapping;
     CImGuiWindowSystem m_WindowSystem;
+    CImGuiCrosshairs g_ImGuiCrosshairs;
 };
 extern CImGuiManager &g_ImGuiManager;

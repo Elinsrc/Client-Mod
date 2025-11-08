@@ -1,7 +1,7 @@
 #include "imgui_window_system.h"
 #include "ui_demo_window.h"
 #include "ui_scoreboard.h"
-#include "ui_crosshairs.h"
+#include "ui_commands.h"
 
 void CImGuiWindowSystem::LinkWindows()
 {
@@ -11,6 +11,6 @@ void CImGuiWindowSystem::LinkWindows()
     static CImGuiScoreboard scoreWindow;
     AddWindow(&scoreWindow);
 
-    static CImGuiCrosshairs srosshairsWindow;
-    AddWindow(&srosshairsWindow);
+    static CImGuiCommands commandsWindow;
+    AddWindow(&commandsWindow);
 }

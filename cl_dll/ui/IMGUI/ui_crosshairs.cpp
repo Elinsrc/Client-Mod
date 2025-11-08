@@ -22,7 +22,7 @@ cvar_t* cl_cross_circle_color;
 
 bool CImGuiCrosshairs::m_ShowCrosshairs = false;
 
-void CImGuiCrosshairs::Initialize()
+void CImGuiCrosshairs::Init()
 {
     cl_cross = CVAR_CREATE("cl_cross", "0", FCVAR_ARCHIVE);
 	cl_cross_color = CVAR_CREATE("cl_cross_color", "0 255 0", FCVAR_ARCHIVE);
@@ -40,18 +40,6 @@ void CImGuiCrosshairs::Initialize()
 	cl_cross_bottom_line = CVAR_CREATE("cl_cross_bottom_line", "1", FCVAR_ARCHIVE);
 	cl_cross_left_line = CVAR_CREATE("cl_cross_left_line", "1", FCVAR_ARCHIVE);
 	cl_cross_right_line = CVAR_CREATE("cl_cross_right_line", "1", FCVAR_ARCHIVE);
-}
-
-void CImGuiCrosshairs::VidInitialize()
-{
-}
-
-void CImGuiCrosshairs::Terminate()
-{
-}
-
-void CImGuiCrosshairs::Think()
-{
 }
 
 void CImGuiCrosshairs::Draw()
@@ -132,19 +120,4 @@ void CImGuiCrosshairs::Draw()
 
     if (cl_cross_circle_radius->value > 0.0f)
         draw->AddCircle(ImVec2(xPos, yPos), radius, circleColor, 128, circlegap);
-}
-
-bool CImGuiCrosshairs::Active()
-{
-    return m_ShowCrosshairs;
-}
-
-bool CImGuiCrosshairs::CursorRequired()
-{
-    return false;
-}
-
-bool CImGuiCrosshairs::HandleKey(bool keyDown, int keyNumber, const char *bindName)
-{
-    return true;
 }
