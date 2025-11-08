@@ -1314,8 +1314,12 @@ void DLLEXPORT HUD_Shutdown( void )
 	discord_integration::shutdown();
 #endif
 
-#if USE_IMGUI && __ANDROID__
+#if USE_IMGUI
+#if __ANDROID__
 	GL_Shutdown();
+#else
+	g_ImGuiManager.Terminate();
+#endif
 #endif
 
 }

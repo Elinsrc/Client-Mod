@@ -202,7 +202,7 @@ void CImGuiCommands::Draw()
             ImGui::EndTabItem();
         }
 
-        if (ImGui::BeginTabItem("hud_color"))
+        if (ImGui::BeginTabItem("HUD Color"))
         {
             bool hud_rainbow = m_CImguiUtils.GetCvarFloat("hud_rainbow");
             if (ImGui::Checkbox("hud_rainbow", &hud_rainbow))
