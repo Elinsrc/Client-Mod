@@ -44,7 +44,7 @@
 #if USE_IMGUI
 #include "imgui_manager.h"
 int g_ImGuiMouse = 0;
-#if __ANDROID__
+#if __ANDROID__ || XASH_64BIT
 #include "gl_export.h"
 #include "render_api.h"
 render_api_t gRenderAPI;
@@ -94,8 +94,10 @@ void	DLLEXPORT HUD_Frame( double time );
 void	DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking);
 void	DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf );
 int		DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs );
-#if USE_IMGUI && __ANDROID__
+#if USE_IMGUI && (__ANDROID__ || XASH_64BIT)
 int 	DLLEXPORT HUD_GetRenderInterface( int version, render_api_t *renderfuncs, render_interface_t *callback );
+#endif
+#if USE_IMGUI && __ANDROID__
 int		DLLEXPORT IN_ClientTouchEvent ( int fingerID, float x, float y, float dx, float dy );
 #endif
 }
@@ -332,7 +334,7 @@ void DLLEXPORT HUD_Init( void )
 #endif
 
 #if USE_IMGUI
-#if __ANDROID__
+#if __ANDROID__ || XASH_64BIT
 	GL_Init();
 #else
 	g_ImGuiManager.Initialize();
@@ -484,7 +486,7 @@ HUD_GetRenderInterface
 Called when Xash3D sends render api to us
 ==========================
 */
-#if USE_IMGUI && __ANDROID__
+#if USE_IMGUI && (__ANDROID__ || XASH_64BIT)
 int DLLEXPORT HUD_GetRenderInterface( int version, render_api_t *renderfuncs, render_interface_t *callback )
 {
 	if( version != CL_RENDER_INTERFACE_VERSION )
@@ -499,7 +501,9 @@ int DLLEXPORT HUD_GetRenderInterface( int version, render_api_t *renderfuncs, re
 
 	return true;
 }
+#endif
 
+#if USE_IMGUI && __ANDROID__
 int DLLEXPORT IN_ClientTouchEvent(int fingerID, float x, float y, float dx, float dy)
 {
 	g_ImGuiManager.TouchEvent(fingerID, x, y, dx, dy);

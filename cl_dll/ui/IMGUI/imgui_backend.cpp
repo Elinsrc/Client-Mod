@@ -3,9 +3,10 @@
 #include "build_info.h"
 #include <stdint.h>
 
-#if __ANDROID__
+#if __ANDROID__ || XASH_64BIT
 #include "gl_export.h"
-#elif _WIN32
+#else
+#if _WIN32
 #define HSPRITE DeletedWinapi_HSPRITE
 #include <windows.h>
 #undef HSPRITE
@@ -13,6 +14,7 @@ typedef int HSPRITE;
 #include <GL/gl.h>
 #elif __linux__
 #include <GL/gl.h>
+#endif
 #endif
 
 // OpenGL data

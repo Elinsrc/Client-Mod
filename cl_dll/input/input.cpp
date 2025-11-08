@@ -40,7 +40,7 @@ extern "C"
 #include "imgui_manager.h"
 #include "ui_scoreboard.h"
 extern cvar_t *ui_imgui_scoreboard;
-#if __ANDROID__
+#if __ANDROID__ || XASH_64BIT
 #include "gl_export.h"
 #endif
 #endif
@@ -1315,7 +1315,7 @@ void DLLEXPORT HUD_Shutdown( void )
 #endif
 
 #if USE_IMGUI
-#if __ANDROID__
+#if __ANDROID__ || XASH_64BIT
 	GL_Shutdown();
 #else
 	g_ImGuiManager.Terminate();

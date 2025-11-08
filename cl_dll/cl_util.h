@@ -1,9 +1,9 @@
 /***
 *
 *	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
+*
+*	This product contains software technology licensed from Id
+*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc.
 *	All Rights Reserved.
 *
 *   Use, distribution, and modification of this source code and/or resulting
@@ -100,9 +100,9 @@ inline client_textmessage_t *TextMessageGet( const char *pName )
 	return gEngfuncs.pfnTextMessageGet( pName );
 }
 
-inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b ) 
+inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b )
 {
-	return gEngfuncs.pfnDrawCharacter( x, y, number, r, g, b ); 
+	return gEngfuncs.pfnDrawCharacter( x, y, number, r, g, b );
 }
 
 int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b );

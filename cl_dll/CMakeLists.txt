@@ -216,9 +216,10 @@ else()
 		ui/hud/hud_crosshairs.cpp)
 endif()
 
-if (USE_IMGUI AND ANDROID)
-	list(APPEND CLDLL_SOURCES
-	rendering/gl_export.cpp)
+if (USE_IMGUI AND (ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8))
+    list(APPEND CLDLL_SOURCES
+        rendering/gl_export.cpp
+    )
 endif()
 
 include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ utils/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
