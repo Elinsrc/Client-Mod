@@ -6,9 +6,10 @@
 #include "imgui_backend.h"
 #include "ui_crosshairs.h"
 
+class CImGuiBackend;
+
 class CImGuiManager
 {
-    CImGuiBackend m_pBackend;
 public:
     static CImGuiManager &GetInstance();
 
@@ -53,6 +54,7 @@ private:
     bool m_bWasCursorRequired = false;
     MouseButtonsState m_MouseButtonsState;
     std::map<int, int> m_KeysMapping;
+    std::unique_ptr<CImGuiBackend> m_pBackend;
     CImGuiWindowSystem m_WindowSystem;
     CImGuiCrosshairs g_ImGuiCrosshairs;
 };

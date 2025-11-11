@@ -17,17 +17,17 @@ typedef int HSPRITE;
 #endif
 #endif
 
-// OpenGL data
-struct ImGui_ImplOpenGL2_Data
+CImGuiBackend::CImGuiBackend()
 {
-    ImGui_ImplOpenGL2_Data() { memset((void*)this, 0, sizeof(*this)); }
-};
+}
 
-// Backend data stored in io.BackendRendererUserData to allow support for multiple Dear ImGui contexts
-// It is STRONGLY preferred that you use docking branch with multi-viewports (== single Dear ImGui context + multiple windows) instead of multiple Dear ImGui contexts.
-static ImGui_ImplOpenGL2_Data* ImGui_ImplOpenGL2_GetBackendData()
+CImGuiBackend::~CImGuiBackend()
 {
-    return ImGui::GetCurrentContext() ? (ImGui_ImplOpenGL2_Data*)ImGui::GetIO().BackendRendererUserData : nullptr;
+}
+
+CImGuiBackend::ImplData* CImGuiBackend::GetBackendData()
+{
+    return ImGui::GetCurrentContext() ? (ImplData*)ImGui::GetIO().BackendRendererUserData : nullptr;
 }
 
 bool CImGuiBackend::Init()
@@ -37,7 +37,7 @@ bool CImGuiBackend::Init()
     IM_ASSERT(io.BackendRendererUserData == nullptr && "Already initialized a renderer backend!");
 
     // Setup backend capabilities flags
-    ImGui_ImplOpenGL2_Data* bd = IM_NEW(ImGui_ImplOpenGL2_Data)();
+    ImplData* bd = IM_NEW(ImplData)();
     io.BackendRendererUserData = (void*)bd;
     io.BackendRendererName = "imgui_impl_opengl2";
     io.BackendPlatformName = BuildInfo::GetPlatform();
@@ -50,12 +50,12 @@ bool CImGuiBackend::Init()
 
 void CImGuiBackend::Shutdown()
 {
-    ImGui_ImplOpenGL2_Data* bd = ImGui_ImplOpenGL2_GetBackendData();
+    ImplData* bd = GetBackendData();
     IM_ASSERT(bd != nullptr && "No renderer backend to shutdown, or already shutdown?");
     ImGuiIO& io = ImGui::GetIO();
     ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
 
-    ImGui_ImplOpenGL2_DestroyDeviceObjects();
+    DestroyDeviceObjects();
 
     io.BackendRendererName = nullptr;
     io.BackendRendererUserData = nullptr;
@@ -67,8 +67,8 @@ void CImGuiBackend::Shutdown()
 void CImGuiBackend::NewFrame()
 {
     ImGuiIO &io = ImGui::GetIO();
-    ImGui_ImplOpenGL2_Data* bd = ImGui_ImplOpenGL2_GetBackendData();
-    IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call ImGui_ImplOpenGL2_Init()?");
+    ImplData* bd = GetBackendData();
+    IM_ASSERT(bd != nullptr && "Context or backend not initialized! Did you call CImGuiBackend::Init()?");
     IM_UNUSED(bd);
 
     float ui_scale = ui_imgui_scale->value;
@@ -81,7 +81,7 @@ void CImGuiBackend::NewFrame()
     io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
 }
 
-static void ImGui_ImplOpenGL2_SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height)
+void CImGuiBackend::SetupRenderState(ImDrawData* draw_data, int fb_width, int fb_height)
 {
     // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers, polygon fill.
     glEnable(GL_BLEND);
@@ -101,17 +101,6 @@ static void ImGui_ImplOpenGL2_SetupRenderState(ImDrawData* draw_data, int fb_wid
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glShadeModel(GL_SMOOTH);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-    // If you are using this code with non-legacy OpenGL header/contexts (which you should not, prefer using imgui_impl_opengl3.cpp!!),
-    // you may need to backup/reset/restore other state, e.g. for current shader using the commented lines below.
-    // (DO NOT MODIFY THIS FILE! Add the code in your calling function)
-    //   GLint last_program;
-    //   glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
-    //   glUseProgram(0);
-    //   ImGui_ImplOpenGL2_RenderDrawData(...);
-    //   glUseProgram(last_program)
-    // There are potentially many more states you could need to clear/setup that we can't access from default headers.
-    // e.g. glBindBuffer(GL_ARRAY_BUFFER, 0), glDisable(GL_TEXTURE_CUBE_MAP).
 
     // Setup viewport, orthographic projection matrix
     // Our visible imgui space lies from draw_data->DisplayPos (top left) to draw_data->DisplayPos+data_data->DisplaySize (bottom right). DisplayPos is (0,0) for single viewport apps.
@@ -141,7 +130,7 @@ void CImGuiBackend::RenderDrawData(ImDrawData* draw_data)
     if (draw_data->Textures != nullptr)
         for (ImTextureData* tex : *draw_data->Textures)
             if (tex->Status != ImTextureStatus_OK)
-                ImGui_ImplOpenGL2_UpdateTexture(tex);
+                UpdateTexture(tex);
 
     // Backup GL state
     GLint last_texture; glGetIntegerv(GL_TEXTURE_BINDING_2D, &last_texture);
@@ -153,7 +142,7 @@ void CImGuiBackend::RenderDrawData(ImDrawData* draw_data)
     glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
 
     // Setup desired GL state
-    ImGui_ImplOpenGL2_SetupRenderState(draw_data, fb_width, fb_height);
+    SetupRenderState(draw_data, fb_width, fb_height);
 
     // Will project scissor/clipping rectangles into framebuffer space
     ImVec2 clip_off = draw_data->DisplayPos;         // (0,0) unless using multi-viewports
@@ -176,7 +165,7 @@ void CImGuiBackend::RenderDrawData(ImDrawData* draw_data)
                 // User callback, registered via ImDrawList::AddCallback()
                 // (ImDrawCallback_ResetRenderState is a special callback value used by the user to request the renderer to reset render state.)
                 if (pcmd->UserCallback == ImDrawCallback_ResetRenderState)
-                    ImGui_ImplOpenGL2_SetupRenderState(draw_data, fb_width, fb_height);
+                    SetupRenderState(draw_data, fb_width, fb_height);
                 else
                     pcmd->UserCallback(draw_list, pcmd);
             }
@@ -215,7 +204,7 @@ void CImGuiBackend::RenderDrawData(ImDrawData* draw_data)
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, last_tex_env_mode);
 }
 
-void ImGui_ImplOpenGL2_UpdateTexture(ImTextureData* tex)
+void CImGuiBackend::UpdateTexture(ImTextureData* tex)
 {
     if (tex->Status == ImTextureStatus_WantCreate)
     {
@@ -275,17 +264,17 @@ void ImGui_ImplOpenGL2_UpdateTexture(ImTextureData* tex)
     }
 }
 
-bool ImGui_ImplOpenGL2_CreateDeviceObjects()
+bool CImGuiBackend::CreateDeviceObjects()
 {
     return true;
 }
 
-void ImGui_ImplOpenGL2_DestroyDeviceObjects()
+void CImGuiBackend::DestroyDeviceObjects()
 {
     for (ImTextureData* tex : ImGui::GetPlatformIO().Textures)
         if (tex->RefCount == 1)
         {
             tex->SetStatus(ImTextureStatus_WantDestroy);
-            ImGui_ImplOpenGL2_UpdateTexture(tex);
+            UpdateTexture(tex);
         }
 }

@@ -22,7 +22,7 @@ void CImGuiManager::Initialize()
     LoadFonts();
     ApplyStyles();
     SetupKeyboardMapping();
-    m_pBackend.Init();
+    m_pBackend->Init();
     m_WindowSystem.Initialize();
     g_ImGuiCrosshairs.Init();
 }
@@ -35,18 +35,18 @@ void CImGuiManager::VidInitialize()
 void CImGuiManager::Terminate()
 {
     m_WindowSystem.Terminate();
-    m_pBackend.Shutdown();
+    m_pBackend->Shutdown();
 }
 
 void CImGuiManager::NewFrame()
 {
-    m_pBackend.NewFrame();
+    m_pBackend->NewFrame();
     UpdateMouseState();
     ImGui::NewFrame();
     m_WindowSystem.NewFrame();
     g_ImGuiCrosshairs.Draw();
     ImGui::Render();
-    m_pBackend.RenderDrawData(ImGui::GetDrawData());
+    m_pBackend->RenderDrawData(ImGui::GetDrawData());
 
     g_ImGuiMouse = IsCursorRequired();
 
@@ -66,6 +66,7 @@ bool CImGuiManager::KeyInput(bool keyDown, int keyNumber, const char *bindName)
 
 CImGuiManager::CImGuiManager()
 {
+    m_pBackend = std::make_unique<CImGuiBackend>();
 }
 
 CImGuiManager::~CImGuiManager()
