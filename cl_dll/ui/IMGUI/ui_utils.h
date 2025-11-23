@@ -1,9 +1,6 @@
 #pragma once
 #include "imgui.h"
-
-struct RGBColor {
-    int r, g, b;
-};
+#include "rgb_color.h"
 
 class CImguiUtils
 {
@@ -17,3 +14,5 @@ public:
     void GetCvarColor(const char* name, float outColor[3]);
     void SetCvarColor(const char* name, const float color[3]);
 };
+
+extern CImguiUtils m_ImguiUtils;

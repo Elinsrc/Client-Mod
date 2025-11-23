@@ -3,6 +3,8 @@
 #include <string>
 #include <cmath>
 
+CImguiUtils m_ImguiUtils;
+
 ImVec4 CImguiUtils::ColorFromCode(char code)
 {
     switch(code)
@@ -17,35 +19,73 @@ ImVec4 CImguiUtils::ColorFromCode(char code)
         case '7': return ImVec4(1.0f, 1.0f, 1.0f, 1.0f); // White
         case '8': return ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Black (same as 0)
         case '9': return ImVec4(1.0f, 0.0f, 0.0f, 1.0f); // Red (same as 1)
+        default: return ImVec4(1.0f, 0.65f, 0.0f, 1.0f); // default orange
     }
 }
 
 void CImguiUtils::TextWithColorCodes(const char* text)
 {
+    bool hasColorCodes = false;
+    for (const char* c = text; *c; c++)
+    {
+        if (*c == '^' && *(c + 1))
+        {
+            hasColorCodes = true;
+            break;
+        }
+    }
+
+    if (!hasColorCodes)
+    {
+        ImGui::TextUnformatted(text);
+        return;
+    }
+
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImVec2 cursor = pos;
+
+    float lineHeight = ImGui::GetTextLineHeight();
+    ImVec4 defaultColor = ImVec4(1.0f, 0.65f, 0.0f, 1.0f);
+
+    ImVec4 color = defaultColor;
     const char* ptr = text;
-    ImVec4 currentColor = ImVec4(1.0f, 0.65f, 0.0f, 1.0f); // default orange
 
     while (*ptr)
     {
-        if (*ptr == '^' && *(ptr+1))
+        if (*ptr == '\n')
         {
-            currentColor = ColorFromCode(*(ptr+1));
+            cursor.x = pos.x;
+            cursor.y += lineHeight;
+            ptr++;
+            color = defaultColor;
+            continue;
+        }
+
+        if (*ptr == '^' && *(ptr + 1))
+        {
+            color = ColorFromCode(*(ptr + 1));
             ptr += 2;
             continue;
         }
 
         const char* start = ptr;
-        while (*ptr && !(*ptr == '^' && *(ptr+1))) ptr++;
-        std::string segment(start, ptr);
+        while (*ptr && *ptr != '\n' && !(*ptr == '^' && *(ptr + 1)))
+            ptr++;
 
-        if (!segment.empty())
+        std::string seg(start, ptr - start);
+
+        if (!seg.empty())
         {
-            ImGui::TextColored(currentColor, "%s", segment.c_str());
-            ImGui::SameLine(0.0f, 0.0f);
+            draw->AddText(cursor, ImGui::ColorConvertFloat4ToU32(color), seg.c_str());
+            cursor.x += ImGui::CalcTextSize(seg.c_str()).x;
         }
     }
-    ImGui::NewLine();
+
+    ImGui::Dummy(ImVec2(0, cursor.y - pos.y + lineHeight));
 }
+
+
 
 void CImguiUtils::HUEtoRGB(float hue, RGBColor &color)
 {

@@ -24,18 +24,9 @@
 #include "netadr.h"
 #include "parsemsg.h"
 
-#if USE_VGUI
-#include "vgui_int.h"
-#include "vgui_TeamFortressViewport.h"
-#endif
-
-#if GOLDSOURCE_SUPPORT && (_WIN32 || __linux__ || __APPLE__) && (__i386 || _M_IX86)
-#define USE_FAKE_VGUI	!USE_VGUI
-#if USE_FAKE_VGUI
 #include "VGUI_Panel.h"
 #include "VGUI_App.h"
-#endif
-#endif
+
 
 #if USE_DISCORD_RPC
 #include "discord_integration.h"
@@ -43,6 +34,7 @@
 
 #if USE_IMGUI
 #include "imgui_manager.h"
+#include "imgui_viewport.h"
 int g_ImGuiMouse = 0;
 #if __ANDROID__ || XASH_64BIT
 #include "gl_export.h"
@@ -61,9 +53,6 @@ extern "C"
 
 cl_enginefunc_t gEngfuncs;
 CHud gHUD;
-#if USE_VGUI
-TeamFortressViewport *gViewPort = NULL;
-#endif
 mobile_engfuncs_t *gMobileEngfuncs = NULL;
 
 void InitInput( void );
@@ -232,7 +221,6 @@ int *HUD_GetRect( void )
 	return extent;
 }
 
-#if USE_FAKE_VGUI
 class TeamFortressViewport : public vgui::Panel
 {
 public:
@@ -272,7 +260,6 @@ void *TeamFortressViewport::operator new( size_t stAllocateBlock )
 	memset( mem, 0, stAllocateBlock );
 	return mem;
 }
-#endif
 
 /*
 ==========================
@@ -287,7 +274,6 @@ so the HUD can reinitialize itself.
 int DLLEXPORT HUD_VidInit( void )
 {
 	gHUD.VidInit();
-#if USE_FAKE_VGUI
 	vgui::Panel* root=(vgui::Panel*)gEngfuncs.VGui_GetPanel();
 	if (root) {
 		gEngfuncs.Con_Printf( "Root VGUI panel exists\n" );
@@ -305,9 +291,6 @@ int DLLEXPORT HUD_VidInit( void )
 	} else {
 		gEngfuncs.Con_Printf( "Root VGUI panel does not exist\n" );
 	}
-#elif USE_VGUI
-	VGui_Startup();
-#endif
 
 #if USE_IMGUI
 	g_ImGuiManager.VidInitialize();
@@ -329,11 +312,9 @@ void DLLEXPORT HUD_Init( void )
 {
 	InitInput();
 	gHUD.Init();
-#if USE_VGUI
-	Scheme_Init();
-#endif
 
 #if USE_IMGUI
+	g_ImGuiViewport.Initialize();
 #if __ANDROID__ || XASH_64BIT
 	GL_Init();
 #else
@@ -415,12 +396,8 @@ void DLLEXPORT HUD_Frame( double time )
 
 	GetClientVoiceMgr()->Frame(time);
 
-#if USE_FAKE_VGUI
 	if (!gViewPort)
 		gEngfuncs.VGui_ViewportPaintBackground(HUD_GetRect());
-#else
-	gEngfuncs.VGui_ViewportPaintBackground(HUD_GetRect());
-#endif
 }
 
 /*

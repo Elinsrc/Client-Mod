@@ -30,6 +30,7 @@
 #include "cl_dll.h"
 #include "ammo.h"
 #include "cvardef.h"
+#include "rgb_color.h"
 
 #define DHN_DRAWZERO 1
 #define DHN_2DIGITS  2
@@ -93,11 +94,7 @@ struct HUDLIST
 
 //
 //-----------------------------------------------------
-#if USE_VGUI
-#include "voice_status.h" // base voice handling class
-#else
 #include "novgui_voice_status.h"
-#endif
 #include "hud_spectator.h"
 #include "hud_speedometer.h"
 #include "hud_jumpspeed.h"
@@ -226,7 +223,7 @@ private:
 	int m_iPos;
 };
 
-#if !USE_VGUI || USE_NOVGUI_MOTD
+#if !USE_IMGUI || USE_NOIMGUI_MOTD
 class CHudMOTD : public CHudBase
 {
 public:
@@ -250,7 +247,7 @@ protected:
 };
 #endif
 
-#if !USE_VGUI || USE_NOVGUI_SCOREBOARD
+#if !USE_IMGUI || USE_NOIMGUI_SCOREBOARD
 class CHudScoreboard : public CHudBase
 {
 public:
@@ -617,7 +614,7 @@ public:
 	int DrawHudStringLen( const char *szIt );
 	int GetHudStringWidth(const char* string);
 	void DrawDarkRectangle( int x, int y, int wide, int tall );
-	void HUEtoRGB(float hue, int &R, int &G, int &B);
+	void HUEtoRGB(float hue, RGBColor &color);
 	void DrawHudModelName(int x, int y, float topcolor, float bottomcolor, const char* model);
 	int DrawHudText(int x, int y, const char* szString, int r, int g, int b);
 	int DrawHudTextCentered(int x, int y, const char* szString, int r, int g, int b);
@@ -709,10 +706,10 @@ public:
 	CHudVote		m_Vote;
 	// CHudSplash		m_Splash;
 	CHudLongjump	m_Longjump;
-#if !USE_VGUI || USE_NOVGUI_SCOREBOARD
+#if !USE_IMGUI || USE_NOIMGUI_SCOREBOARD
 	CHudScoreboard	m_Scoreboard;
 #endif
-#if !USE_VGUI || USE_NOVGUI_MOTD
+#if !USE_IMGUI || USE_NOIMGUI_MOTD
 	CHudMOTD	m_MOTD;
 #endif
 

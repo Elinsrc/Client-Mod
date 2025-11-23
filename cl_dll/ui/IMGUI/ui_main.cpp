@@ -1,16 +1,20 @@
 #include "imgui_window_system.h"
 #include "ui_demo_window.h"
-#include "ui_scoreboard.h"
 #include "ui_commands.h"
+#include "imgui_ScorePanel.h"
+#include "imgui_MOTD.h"
 
 void CImGuiWindowSystem::LinkWindows()
 {
     static CImGuiDemoWindow demoWindow;
     AddWindow(&demoWindow);
 
+    static CImGuiCommands commandsWindow;
+    AddWindow(&commandsWindow);
+
     static CImGuiScoreboard scoreWindow;
     AddWindow(&scoreWindow);
 
-    static CImGuiCommands commandsWindow;
-    AddWindow(&commandsWindow);
+    static CImGuiMOTD motdWindow;
+    AddWindow(&motdWindow);
 }

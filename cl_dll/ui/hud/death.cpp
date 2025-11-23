@@ -23,8 +23,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#if USE_VGUI
-#include "vgui_TeamFortressViewport.h"
+#if USE_IMGUI
+#include "imgui_viewport.h"
 #endif
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg )
@@ -125,8 +125,8 @@ int CHudDeathNotice::Draw( float flTime )
 
 		// Only draw if the viewport will let me
 		// vgui dropped out
-#if USE_VGUI
-		if( gViewPort && gViewPort->AllowedToPrintText() )
+#if USE_IMGUI
+		//if( g_ImGuiViewport.AllowedToPrintText() )
 #endif
 		{
 			// Draw the death notice
@@ -212,9 +212,8 @@ int CHudDeathNotice::MsgFunc_DeathMsg( const char *pszName, int iSize, void *pbu
 	strncat( killedwith, READ_STRING(), sizeof(killedwith) - strlen(killedwith) - 1 );
 	killedwith[sizeof(killedwith) - 1] = '\0';
 
-#if USE_VGUI && !USE_NOVGUI_SCOREBOARD
-	if (gViewPort)
-		gViewPort->DeathMsg( killer, victim );
+#if USE_IMGUI && !USE_NOIMGUI_SCOREBOARD
+	g_ImGuiViewport.DeathMsg( killer, victim );
 #else
 	gHUD.m_Scoreboard.DeathMsg( killer, victim );
 #endif

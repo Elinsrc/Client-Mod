@@ -250,8 +250,8 @@ int CVoiceStatus::Draw(float time)
 	if (IsPlayerSpeaking(localPlayer->index))
 		DrawNoVguiSpeakerIcon(ScreenWidth - 40, ScreenHeight - gHUD.m_iFontHeight * 4, localPlayer->index);
 
-	if (gHUD.m_Scoreboard.m_iShowscoresHeld)
-		return 1;
+	/*if (gHUD.m_Scoreboard.m_iShowscoresHeld)
+		return 1;*/
 
 	for (int i = 1; i <= MAX_VOICE_SPEAKERS; i++)
 	{

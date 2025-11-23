@@ -21,10 +21,11 @@
 
 #include "hud.h"
 #include "cl_util.h"
+#include "rgb_color.h"
 //#include "triangleapi.h"
 
-#if USE_VGUI
-#include "vgui_TeamFortressViewport.h"
+#if USE_IMGUI
+#include "imgui_viewport.h"
 #endif
 
 #define MAX_LOGO_FRAMES 56
@@ -45,7 +46,7 @@ extern cvar_t *sensitivity;
 // Think
 void CHud::Think( void )
 {
-#if USE_VGUI
+#if USE_IMGUI
 	m_scrinfo.iSize = sizeof(m_scrinfo);
 	GetScreenInfo(&m_scrinfo);
 #endif
@@ -108,34 +109,30 @@ int CHud::Redraw( float flTime, int intermission )
 	if( m_flTimeDelta < 0 )
 		m_flTimeDelta = 0;
 
-#if USE_VGUI
-	// Bring up the scoreboard during intermission
-	if (gViewPort)
+#if USE_IMGUI
+	if( m_iIntermission && !intermission )
 	{
-		if( m_iIntermission && !intermission )
-		{
-			// Have to do this here so the scoreboard goes away
-			m_iIntermission = intermission;
-			gViewPort->HideCommandMenu();
-			gViewPort->HideScoreBoard();
-			gViewPort->UpdateSpectatorPanel();
-		}
-		else if( !m_iIntermission && intermission )
-		{
-			m_iIntermission = intermission;
-			gViewPort->HideCommandMenu();
-			gViewPort->HideVGUIMenu();
-#if !USE_NOVGUI_SCOREBOARD
-			gViewPort->ShowScoreBoard();
+		// Have to do this here so the scoreboard goes away
+		m_iIntermission = intermission;
+		//gViewPort->HideCommandMenu();
+		g_ImGuiViewport.HideScoreBoard();
+		//gViewPort->UpdateSpectatorPanel();
+	}
+	else if( !m_iIntermission && intermission )
+	{
+		m_iIntermission = intermission;
+		/*g_ImGuiViewport.HideCommandMenu();
+		g_ImGuiViewport.HideIMGUIMenu();*/
+#if !USE_NOIMGUI_SCOREBOARD
+		g_ImGuiViewport.ShowScoreBoard();
 #endif
-			gViewPort->UpdateSpectatorPanel();
-			// Take a screenshot if the client's got the cvar set
-			if( CVAR_GET_FLOAT( "hud_takesshots" ) != 0 )
-				m_flShotTime = flTime + 1.0;	// Take a screenshot in a second
+		//g_ImGuiViewport.UpdateSpectatorPanel();
+		// Take a screenshot if the client's got the cvar set
+		if( CVAR_GET_FLOAT( "hud_takesshots" ) != 0 )
+			m_flShotTime = flTime + 1.0;	// Take a screenshot in a second
 
-			if ( m_pCvarAutostop->value > 0.0f )
-				m_flStopTime = flTime + 3.0; // Stop demo recording in three seconds
-		}
+		if ( m_pCvarAutostop->value > 0.0f )
+			m_flStopTime = flTime + 3.0; // Stop demo recording in three seconds
 	}
 #else
 	if( !m_iIntermission && intermission )
@@ -497,55 +494,47 @@ void CHud::DrawDarkRectangle( int x, int y, int wide, int tall )
 	FillRGBA( x, y + tall - 1, wide - 1, 1, 255, 140, 0, 255 );
 }
 
-void CHud::HUEtoRGB(float hue, int &R, int &G, int &B)
+void CHud::HUEtoRGB(float hue, RGBColor &color)
 {
-    hue = fmax(0, fmin(255, hue));
-    float h = hue / 255.0f;
-    float r, g, b;
+	hue = fmax(0, fmin(255, hue));
+	float h = hue / 255.0f;
+	float r, g, b;
 
-    if (h < 1.0f/6.0f) {
-        r = 1.0f;
-        g = h * 6.0f;
-        b = 0.0f;
-    }
-    else if (h < 2.0f/6.0f) {
-        r = 1.0f - (h - 1.0f/6.0f) * 6.0f;
-        g = 1.0f;
-        b = 0.0f;
-    }
-    else if (h < 3.0f/6.0f) {
-        r = 0.0f;
-        g = 1.0f;
-        b = (h - 2.0f/6.0f) * 6.0f;
-    }
-    else if (h < 4.0f/6.0f) {
-        r = 0.0f;
-        g = 1.0f - (h - 3.0f/6.0f) * 6.0f;
-        b = 1.0f;
-    }
-    else if (h < 5.0f/6.0f) {
-        r = (h - 4.0f/6.0f) * 6.0f;
-        g = 0.0f;
-        b = 1.0f;
-    }
-    else {
-        r = 1.0f;
-        g = 0.0f;
-        b = 1.0f - (h - 5.0f/6.0f) * 6.0f;
-    }
+	if (h < 1.0f/6.0f) {
+		r = 1.0f;
+		g = h * 6.0f;
+		b = 0.0f;
+	}
+	else if (h < 2.0f/6.0f) {
+		r = 1.0f - (h - 1.0f/6.0f) * 6.0f;
+		g = 1.0f;
+		b = 0.0f;
+	}
+	else if (h < 3.0f/6.0f) {
+		r = 0.0f;
+		g = 1.0f;
+		b = (h - 2.0f/6.0f) * 6.0f;
+	}
+	else if (h < 4.0f/6.0f) {
+		r = 0.0f;
+		g = 1.0f - (h - 3.0f/6.0f) * 6.0f;
+		b = 1.0f;
+	}
+	else if (h < 5.0f/6.0f) {
+		r = (h - 4.0f/6.0f) * 6.0f;
+		g = 0.0f;
+		b = 1.0f;
+	}
+	else {
+		r = 1.0f;
+		g = 0.0f;
+		b = 1.0f - (h - 5.0f/6.0f) * 6.0f;
+	}
 
-    R = static_cast<int>(r * 255);
-    G = static_cast<int>(g * 255);
-    B = static_cast<int>(b * 255);
+	color.r = static_cast<int>(r * 255);
+	color.g = static_cast<int>(g * 255);
+	color.b = static_cast<int>(b * 255);
 }
-
-struct RGBColor {
-    int r;
-    int g;
-    int b;
-};
-
-struct RGBColor top, bottom;
 
 void CHud::DrawHudModelName(int x, int y, float topcolor, float bottomcolor, const char* model)
 {
@@ -561,8 +550,9 @@ void CHud::DrawHudModelName(int x, int y, float topcolor, float bottomcolor, con
 	strncpy(secondcolor, model + mid, modelLength - mid);
 	secondcolor[modelLength - mid] = '\0';
 
-	HUEtoRGB(topcolor, top.r, top.g, top.b);
-	HUEtoRGB(bottomcolor, bottom.r, bottom.g, bottom.b);
+	RGBColor top, bottom;
+	HUEtoRGB(topcolor, top);
+	HUEtoRGB(bottomcolor, bottom);
 
 	int width = GetHudStringWidthWithColorTags(firstcolor);
 
