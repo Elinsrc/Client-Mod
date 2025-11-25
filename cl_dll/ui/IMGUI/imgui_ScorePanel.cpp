@@ -393,6 +393,9 @@ void CImGuiScoreboard::DrawScoreboard()
 				}
 				else
 				{
+					ImGui::TableNextRow();
+					ImGui::TableSetColumnIndex(0);
+
 					hud_player_info_t* pl = &g_PlayerInfoList[m_iSortedRows[row]];
 					extra_player_info_t* ex = &g_PlayerExtraInfo[m_iSortedRows[row]];
 
@@ -415,11 +418,8 @@ void CImGuiScoreboard::DrawScoreboard()
 					}
 					else if ( m_iSortedRows[row] == m_iLastKilledBy && m_fLastKillTime && m_fLastKillTime > gHUD.m_flTime )
 					{
-						draw_list->AddRectFilled(row_min, row_max, IM_COL32(0, 0, 255, 70 - ((float)15 * (float)(m_fLastKillTime - gHUD.m_flTime))), 4.0f);
+						draw_list->AddRectFilled(row_min, row_max,IM_COL32(255, 0, 0,(int)(70.0f * (m_fLastKillTime - gHUD.m_flTime) / 10.0f)),4.0f);
 					}
-
-					ImGui::TableNextRow();
-					ImGui::TableSetColumnIndex(0);
 
 					// NAME
 					ImGui::PushStyleColor(ImGuiCol_Text, playerColor);

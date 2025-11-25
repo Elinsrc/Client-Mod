@@ -12,8 +12,7 @@ void CImGuiWindowSystem::LinkWindows()
     static CImGuiCommands commandsWindow;
     AddWindow(&commandsWindow);
 
-    static CImGuiScoreboard scoreWindow;
-    AddWindow(&scoreWindow);
+    AddWindow(&m_iScoreboard);
 
     static CImGuiMOTD motdWindow;
     AddWindow(&motdWindow);
