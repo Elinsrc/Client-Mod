@@ -357,6 +357,9 @@ public:
 	void InitHUDData( void );
 	int VidInit( void );
 	int Draw( float flTime );
+#if USE_IMGUI
+	void ImGui_DeathNotice();
+#endif
 	int MsgFunc_DeathMsg( const char *pszName, int iSize, void *pbuf );
 
 private:

@@ -1,7 +1,21 @@
 #include "ui_utils.h"
-#include "hud.h"
 #include <string>
 #include <cmath>
+
+#if __ANDROID__ || XASH_64BIT
+#include "gl_export.h"
+#else
+#if _WIN32
+#define HSPRITE DeletedWinapi_HSPRITE
+#include <windows.h>
+#undef HSPRITE
+typedef int HSPRITE;
+#include <GL/gl.h>
+#elif __linux__
+#include <GL/gl.h>
+#endif
+#endif
+
 
 CImguiUtils m_ImguiUtils;
 
@@ -85,7 +99,124 @@ void CImguiUtils::TextWithColorCodes(const char* text)
     ImGui::Dummy(ImVec2(0, cursor.y - pos.y + lineHeight));
 }
 
+float CImguiUtils::CalcTextWidthWithColorCodes(const char* text)
+{
+    float width = 0.0f;
+    const char* ptr = text;
 
+    while (*ptr)
+    {
+        if (*ptr == '^' && *(ptr + 1))
+        {
+            ptr += 2;
+            continue;
+        }
+
+        const char* start = ptr;
+        while (*ptr && !(*ptr == '^' && *(ptr + 1)))
+            ++ptr;
+
+        if (ptr > start)
+        {
+            ImVec2 sz = ImGui::CalcTextSize(start, ptr);
+            width += sz.x;
+        }
+    }
+
+    return width;
+}
+
+float CImguiUtils::DrawTextWithColorCodesAt(const ImVec2& pos, const char* text, ImVec4 defaultColor, float alphaMul)
+{
+    ImDrawList* dl = ImGui::GetBackgroundDrawList();
+
+    ImVec2 cursor = pos;
+    ImVec4 color  = defaultColor;
+
+    color.w *= alphaMul;
+    const char* ptr = text;
+
+    while (*ptr)
+    {
+        if (*ptr == '^' && *(ptr + 1))
+        {
+            color = ColorFromCode(*(ptr + 1));
+            color.w *= alphaMul;
+            ptr += 2;
+            continue;
+        }
+
+        const char* start = ptr;
+        while (*ptr && !(*ptr == '^' && *(ptr + 1)))
+            ++ptr;
+
+        if (ptr > start)
+        {
+            ImU32 colU32 = ImGui::ColorConvertFloat4ToU32(color);
+
+            dl->AddText(cursor, colU32, start, ptr);
+
+            ImVec2 sz = ImGui::CalcTextSize(start, ptr);
+            cursor.x += sz.x;
+        }
+    }
+
+    return cursor.x - pos.x;
+}
+
+void CImguiUtils::DrawCallback_SetAdditive(const ImDrawList* parent_list, const ImDrawCmd* cmd)
+{
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+}
+void CImguiUtils::DrawCallback_SetNormal(const ImDrawList* parent_list, const ImDrawCmd* cmd)
+{
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+float CImguiUtils::ImGuiSpriteIcon(int spriteId, const wrect_t& rc, float x, float y, float iconWidth, float iconHeight, float textHeight, int r, int g, int b, int alpha)
+{
+    ImDrawList* dl = ImGui::GetBackgroundDrawList();
+
+    SPR_Set(gHUD.GetSprite(spriteId), 255, 255, 255);
+
+    GLboolean oldColorMask[4];
+    glGetBooleanv(GL_COLOR_WRITEMASK, oldColorMask);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+    SPR_DrawAdditive(0, 0, 0, &rc);
+
+    glColorMask(oldColorMask[0], oldColorMask[1], oldColorMask[2], oldColorMask[3]);
+
+    GLint boundTex = 0;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTex);
+    if (boundTex == 0)
+        return x;
+
+    GLint texW = 0, texH = 0;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH,  &texW);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texH);
+    if (texW <= 0 || texH <= 0)
+        return x;
+
+    ImTextureID tex = (ImTextureID)(uintptr_t)boundTex;
+
+    float u1 = (float)rc.left   / (float)texW;
+    float v1 = (float)rc.top    / (float)texH;
+    float u2 = (float)rc.right  / (float)texW;
+    float v2 = (float)rc.bottom / (float)texH;
+
+    float iconY = y + (textHeight - iconHeight) * 0.5f;
+    ImVec2 p_min(x, iconY);
+    ImVec2 p_max(x + iconWidth, iconY + iconHeight);
+
+    ImU32 col = IM_COL32(r, g, b, alpha);
+
+    dl->AddCallback(DrawCallback_SetAdditive, nullptr);
+    dl->AddImage(tex, p_min, p_max, ImVec2(u1, v1), ImVec2(u2, v2), col);
+    dl->AddCallback(DrawCallback_SetNormal, nullptr);
+
+    return x + iconWidth;
+}
 
 void CImguiUtils::HUEtoRGB(float hue, RGBColor &color)
 {

@@ -45,6 +45,7 @@ void CImGuiManager::NewFrame()
     ImGui::NewFrame();
     m_WindowSystem.NewFrame();
     g_ImGuiCrosshairs.Draw();
+    gHUD.m_DeathNotice.ImGui_DeathNotice();
     ImGui::Render();
     m_pBackend->RenderDrawData(ImGui::GetDrawData());
 

@@ -1,12 +1,19 @@
 #pragma once
 #include "imgui.h"
 #include "rgb_color.h"
+#include "hud.h"
+#include "cl_util.h"
 
 class CImguiUtils
 {
 public:
     ImVec4 ColorFromCode(char code);
     void TextWithColorCodes(const char* text);
+    float CalcTextWidthWithColorCodes(const char* text);
+    float DrawTextWithColorCodesAt(const ImVec2& pos, const char* text, ImVec4 defaultColor, float alphaMul = 1.0f);
+    static void DrawCallback_SetAdditive(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+    static void DrawCallback_SetNormal(const ImDrawList* parent_list, const ImDrawCmd* cmd);
+    float ImGuiSpriteIcon(int spriteId, const wrect_t& rc, float x, float y, float iconWidth, float iconHeight, float textHeight, int r, int g, int b, int alpha);
     void HUEtoRGB(float hue, RGBColor &color);
     void DrawModelName(float topcolor, float bottomcolor, const char* model);
     float GetCvarFloat(const char* name);
