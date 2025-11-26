@@ -1468,6 +1468,7 @@ EXTERN void (APIENTRY *glAlphaToCoverageDitherControlNV)(GLenum mode);
 #define GL_COLOR_MATERIAL 0x0B57
 #define GL_SHADE_MODEL 0x0B54
 #define GL_UNPACK_ROW_LENGTH 0x0CF2
+#define GL_COLOR_WRITEMASK 0x0C23
 
 bool GL_Init(void);
 void GL_Shutdown(void);
