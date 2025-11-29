@@ -23,8 +23,10 @@
 #include <string.h>
 #include <stdio.h>
 
-#if USE_VGUI
-#include "vgui_TeamFortressViewport.h"
+#if USE_IMGUI
+#include "imgui_manager.h"
+#include "imgui_viewport.h"
+#include "ui_utils.h"
 #endif
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg )
@@ -39,6 +41,10 @@ struct DeathNoticeItem {
 	float flDisplayTime;
 	float *KillerColor;
 	float *VictimColor;
+
+#if USE_IMGUI
+	int iKillerKilledLocal;
+#endif
 };
 
 #define MAX_DEATHNOTICES	4
@@ -103,8 +109,143 @@ int CHudDeathNotice::VidInit( void )
 	return 1;
 }
 
+#if USE_IMGUI
+void CHudDeathNotice::ImGui_DeathNotice()
+{
+	ImFont* hudFont = g_ImGuiManager.GetHudFont();
+	ImGui::PushFont(hudFont);
+
+	ImDrawList* dl = ImGui::GetBackgroundDrawList();
+
+	for (int i = 0; i < MAX_DEATHNOTICES; ++i)
+	{
+		if (rgDeathNoticeList[i].iId == 0)
+			break;
+
+		if (rgDeathNoticeList[i].flDisplayTime < gHUD.m_flTime)
+		{
+			memmove(&rgDeathNoticeList[i], &rgDeathNoticeList[i + 1], sizeof(DeathNoticeItem) * (MAX_DEATHNOTICES - i));
+			--i;
+			continue;
+		}
+
+		rgDeathNoticeList[i].flDisplayTime = Q_min(rgDeathNoticeList[i].flDisplayTime, gHUD.m_flTime + DEATHNOTICE_DISPLAY_TIME);
+
+		float textHeight = ImGui::GetTextLineHeight();
+		float bg_h       = textHeight + 4.0f;
+		float rowHeight  = bg_h + 5.0f;
+
+
+		float killerWidth = m_ImguiUtils.CalcTextWidthWithColorCodes(rgDeathNoticeList[i].szKiller);
+		float victimWidth = m_ImguiUtils.CalcTextWidthWithColorCodes(rgDeathNoticeList[i].szVictim);
+
+		float y = (int)(YRES(DEATHNOTICE_TOP) + 2 + rowHeight * i);
+
+		int id = (rgDeathNoticeList[i].iId == -1) ? m_HUD_d_skull : rgDeathNoticeList[i].iId;
+
+		wrect_t rc = gHUD.GetSpriteRect(id);
+		int spriteWidth  = rc.right  - rc.left;
+		int spriteHeight = rc.bottom - rc.top;
+
+		float maxIconHeight = textHeight;
+		float scale = 1.0f;
+		if (spriteHeight > 0 && spriteHeight > maxIconHeight)
+			scale = maxIconHeight / (float)spriteHeight;
+
+		float iconWidth = spriteWidth  * scale;
+		float iconHeight = spriteHeight * scale;
+
+		float timeLeft  = rgDeathNoticeList[i].flDisplayTime - gHUD.m_flTime;
+		float totalTime = (float)DEATHNOTICE_DISPLAY_TIME;
+		float t = timeLeft / totalTime;
+
+		if (t < 0.0f)
+			t = 0.0f;
+
+		if (t > 1.0f)
+			t = 1.0f;
+
+		int alphaBg = (int)(255.0f * 0.6f * t);
+		int alphaUI = (int)(255.0f * t);
+		float alphaUIF = alphaUI / 255.0f;
+
+		bool highlight = (rgDeathNoticeList[i].iKillerKilledLocal != 0);
+
+		float x = (float)ScreenWidth - victimWidth - iconWidth - 10.0f;
+		if (!rgDeathNoticeList[i].iSuicide)
+			x -= 5.0f + killerWidth;
+
+
+		float bg_x = x - 5.0f;
+		float bg_y = (float)y - 2.0f;
+		float bg_w = victimWidth + iconWidth + 10.0f;
+		if (!rgDeathNoticeList[i].iSuicide)
+			bg_w += 5.0f + killerWidth;
+
+		float rounding = bg_h * 0.5f;
+
+		ImU32 bgColor;
+		if (highlight)
+		{
+			int a = (int)(70.0f * t);
+			bgColor = IM_COL32(255, 0, 0, a);
+		}
+		else
+		{
+			bgColor = IM_COL32(0, 0, 0, alphaBg);
+		}
+
+		dl->AddRectFilled(ImVec2(bg_x, bg_y), ImVec2(bg_x + bg_w, bg_y + bg_h), bgColor, rounding);
+
+		if (!rgDeathNoticeList[i].iSuicide && rgDeathNoticeList[i].szKiller[0])
+		{
+			ImVec4 baseColor(1.0f, 1.0f, 1.0f, 1.0f);
+			if (rgDeathNoticeList[i].KillerColor)
+			{
+				baseColor.x = rgDeathNoticeList[i].KillerColor[0];
+				baseColor.y = rgDeathNoticeList[i].KillerColor[1];
+				baseColor.z = rgDeathNoticeList[i].KillerColor[2];
+			}
+
+			m_ImguiUtils.DrawTextWithColorCodesAt(ImVec2(x, y), rgDeathNoticeList[i].szKiller, baseColor, alphaUIF);
+
+			x += killerWidth + 5.0f;
+		}
+
+		int r = 255, g = 80, b = 0;
+		if (rgDeathNoticeList[i].iTeamKill)
+		{
+			r = 10; g = 240; b = 10;
+		}
+
+		HSPRITE hSpr = gHUD.GetSprite(id);
+
+		x = m_ImguiUtils.ImGuiSpriteIcon( hSpr, rc, x, y, iconWidth, iconHeight, textHeight, r, g, b, alphaUI);
+
+		if (!rgDeathNoticeList[i].iNonPlayerKill && rgDeathNoticeList[i].szVictim[0])
+		{
+			ImVec4 baseColor(1.0f, 1.0f, 1.0f, 1.0f);
+			if (rgDeathNoticeList[i].VictimColor)
+			{
+				baseColor.x = rgDeathNoticeList[i].VictimColor[0];
+				baseColor.y = rgDeathNoticeList[i].VictimColor[1];
+				baseColor.z = rgDeathNoticeList[i].VictimColor[2];
+			}
+
+			m_ImguiUtils.DrawTextWithColorCodesAt(ImVec2(x, y), rgDeathNoticeList[i].szVictim, baseColor, alphaUIF);
+		}
+	}
+
+	 ImGui::PopFont();
+}
+#endif
+
 int CHudDeathNotice::Draw( float flTime )
 {
+#if USE_IMGUI
+	return 1;
+#endif
+
 	int x, y, r, g, b;
 
 	for( int i = 0; i < MAX_DEATHNOTICES; i++ )
@@ -125,8 +266,8 @@ int CHudDeathNotice::Draw( float flTime )
 
 		// Only draw if the viewport will let me
 		// vgui dropped out
-#if USE_VGUI
-		if( gViewPort && gViewPort->AllowedToPrintText() )
+#if USE_IMGUI
+		//if( g_ImGuiViewport.AllowedToPrintText() )
 #endif
 		{
 			// Draw the death notice
@@ -212,9 +353,8 @@ int CHudDeathNotice::MsgFunc_DeathMsg( const char *pszName, int iSize, void *pbu
 	strncat( killedwith, READ_STRING(), sizeof(killedwith) - strlen(killedwith) - 1 );
 	killedwith[sizeof(killedwith) - 1] = '\0';
 
-#if USE_VGUI && !USE_NOVGUI_SCOREBOARD
-	if (gViewPort)
-		gViewPort->DeathMsg( killer, victim );
+#if USE_IMGUI && !USE_NOIMGUI_SCOREBOARD
+	g_ImGuiViewport.DeathMsg( killer, victim );
 #else
 	gHUD.m_Scoreboard.DeathMsg( killer, victim );
 #endif
@@ -283,6 +423,17 @@ int CHudDeathNotice::MsgFunc_DeathMsg( const char *pszName, int iSize, void *pbu
 		if( !strcmp( killedwith, "d_teammate" ) )
 			rgDeathNoticeList[i].iTeamKill = TRUE;
 	}
+
+#if USE_IMGUI
+	rgDeathNoticeList[i].iKillerKilledLocal = FALSE;
+	if( !rgDeathNoticeList[i].iNonPlayerKill && !rgDeathNoticeList[i].iSuicide )
+	{
+		if( g_PlayerInfoList[victim].thisplayer || g_iUser2 == victim )
+		{
+			rgDeathNoticeList[i].iKillerKilledLocal = TRUE;
+		}
+	}
+#endif
 
 	// Find the sprite in the list
 	int spr = gHUD.GetSpriteIndex( killedwith );

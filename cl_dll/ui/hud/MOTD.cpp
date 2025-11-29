@@ -26,7 +26,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#if !USE_VGUI || USE_NOVGUI_MOTD
+#if !USE_IMGUI || USE_NOIMGUI_MOTD
 DECLARE_MESSAGE( m_MOTD, MOTD )
 #endif
 
@@ -34,7 +34,7 @@ int CHudMOTD::Init( void )
 {
 	gHUD.AddHudElem( this );
 
-#if !USE_VGUI || USE_NOVGUI_MOTD
+#if !USE_IMGUI || USE_NOIMGUI_MOTD
 	HOOK_MESSAGE( MOTD );
 #endif
 

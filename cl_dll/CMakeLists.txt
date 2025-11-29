@@ -53,22 +53,18 @@ if (GOLDSOURCE_SUPPORT)
 	add_definitions(-DGOLDSOURCE_SUPPORT)
 endif()
 
-if (USE_VGUI)
-	add_definitions(-DUSE_VGUI)
-	if (USE_NOVGUI_MOTD)
-		add_definitions(-DUSE_NOVGUI_MOTD)
+if (USE_IMGUI)
+	add_definitions(-DUSE_IMGUI)
+	if (USE_NOIMGUI_MOTD)
+		add_definitions(-DUSE_NOIMGUI_MOTD)
 	endif()
-	if (USE_NOVGUI_SCOREBOARD)
-		add_definitions(-DUSE_NOVGUI_SCOREBOARD)
+	if (USE_NOIMGUI_SCOREBOARD)
+		add_definitions(-DUSE_NOIMGUI_SCOREBOARD)
 	endif()
 endif()
 
 if(USE_DISCORD_RPC)
 	add_definitions(-DUSE_DISCORD_RPC)
-endif()
-
-if(USE_IMGUI)
-	add_definitions(-DUSE_IMGUI)
 endif()
 
 set (CLDLL_SOURCES
@@ -151,58 +147,21 @@ set (CLDLL_SOURCES
 	studio_util.cpp
 	util.cpp
 	view.cpp
+	ui/voice_status.cpp
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_debug.c
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_math.c
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_shared.c)
-
-if (USE_VGUI)
-	list(APPEND CLDLL_SOURCES
-		ui/voice_status.cpp
-		ui/VGUI/vgui_int.cpp
-		ui/VGUI/vgui_ClassMenu.cpp
-		ui/VGUI/vgui_ConsolePanel.cpp
-		ui/VGUI/vgui_ControlConfigPanel.cpp
-		ui/VGUI/vgui_CustomObjects.cpp
-		ui/VGUI/vgui_MOTDWindow.cpp
-		ui/VGUI/vgui_SchemeManager.cpp
-		ui/VGUI/vgui_ScorePanel.cpp
-		ui/VGUI/vgui_TeamFortressViewport.cpp
-		ui/VGUI/vgui_SpectatorPanel.cpp
-		ui/VGUI/vgui_teammenu.cpp
-		ui/VGUI/utils/vgui_checkbutton2.cpp
-		ui/VGUI/utils/vgui_grid.cpp
-		ui/VGUI/utils/vgui_helpers.cpp
-		ui/VGUI/utils/vgui_listbox.cpp
-		ui/VGUI/utils/vgui_loadtga.cpp
-		ui/VGUI/utils/vgui_scrollbar2.cpp
-		ui/VGUI/utils/vgui_slider2.cpp
-		)
-	if (USE_NOVGUI_MOTD)
-		list(APPEND CLDLL_SOURCES ui/hud/MOTD.cpp)
-	endif()
-	if (USE_NOVGUI_SCOREBOARD)
-		list(APPEND CLDLL_SOURCES ui/hud/scoreboard.cpp)
-	endif()
-else()
-	list(APPEND CLDLL_SOURCES
-		ui/novgui_voice_status.cpp
-		ui/hud/MOTD.cpp
-		ui/hud/scoreboard.cpp)
-endif()
-
-if (USE_DISCORD_RPC)
-	list(APPEND CLDLL_SOURCES
-		discord-rpc/discord_integration.cpp)
-endif()
 
 if (USE_IMGUI)
 	list(APPEND CLDLL_SOURCES
 		ui/IMGUI/imgui_backend.cpp
 		ui/IMGUI/imgui_manager.cpp
 		ui/IMGUI/imgui_window_system.cpp
+		ui/IMGUI/imgui_viewport.cpp
+		ui/IMGUI/imgui_MOTD.cpp
+		ui/IMGUI/imgui_ScorePanel.cpp
 		ui/IMGUI/ui_main.cpp
 		ui/IMGUI/ui_demo_window.cpp
-		ui/IMGUI/ui_scoreboard.cpp
 		ui/IMGUI/ui_crosshairs.cpp
 		ui/IMGUI/ui_commands.cpp
 		ui/IMGUI/ui_utils.cpp
@@ -211,9 +170,22 @@ if (USE_IMGUI)
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_draw.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_tables.cpp
 		${CMAKE_SOURCE_DIR}/external/imgui/imgui_widgets.cpp)
+	if (USE_NOIMGUI_MOTD)
+		list(APPEND CLDLL_SOURCES ui/hud/MOTD.cpp)
+	endif()
+	if (USE_NOIMGUI_SCOREBOARD)
+		list(APPEND CLDLL_SOURCES ui/hud/scoreboard.cpp)
+	endif()
 else()
 	list(APPEND CLDLL_SOURCES
+		ui/hud/MOTD.cpp
+		ui/hud/scoreboard.cpp
 		ui/hud/hud_crosshairs.cpp)
+endif()
+
+if (USE_DISCORD_RPC)
+	list(APPEND CLDLL_SOURCES
+		discord-rpc/discord_integration.cpp)
 endif()
 
 if (USE_IMGUI AND (ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8))
@@ -222,18 +194,10 @@ if (USE_IMGUI AND (ANDROID OR CMAKE_SIZEOF_VOID_P EQUAL 8))
     )
 endif()
 
-include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ utils/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public)
+include_directories (. hl/ events/ input/ rendering/ ui ui/hud ui/hud/OpenAG/ utils/ ${CMAKE_SOURCE_DIR}/dlls ${CMAKE_SOURCE_DIR}/dlls/wpn_shared ${CMAKE_SOURCE_DIR}/common ${CMAKE_SOURCE_DIR}/engine ${CMAKE_SOURCE_DIR}/pm_shared ${CMAKE_SOURCE_DIR}/game_shared ${CMAKE_SOURCE_DIR}/public ${CMAKE_SOURCE_DIR}/utils/fake_vgui/include)
 
 if (USE_DISCORD_RPC)
 	include_directories(${CMAKE_SOURCE_DIR}/external/discord-rpc/include discord-rpc)
-endif()
-
-if (USE_VGUI)
-	SET(CMAKE_SKIP_RPATH TRUE)
-	link_directories(${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/lib)
-	include_directories(ui/VGUI ui/VGUI/utils/ ${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/include)
-else()
-	include_directories(${CMAKE_SOURCE_DIR}/utils/fake_vgui/include)
 endif()
 
 if(USE_VOICEMGR)
@@ -249,19 +213,6 @@ add_library (${CLDLL_LIBRARY} SHARED ${CLDLL_SOURCES})
 
 if (GOLDSOURCE_SUPPORT)
 	target_link_libraries( ${CLDLL_LIBRARY} ${CMAKE_DL_LIBS} )
-endif()
-
-if (USE_VGUI)
-	if (WIN32)
-		add_library(vgui SHARED IMPORTED)
-		set_property(TARGET vgui PROPERTY IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/lib/win32_vc6/vgui.dll")
-		set_property(TARGET vgui PROPERTY IMPORTED_IMPLIB "${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/lib/win32_vc6/vgui.lib")
-		target_link_libraries(${CLDLL_LIBRARY} vgui)
-	elseif(APPLE)
-		target_link_libraries(${CLDLL_LIBRARY} "-Wl,--no-undefined -L${CMAKE_SOURCE_DIR}/vgui_support/vgui-dev/lib vgui.dylib")
-	else()
-		target_link_libraries(${CLDLL_LIBRARY} :vgui.so)
-	endif()
 endif()
 
 if(WIN32)

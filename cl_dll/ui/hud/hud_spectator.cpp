@@ -9,9 +9,8 @@
 #include "cl_util.h"
 #include "cl_entity.h"
 #include "triangleapi.h"
-#if USE_VGUI
-#include "vgui_TeamFortressViewport.h"
-#include "vgui_SpectatorPanel.h"
+#if USE_IMGUI
+#include "imgui_viewport.h"
 #endif
 #include "hltv.h"
 
@@ -83,12 +82,12 @@ void SpectatorSpray( void )
 
 void SpectatorHelp( void )
 {
-#if USE_VGUI
-	if( gViewPort )
+#if USE_IMGUI
+	/*if( g_ImGuiViewport )
 	{
-		gViewPort->ShowVGUIMenu( MENU_SPECHELP );
+		g_ImGuiViewport.ShowIMGUIMenu( MENU_SPECHELP );
 	}
-	else
+	else*/
 #endif
 	{
   		char *text = CHudTextMessage::BufferedLocaliseTextString( "#Spec_Help_Text" );
@@ -113,25 +112,25 @@ void SpectatorMenu( void )
 		return;
 	}
 
-#if USE_VGUI
-	gViewPort->m_pSpectatorPanel->ShowMenu( atoi( gEngfuncs.Cmd_Argv( 1 ) ) != 0 );
+#if USE_IMGUI
+	//g_ImGuiViewport.m_pSpectatorPanel->ShowMenu( atoi( gEngfuncs.Cmd_Argv( 1 ) ) != 0 );
 #endif
 }
 
 void ToggleScores( void )
 {
-#if USE_VGUI && !USE_NOVGUI_SCOREBOARD
-	if( gViewPort )
+#if USE_IMGUI && !USE_NOIMGUI_SCOREBOARD
+	/*if( g_ImGuiViewport )
 	{
-		if( gViewPort->IsScoreBoardVisible() )
+		if( g_ImGuiViewport.IsScoreBoardVisible() )
 		{
-			gViewPort->HideScoreBoard();
+			g_ImGuiViewport.HideScoreBoard();
 		}
 		else
 		{
-			gViewPort->ShowScoreBoard();
+			g_ImGuiViewport.ShowScoreBoard();
 		}
-	}
+	}*/
 #else
 	if (gHUD.m_Scoreboard.m_iShowscoresHeld) {
 		gHUD.m_Scoreboard.UserCmd_HideScores();
@@ -570,15 +569,15 @@ void CHudSpectator::DirectorMessage( int iSize, void *pbuf )
 			READ_LONG(); // total number of spectator slots
 			m_iSpectatorNumber = READ_LONG(); // total number of spectator
 			READ_WORD(); // total number of relay proxies
-#if USE_VGUI
-			gViewPort->UpdateSpectatorPanel();
+#if USE_IMGUI
+			//g_ImGuiViewport.UpdateSpectatorPanel();
 #endif
 			break;
 		case DRC_CMD_BANNER:
 			// gEngfuncs.Con_DPrintf( "GUI: Banner %s\n",READ_STRING() ); // name of banner tga eg gfx/temp/7454562234563475.tga
-#if USE_VGUI
-			gViewPort->m_pSpectatorPanel->m_TopBanner->LoadImage( READ_STRING() );
-			gViewPort->UpdateSpectatorPanel();
+#if USE_IMGUI
+			/*g_ImGuiViewport.m_pSpectatorPanel->m_TopBanner->LoadImage( READ_STRING() );
+			g_ImGuiViewport.UpdateSpectatorPanel();*/
 #endif
 			break;
 		case DRC_CMD_FADE:
@@ -658,8 +657,8 @@ void CHudSpectator::FindNextPlayer( bool bReverse )
 		VectorCopy( pEnt->angles, vJumpAngles );
 	}
 	iJumpSpectator = 1;
-#if USE_VGUI
-	gViewPort->MsgFunc_ResetFade( NULL, 0, NULL );
+#if USE_IMGUI
+	g_ImGuiViewport.MsgFunc_ResetFade( NULL, 0, NULL );
 #endif
 }
 
@@ -717,8 +716,8 @@ void CHudSpectator::FindPlayer(const char *name)
 	}
 
 	iJumpSpectator = 1;
-#if USE_VGUI
-	gViewPort->MsgFunc_ResetFade( NULL, 0, NULL );
+#if USE_IMGUI
+	g_ImGuiViewport.MsgFunc_ResetFade( NULL, 0, NULL );
 #endif
 }
 
@@ -730,11 +729,6 @@ void CHudSpectator::HandleButtonsDown( int ButtonPressed )
 	int newInsetMode = m_pip->value;
 
 	// gEngfuncs.Con_Printf( " HandleButtons:%i\n", ButtonPressed );
-
-#if USE_VGUI
-	if( !gViewPort )
-		return;
-#endif
 
 	//Not in intermission.
 	if( gHUD.m_iIntermission )
@@ -751,9 +745,9 @@ void CHudSpectator::HandleButtonsDown( int ButtonPressed )
 		return;
 
 	// enable spectator screen
-#if USE_VGUI
-	if( ButtonPressed & IN_DUCK )
-		gViewPort->m_pSpectatorPanel->ShowMenu( !gViewPort->m_pSpectatorPanel->m_menuVisible );
+#if USE_IMGUI
+	/*if( ButtonPressed & IN_DUCK )
+		g_ImGuiViewport.m_pSpectatorPanel->ShowMenu( !g_ImGuiViewport.m_pSpectatorPanel->m_menuVisible );*/
 #endif
 
 	//  'Use' changes inset window mode
@@ -821,12 +815,9 @@ void CHudSpectator::HandleButtonsDown( int ButtonPressed )
 
 void CHudSpectator::HandleButtonsUp( int ButtonPressed )
 {
-#if USE_VGUI
-	if( !gViewPort )
-		return;
-
-	if( !gViewPort->m_pSpectatorPanel->isVisible() )
-		return; // dont do anything if not in spectator mode
+#if USE_IMGUI
+	/*if( !g_ImGuiViewport.m_pSpectatorPanel->isVisible() )
+		return; // dont do anything if not in spectator mode*/
 #endif
 
 	if( ButtonPressed & ( IN_FORWARD | IN_BACK ) )
@@ -924,8 +915,8 @@ void CHudSpectator::SetModes( int iNewMainMode, int iNewInsetMode )
 			SetCrosshair( 0, m_crosshairRect, 0, 0, 0 );
 		}
 
-#if USE_VGUI
-		gViewPort->MsgFunc_ResetFade( NULL, 0, NULL );
+#if USE_IMGUI
+		g_ImGuiViewport.MsgFunc_ResetFade( NULL, 0, NULL );
 #endif
 
 		char string[128];
@@ -934,8 +925,8 @@ void CHudSpectator::SetModes( int iNewMainMode, int iNewInsetMode )
 		gHUD.m_TextMessage.MsgFunc_TextMsg( NULL, strlen( string ) + 1, string );
 	}
 
-#if USE_VGUI
-	gViewPort->UpdateSpectatorPanel();
+#if USE_IMGUI
+	//g_ImGuiViewport.UpdateSpectatorPanel();
 #endif
 }
 
@@ -1585,8 +1576,8 @@ void CHudSpectator::CheckSettings()
 		m_pip->value = INSET_OFF;
 
 	// draw small border around inset view, adjust upper black bar
-#if USE_VGUI
-	gViewPort->m_pSpectatorPanel->EnableInsetView( m_pip->value != INSET_OFF );
+#if USE_IMGUI
+	//g_ImGuiViewport.m_pSpectatorPanel->EnableInsetView( m_pip->value != INSET_OFF );
 #endif
 }
 

@@ -8,6 +8,7 @@
 #include "hud_debug.h"
 #include "pm_defs.h"
 #include "event_api.h"
+#include "rgb_color.h"
 
 
 // https://github.com/SNMetamorph/goldsrc-monitor
@@ -53,14 +54,6 @@ const unsigned char* getColorForFPS(int fps)
         return colors[0];
 }
 
-
-extern struct RGBColor {
-    int r;
-    int g;
-    int b;
-} top, bottom;
-
-
 void CHudDebug::ClientModelName(cl_entity_s *entity, int x, int y, int r, int g, int b)
 {
     const char* model = g_PlayerInfoList[entity->index].model;
@@ -79,8 +72,9 @@ void CHudDebug::ClientModelName(cl_entity_s *entity, int x, int y, int r, int g,
         strncpy(secondcolor, model + mid, modelLength - mid);
         secondcolor[modelLength - mid] = '\0';
 
-        gHUD.HUEtoRGB(g_PlayerInfoList[entity->index].topcolor, top.r, top.g, top.b);
-        gHUD.HUEtoRGB(g_PlayerInfoList[entity->index].bottomcolor, bottom.r, bottom.g, bottom.b);
+        RGBColor top, bottom;
+        gHUD.HUEtoRGB(g_PlayerInfoList[entity->index].topcolor, top);
+        gHUD.HUEtoRGB(g_PlayerInfoList[entity->index].bottomcolor, bottom);
 
         int modelWidth, modelHeight;
         gHUD.GetConsoleStringSizeWithColorTags(const_cast<char*>(model_str), modelWidth, modelHeight);

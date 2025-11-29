@@ -29,6 +29,9 @@ public:
     float m_TouchDY = 0.0f;
 #endif
 
+    ImFont* GetDefaultFont() const { return m_pDefaultFont; }
+    ImFont* GetHudFont() const { return m_pHudFont; }
+
 private:
     struct MouseButtonsState
     {
@@ -57,5 +60,8 @@ private:
     std::unique_ptr<CImGuiBackend> m_pBackend;
     CImGuiWindowSystem m_WindowSystem;
     CImGuiCrosshairs g_ImGuiCrosshairs;
+
+    ImFont* m_pDefaultFont = nullptr;
+    ImFont* m_pHudFont     = nullptr;
 };
 extern CImGuiManager &g_ImGuiManager;

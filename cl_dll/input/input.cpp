@@ -28,17 +28,13 @@ extern "C"
 #include <string.h>
 #include <ctype.h>
 
-#if USE_VGUI
-#include "vgui_TeamFortressViewport.h"
-#endif
-
 #if USE_DISCORD_RPC
 #include "discord_integration.h"
 #endif
 
 #if USE_IMGUI
 #include "imgui_manager.h"
-#include "ui_scoreboard.h"
+#include "imgui_viewport.h"
 extern cvar_t *ui_imgui_scoreboard;
 #if __ANDROID__ || XASH_64BIT
 #include "gl_export.h"
@@ -480,11 +476,6 @@ int DLLEXPORT HUD_Key_Event( int down, int keynum, const char *pszCurrentBinding
 #if USE_IMGUI
 	return g_ImGuiManager.KeyInput(down != 0, keynum, pszCurrentBinding) ? 1 : 0;
 #endif
-
-#if USE_VGUI
-	if (gViewPort)
-		return gViewPort->KeyInput(down, keynum, pszCurrentBinding);
-#endif
 	return 1;
 }
 
@@ -753,18 +744,8 @@ void IN_Impulse( void )
 void IN_ScoreDown( void )
 {
 	KeyDown( &in_score );
-#if USE_VGUI && !USE_NOVGUI_SCOREBOARD
-	if ( gViewPort )
-	{
-#if USE_IMGUI
-		if (ui_imgui_scoreboard->value)
-			m_iScoreboard.m_ShowWindow = true;
-		else
-			gViewPort->ShowScoreBoard();
-#else
-		gViewPort->ShowScoreBoard();
-#endif
-	}
+#if USE_IMGUI && !USE_NOIMGUI_SCOREBOARD
+	g_ImGuiViewport.ShowScoreBoard();
 #else
 	gHUD.m_Scoreboard.UserCmd_ShowScores();
 #endif
@@ -773,18 +754,8 @@ void IN_ScoreDown( void )
 void IN_ScoreUp( void )
 {
 	KeyUp( &in_score );
-#if USE_VGUI && !USE_NOVGUI_SCOREBOARD
-	if ( gViewPort )
-	{
-#if USE_IMGUI
-	if (ui_imgui_scoreboard->value)
-		m_iScoreboard.m_ShowWindow = false;
-	else
-		gViewPort->HideScoreBoard();
-#else
-	gViewPort->HideScoreBoard();
-#endif
-	}
+#if USE_IMGUI && !USE_NOIMGUI_SCOREBOARD
+	g_ImGuiViewport.HideScoreBoard();
 #else
 	gHUD.m_Scoreboard.UserCmd_HideScores();
 #endif
@@ -1006,10 +977,10 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 		autofuncs::handle_autojump(cmd);
 	//
 
-#if USE_VGUI
+#if USE_IMGUI
 	// If they're in a modal dialog, ignore the attack button.
-	if(GetClientVoiceMgr()->IsInSquelchMode())
-		cmd->buttons &= ~IN_ATTACK;
+	/*if(GetClientVoiceMgr()->IsInSquelchMode())
+		cmd->buttons &= ~IN_ATTACK;*/
 #endif
 
 	// Using joystick?
@@ -1066,7 +1037,7 @@ int CL_ButtonBits( int bResetState )
 
 	if( in_attack.state & 3 )
 	{
-#if !USE_VGUI || USE_NOVGUI_MOTD
+#if !USE_IMGUI || USE_NOIMGUI_MOTD
 		if( gHUD.m_MOTD.m_bShow )
 			gHUD.m_MOTD.Reset();
 		else

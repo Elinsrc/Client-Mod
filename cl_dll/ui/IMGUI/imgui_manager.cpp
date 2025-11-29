@@ -4,6 +4,7 @@
 #include "hud.h"
 #include "cl_util.h"
 #include "Roboto.h"
+#include "voice_status.h"
 
 extern int g_ImGuiMouse;
 
@@ -45,6 +46,8 @@ void CImGuiManager::NewFrame()
     ImGui::NewFrame();
     m_WindowSystem.NewFrame();
     g_ImGuiCrosshairs.Draw();
+    gHUD.m_DeathNotice.ImGui_DeathNotice();
+    GetClientVoiceMgr()->ImGui_DrawVoiceHUD();
     ImGui::Render();
     m_pBackend->RenderDrawData(ImGui::GetDrawData());
 
@@ -76,7 +79,12 @@ CImGuiManager::~CImGuiManager()
 void CImGuiManager::LoadFonts()
 {
     ImGuiIO &io = ImGui::GetIO();
-    io.FontDefault = io.Fonts->AddFontFromMemoryTTF(Roboto_ttf, Roboto_ttf_len, 16.0f);
+    io.Fonts->Clear();
+
+    m_pDefaultFont = io.Fonts->AddFontFromMemoryTTF(Roboto_ttf, Roboto_ttf_len, 16.0f);
+    io.FontDefault = m_pDefaultFont;
+
+    m_pHudFont = io.Fonts->AddFontFromMemoryTTF(Roboto_ttf, Roboto_ttf_len, 32.0f);
 }
 void CImGuiManager::ApplyStyles()
 {
