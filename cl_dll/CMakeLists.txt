@@ -147,7 +147,7 @@ set (CLDLL_SOURCES
 	studio_util.cpp
 	util.cpp
 	view.cpp
-	ui/novgui_voice_status.cpp
+	ui/voice_status.cpp
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_debug.c
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_math.c
 	${CMAKE_SOURCE_DIR}/pm_shared/pm_shared.c)

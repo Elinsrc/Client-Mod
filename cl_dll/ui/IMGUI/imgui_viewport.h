@@ -5,9 +5,6 @@
 #include "imgui_ScorePanel.h"
 #include "imgui_MOTD.h"
 
-extern int iTeamColors[5][3];
-extern int iNumberOfTeamColors;
-
 class CImGuiViewport
 {
 public:

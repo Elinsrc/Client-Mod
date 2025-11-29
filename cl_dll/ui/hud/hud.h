@@ -68,6 +68,9 @@ typedef struct cvar_s cvar_t;
 #define MAX_SERVERNAME_LENGTH	64
 #define MAX_TEAMNAME_SIZE 32
 
+extern int iTeamColors[5][3];
+extern int iNumberOfTeamColors;
+
 //
 //-----------------------------------------------------
 //
@@ -94,7 +97,7 @@ struct HUDLIST
 
 //
 //-----------------------------------------------------
-#include "novgui_voice_status.h"
+#include "voice_status.h"
 #include "hud_spectator.h"
 #include "hud_speedometer.h"
 #include "hud_jumpspeed.h"

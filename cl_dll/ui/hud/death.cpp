@@ -24,6 +24,7 @@
 #include <stdio.h>
 
 #if USE_IMGUI
+#include "imgui_manager.h"
 #include "imgui_viewport.h"
 #include "ui_utils.h"
 #endif
@@ -111,6 +112,9 @@ int CHudDeathNotice::VidInit( void )
 #if USE_IMGUI
 void CHudDeathNotice::ImGui_DeathNotice()
 {
+	ImFont* hudFont = g_ImGuiManager.GetHudFont();
+	ImGui::PushFont(hudFont);
+
 	ImDrawList* dl = ImGui::GetBackgroundDrawList();
 
 	for (int i = 0; i < MAX_DEATHNOTICES; ++i)
@@ -214,7 +218,9 @@ void CHudDeathNotice::ImGui_DeathNotice()
 			r = 10; g = 240; b = 10;
 		}
 
-		x = m_ImguiUtils.ImGuiSpriteIcon(id, rc, x, y, iconWidth, iconHeight, textHeight, r, g, b, alphaUI);
+		HSPRITE hSpr = gHUD.GetSprite(id);
+
+		x = m_ImguiUtils.ImGuiSpriteIcon( hSpr, rc, x, y, iconWidth, iconHeight, textHeight, r, g, b, alphaUI);
 
 		if (!rgDeathNoticeList[i].iNonPlayerKill && rgDeathNoticeList[i].szVictim[0])
 		{
@@ -229,6 +235,8 @@ void CHudDeathNotice::ImGui_DeathNotice()
 			m_ImguiUtils.DrawTextWithColorCodesAt(ImVec2(x, y), rgDeathNoticeList[i].szVictim, baseColor, alphaUIF);
 		}
 	}
+
+	 ImGui::PopFont();
 }
 #endif
 
