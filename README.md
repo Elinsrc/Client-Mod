@@ -74,7 +74,7 @@
 | hud_health_divider          | 1                   | 0   | 1   | Show separator bar after health                                                                                   |
 | hud_allow_hd                | 0                   | 0   | 1   | Draw HL25 style HUD and disable hud_deathnotice_bg                                                                |
 | ui_imgui_demo               | -                   | -   | -   | Shows the ImGui demo window                                                                                       |
-| ui_imgui_scoreboard         | 0                   | 0   | 1   | Switches the scoreboard to the one implemented using ImGui                                                        |
+| ui_commands                 | 0                   | -   | -   | Open the Client-Mod ImGui settings menu (HUD, crosshair, effects, debug, etc.)                                    |
 | ui_imgui_scale              | 0                   | 1   | -   | Adjusts the scaling of the ImGui elements                                                                         |
 
 ## Building
